@@ -21,7 +21,7 @@ const techStack = [
 ];
 
 const Index = () => {
-  const { portfolioItems, recordContactRequest } = useStudio();
+  const { portfolioItems, recordContactRequest, homepageVideoUrl } = useStudio();
   const [hookIndex, setHookIndex] = useState(0);
   const [contactSent, setContactSent] = useState(false);
   const [form, setForm] = useState({
@@ -34,16 +34,42 @@ const Index = () => {
   const heroProject = portfolioItems[0];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div className="absolute inset-0 z-[-20] overflow-hidden">
+        {homepageVideoUrl ? (
+          <video
+            key={homepageVideoUrl}
+            className="h-full w-full object-cover"
+            src={homepageVideoUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
+        )}
+        <div className="absolute inset-0 bg-slate-950/70" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/75 via-slate-950/40 to-slate-950" aria-hidden="true" />
+        <div
+          className="absolute inset-0 mix-blend-overlay opacity-30"
+          aria-hidden="true"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 20%, hsla(var(--visual-accent)/0.3), transparent 55%), radial-gradient(circle at 80% 80%, hsla(var(--visual-secondary)/0.25), transparent 60%)",
+          }}
+        />
+      </div>
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 z-[-10]"
         style={{
           background:
             "radial-gradient(circle at 10% 10%, hsl(var(--visual-accent) / 0.22), transparent 60%), radial-gradient(circle at 90% 90%, hsl(var(--visual-secondary) / 0.22), transparent 60%)",
         }}
       />
       <div
-        className="pointer-events-none absolute inset-0 animate-[spin_20s_linear_infinite]"
+        className="pointer-events-none absolute inset-0 z-[-10] animate-[spin_20s_linear_infinite]"
         style={{
           background:
             "conic-gradient(from 45deg at 30% 30%, hsl(var(--visual-accent-soft) / 0.22), hsl(var(--visual-secondary) / 0.2), transparent 70%)",

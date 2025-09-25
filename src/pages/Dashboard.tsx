@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState, useCallback } from "react";
+import { FormEvent, useMemo, useState, useCallback, useEffect } from "react";
 import { useStudio } from "@/context/StudioContext";
 
 const ADMIN_EMAIL = "volberg.thomas@gmail.com";
@@ -47,18 +47,28 @@ const Dashboard = () => {
     updatePricingTier,
     advanceQuoteStatus,
     appendChatMessage,
+    homepageVideoUrl,
+    updateHomepageVideoUrl,
+    defaultHomepageVideoUrl,
   } = useStudio();
 
-    const [newProject, setNewProject] = useState<PortfolioDraft>(() => getDefaultProject(serviceCategories));
-    const [chatInput, setChatInput] = useState("");
-    const [selectedChatId, setSelectedChatId] = useState(() => chats[0]?.quoteId ?? "");
-    const [youtubeUrl, setYoutubeUrl] = useState("");
-    const [isImportingMetadata, setIsImportingMetadata] = useState(false);
-    const [metadataError, setMetadataError] = useState<string | null>(null);
-    const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
+  const [newProject, setNewProject] = useState<PortfolioDraft>(() => getDefaultProject(serviceCategories));
+  const [chatInput, setChatInput] = useState("");
+  const [selectedChatId, setSelectedChatId] = useState(() => chats[0]?.quoteId ?? "");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [isImportingMetadata, setIsImportingMetadata] = useState(false);
+  const [metadataError, setMetadataError] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
+  const [heroVideoDraft, setHeroVideoDraft] = useState(homepageVideoUrl);
+  const [videoFeedback, setVideoFeedback] = useState<{ tone: "info" | "error"; message: string } | null>(null);
 
   const activeChat = useMemo(() => chats.find((chat) => chat.quoteId === selectedChatId), [chats, selectedChatId]);
   const isAdmin = user?.email === ADMIN_EMAIL;
+
+  useEffect(() => {
+    setHeroVideoDraft(homepageVideoUrl);
+    setVideoFeedback(null);
+  }, [homepageVideoUrl]);
 
   const resetNewProject = () => {
     setNewProject(getDefaultProject(serviceCategories));
@@ -219,6 +229,28 @@ const Dashboard = () => {
 
   const cancelEdit = () => setEditDraft(null);
 
+  const handleUpdateHeroVideo = () => {
+    if (!heroVideoDraft.trim()) {
+      setVideoFeedback({
+        tone: "error",
+        message: "Ajoutez une URL valide (mp4 ou webm) pour activer la vidéo de fond.",
+      });
+      return;
+    }
+
+    updateHomepageVideoUrl(heroVideoDraft);
+    setVideoFeedback({
+      tone: "info",
+      message: "Vidéo de fond mise à jour. Rendez-vous sur la page d'accueil pour visualiser le rendu.",
+    });
+  };
+
+  const handleResetHeroVideo = () => {
+    setHeroVideoDraft(defaultHomepageVideoUrl);
+    updateHomepageVideoUrl(defaultHomepageVideoUrl);
+    setVideoFeedback({ tone: "info", message: "Vidéo de fond réinitialisée sur la version Studio VBG." });
+  };
+
   const handleSendMessage = () => {
     if (!activeChat || !chatInput.trim()) return;
     appendChatMessage(activeChat.quoteId, { from: "studio", content: chatInput.trim() });
@@ -256,6 +288,83 @@ const Dashboard = () => {
 
         <section className="mt-16 grid gap-10 xl:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-10">
+            <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(14,165,233,0.18)] visual-accent-veil">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+                <div className="flex-1 space-y-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Fond immersif</p>
+                  <h2 className="text-2xl font-bold">Vidéo de fond de la page d'accueil</h2>
+                  <p className="text-sm text-slate-200/70">
+                    Remplacez le visuel néon par votre propre vidéo cinématique. Le rendu apparaît en pleine largeur sur la page d'accueil.
+                  </p>
+                  <ul className="space-y-2 text-xs text-slate-200/60">
+                    <li>• Formats recommandés : MP4 ou WebM, 15 à 30 secondes, 1080p minimum.</li>
+                    <li>• La vidéo est lue en boucle, muette et optimisée pour les navigateurs mobiles.</li>
+                    <li>• Un dégradé automatique est appliqué pour préserver la lisibilité du contenu.</li>
+                  </ul>
+                  <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-slate-200/70">
+                    URL actuelle :
+                    <span className="mt-1 block break-all font-mono text-[11px] text-cyan-100/80 visual-accent-text-strong">
+                      {homepageVideoUrl || "Aucune vidéo définie"}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex-1 space-y-4">
+                  <div className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950/40 shadow-inner">
+                    {heroVideoDraft ? (
+                      <video
+                        key={heroVideoDraft}
+                        className="aspect-video w-full object-cover"
+                        src={heroVideoDraft}
+                        controls
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <div className="flex aspect-video items-center justify-center px-6 text-center text-xs text-slate-200/60">
+                        Collez une URL .mp4 ou .webm pour prévisualiser votre ambiance vidéo.
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    value={heroVideoDraft}
+                    onChange={(event) => {
+                      setHeroVideoDraft(event.target.value);
+                      setVideoFeedback(null);
+                    }}
+                    placeholder="https://.../votre-video.mp4"
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                  />
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={handleUpdateHeroVideo}
+                      className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+                    >
+                      Mettre à jour la vidéo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetHeroVideo}
+                      className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+                    >
+                      Réinitialiser
+                    </button>
+                  </div>
+                  {videoFeedback && (
+                    <p
+                      className={`text-xs ${
+                        videoFeedback.tone === "error"
+                          ? "text-rose-200"
+                          : "text-cyan-200/80 visual-accent-text"
+                      }`}
+                    >
+                      {videoFeedback.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Ajouter un projet au portfolio</h2>
               <p className="mt-2 text-sm text-slate-200/70">Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.</p>

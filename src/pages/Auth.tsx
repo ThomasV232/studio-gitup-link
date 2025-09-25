@@ -1,6 +1,12 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
+
+const membershipOptions = [
+  { value: "Hyperdrive", label: "Hyperdrive — accompagnement complet" },
+  { value: "Warp", label: "Warp — production récurrente" },
+  { value: "Impulse", label: "Impulse — projet ponctuel" },
+];
 
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "register">("register");
@@ -10,7 +16,10 @@ const Auth = () => {
   const { register: registerUser, login, user } = useStudio();
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectPath = (location.state as { from?: string })?.from ?? "/dashboard";
+  const redirectPath = useMemo(
+    () => (location.state as { from?: string })?.from ?? "/dashboard",
+    [location.state],
+  );
 
   const [form, setForm] = useState({
     name: "",
@@ -18,7 +27,7 @@ const Auth = () => {
     password: "",
     company: "",
     industry: "",
-    membership: "Hyperdrive" as const,
+    membership: membershipOptions[0]?.value ?? "Hyperdrive",
   });
 
   useEffect(() => {
@@ -35,8 +44,8 @@ const Auth = () => {
 
     try {
       if (mode === "register") {
-        if (!form.name || !form.email || !form.password) {
-          setError("Merci de remplir tous les champs indispensables.");
+        if (!form.name || !form.email || !form.password || !form.company || !form.industry) {
+          setError("Merci de compléter l'ensemble des champs pour créer votre espace.");
           return;
         }
 
@@ -49,7 +58,7 @@ const Auth = () => {
       } else {
         const response = await login(form.email, form.password);
         if (!response.success) {
-          setError(response.message ?? "Impossible de se connecter.");
+          setError(response.message ?? "Identifiants incorrects.");
         } else {
           setSuccess("Connexion réussie. Vous pouvez préparer votre brief.");
         }
@@ -86,7 +95,7 @@ const Auth = () => {
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Sécurité maîtrisée</p>
-                <p className="mt-2">Vos données sont hébergées en interne et utilisées exclusivement pour vos projets.</p>
+                <p className="mt-2">Vos données sont hébergées en interne et utilisées exclusivement pour vos productions.</p>
               </div>
             </div>
           </div>
@@ -141,3 +150,74 @@ const Auth = () => {
                     onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
                     placeholder="Secteur d'activité"
                     required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Programme</label>
+                <select
+                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                  value={form.membership}
+                  onChange={(event) => setForm((prev) => ({ ...prev, membership: event.target.value }))}
+                >
+                  {membershipOptions.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Email</label>
+              <input
+                type="email"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                value={form.email}
+                onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                placeholder="vous@futurebrand.com"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
+              <input
+                type="password"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                value={form.password}
+                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                placeholder={mode === "register" ? "Créez un mot de passe" : "Votre mot de passe"}
+                required
+              />
+            </div>
+          </div>
+
+          {error && (
+            <p className="rounded-2xl border border-rose-300/40 bg-rose-500/20 px-4 py-3 text-sm text-rose-100">{error}</p>
+          )}
+          {success && (
+            <p className="rounded-2xl border border-emerald-300/40 bg-emerald-500/20 px-4 py-3 text-sm text-emerald-100">{success}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <span className="relative z-10">{isSubmitting ? "Traitement..." : mode === "register" ? "Créer mon espace" : "Me connecter"}</span>
+            <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0" />
+          </button>
+
+          <p className="text-[0.7rem] text-slate-200/60">
+            En validant, vous acceptez le traitement confidentiel de vos informations pour préparer vos productions vidéo.
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Auth;
