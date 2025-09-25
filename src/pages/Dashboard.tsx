@@ -12,7 +12,10 @@ const quickNavigation = [
   { label: "Dashboard", description: "Pilotage projet", icon: "📊", to: "/dashboard" },
 ];
 
-const quoteStatusCopy: Record<QuoteRequest["status"], { label: string; tone: string; border: string }> = {
+const quoteStatusCopy: Record<
+  QuoteRequest["status"],
+  { label: string; tone: string; border: string }
+> = {
   nouveau: {
     label: "Nouveau",
     tone: "bg-cyan-500/15 text-cyan-100",
@@ -58,7 +61,10 @@ const Dashboard = () => {
     return quoteRequests
       .filter((quote) => quote.clientId === user.id)
       .slice()
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
   }, [quoteRequests, user]);
 
   const lastMessages = useMemo(() => {
@@ -68,7 +74,13 @@ const Dashboard = () => {
       .map((thread) => ({
         quoteId: thread.quoteId,
         projectName: thread.projectName,
-        last: thread.messages.slice().sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0],
+        last: thread.messages
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.timestamp).getTime() -
+              new Date(a.timestamp).getTime(),
+          )[0],
       }))
       .filter((thread) => Boolean(thread.last))
       .slice(0, 3);
@@ -88,7 +100,9 @@ const Dashboard = () => {
       return;
     }
 
-    const configurationMissing = result.message?.includes("Supabase n'est pas configuré");
+    const configurationMissing = result.message?.includes(
+      "Supabase n'est pas configuré",
+    );
 
     if (configurationMissing) {
       setIsUnlocked(true);
@@ -105,7 +119,10 @@ const Dashboard = () => {
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 pb-24 pt-20 lg:flex-row">
         <div className="relative flex flex-1 flex-col justify-between overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-[#1a2656] via-[#0c0e24] to-[#120420] p-10 shadow-[0_60px_120px_rgba(10,15,45,0.6)]">
-          <span className="pointer-events-none absolute right-[-4rem] top-1/3 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" aria-hidden="true" />
+          <span
+            className="pointer-events-none absolute right-[-4rem] top-1/3 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"
+            aria-hidden="true"
+          />
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-xs uppercase tracking-[0.4em] text-slate-200/70">
               Studio VBG · Espace client
@@ -114,20 +131,28 @@ const Dashboard = () => {
               Accédez à l'espace client
             </h1>
             <p className="mt-6 max-w-lg text-base text-slate-200/80">
-              Créez votre compte ou connectez-vous pour consulter le tableau de bord, déposer un brief, suivre vos devis et échanger avec nos équipes.
+              Créez votre compte ou connectez-vous pour consulter le tableau de
+              bord, déposer un brief, suivre vos devis et échanger avec nos
+              équipes.
             </p>
 
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-200/80">Onboarding structuré</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-200/80">
+                  Onboarding structuré
+                </p>
                 <p className="mt-4 text-sm text-slate-200/80">
-                  Un formulaire clair pour rassembler les informations essentielles et aligner notre équipe sur votre projet.
+                  Un formulaire clair pour rassembler les informations
+                  essentielles et aligner notre équipe sur votre projet.
                 </p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-200/80">Sécurité maîtrisée</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-200/80">
+                  Sécurité maîtrisée
+                </p>
                 <p className="mt-4 text-sm text-slate-200/80">
-                  Vos données sont hébergées en interne sur des environnements chiffrés et monitorés par nos producteurs.
+                  Vos données sont hébergées en interne sur des environnements
+                  chiffrés et monitorés par nos producteurs.
                 </p>
               </div>
             </div>
@@ -143,7 +168,7 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-1 items-stretch">
-          <div className="relative w-full overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-b from-[#161c3d] via-[#10132a] to-[#05060f] p-10 shadow-[0_60px_120px_rgba(9,11,30,0.6)]">
+          <div className="relative w/full overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-b from-[#161c3d] via-[#10132a] to-[#05060f] p-10 shadow-[0_60px_120px_rgba(9,11,30,0.6)]">
             <div className="flex flex-wrap items-center justify-between gap-4 text-[0.65rem] uppercase tracking-[0.35em] text-slate-100/70">
               <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
                 <span className="text-base">🌊</span> Mode Vague
@@ -162,29 +187,46 @@ const Dashboard = () => {
                   >
                     Connexion
                   </button>
-                  <button type="button" className="rounded-full px-6 py-3 text-slate-200/60">
+                  <button
+                    type="button"
+                    className="rounded-full px-6 py-3 text-slate-200/60"
+                  >
                     Créer un compte
                   </button>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-[0.35em] text-slate-200/70">Email</label>
+                    <label className="text-xs uppercase tracking-[0.35em] text-slate-200/70">
+                      Email
+                    </label>
                     <input
                       type="email"
                       value={credentials.email}
-                      onChange={(event) => setCredentials((prev) => ({ ...prev, email: event.target.value }))}
+                      onChange={(event) =>
+                        setCredentials((prev) => ({
+                          ...prev,
+                          email: event.target.value,
+                        }))
+                      }
                       className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-cyan-300 focus:outline-none"
                       placeholder="vous@studio2025.com"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-[0.35em] text-slate-200/70">Mot de passe</label>
+                    <label className="text-xs uppercase tracking-[0.35em] text-slate-200/70">
+                      Mot de passe
+                    </label>
                     <input
                       type="password"
                       value={credentials.password}
-                      onChange={(event) => setCredentials((prev) => ({ ...prev, password: event.target.value }))}
+                      onChange={(event) =>
+                        setCredentials((prev) => ({
+                          ...prev,
+                          password: event.target.value,
+                        }))
+                      }
                       className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-cyan-300 focus:outline-none"
                       placeholder="Au moins 8 caractères"
                       required
@@ -208,7 +250,12 @@ const Dashboard = () => {
                   disabled={status === "loading"}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    {status === "loading" && <span className="h-2 w-2 animate-ping rounded-full bg-cyan-200" aria-hidden="true" />}
+                    {status === "loading" && (
+                      <span
+                        className="h-2 w-2 animate-ping rounded-full bg-cyan-200"
+                        aria-hidden="true"
+                      />
+                    )}
                     {status === "loading" ? "Connexion…" : "Connexion"}
                   </span>
                   <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0" />
@@ -217,7 +264,9 @@ const Dashboard = () => {
                 {feedback && (
                   <p
                     className={`text-[0.75rem] uppercase tracking-[0.3em] ${
-                      status === "error" ? "text-rose-200/80" : "text-cyan-100/80"
+                      status === "error"
+                        ? "text-rose-200/80"
+                        : "text-cyan-100/80"
                     }`}
                   >
                     {feedback}
@@ -227,36 +276,55 @@ const Dashboard = () => {
             ) : (
               <div className="mt-10 space-y-8">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.35em] text-slate-200/70">Bienvenue</p>
+                  <p className="text-xs uppercase tracking-[0.35em] text-slate-200/70">
+                    Bienvenue
+                  </p>
                   <h2 className="mt-3 text-2xl font-semibold text-white">
                     {user?.name ?? "Client Studio"}, voici votre cockpit projet.
                   </h2>
                   <p className="mt-2 text-sm text-slate-200/80">
-                    Visualisez vos devis, derniers échanges et accédez aux ressources clés de Studio VBG.
+                    Visualisez vos devis, derniers échanges et accédez aux
+                    ressources clés de Studio VBG.
                   </p>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-2">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">Devis en cours</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">
+                      Devis en cours
+                    </p>
                     <ul className="mt-4 space-y-4">
                       {myQuotes.length === 0 && (
-                        <li className="text-sm text-slate-200/70">Aucun devis en cours pour le moment.</li>
+                        <li className="text-sm text-slate-200/70">
+                          Aucun devis en cours pour le moment.
+                        </li>
                       )}
                       {myQuotes.slice(0, 3).map((quote) => {
                         const statusStyle = quoteStatusCopy[quote.status];
                         return (
-                          <li key={quote.id} className="rounded-2xl border border-white/10 bg-[#0f1327]/80 p-4">
+                          <li
+                            key={quote.id}
+                            className="rounded-2xl border border-white/10 bg-[#0f1327]/80 p-4"
+                          >
                             <div className="flex items-center justify-between gap-4">
                               <div>
-                                <p className="text-sm font-semibold text-white">{quote.projectName}</p>
-                                <p className="text-[0.7rem] uppercase tracking-[0.25em] text-slate-300/70">{quote.clientName}</p>
+                                <p className="text-sm font-semibold text-white">
+                                  {quote.projectName}
+                                </p>
+                                <p className="text-[0.7rem] uppercase tracking-[0.25em] text-slate-300/70">
+                                  {quote.clientName}
+                                </p>
                               </div>
-                              <span className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.3em] ${statusStyle.tone} ${statusStyle.border}`}>
+                              <span
+                                className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.3em] ${statusStyle.tone} ${statusStyle.border}`}
+                              >
                                 {statusStyle.label}
                               </span>
                             </div>
-                            <p className="mt-3 text-xs text-slate-200/70">Budget : {quote.budgetRange} · Deadline : {quote.deadline || "À définir"}</p>
+                            <p className="mt-3 text-xs text-slate-200/70">
+                              Budget : {quote.budgetRange} · Deadline :{" "}
+                              {quote.deadline || "À définir"}
+                            </p>
                           </li>
                         );
                       })}
@@ -264,7 +332,9 @@ const Dashboard = () => {
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                    <p className="text-xs uppercase tracking-[0.3em] text-sky-200/80">Navigation rapide</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-sky-200/80">
+                      Navigation rapide
+                    </p>
                     <div className="mt-4 space-y-3">
                       {quickNavigation.map((item) => {
                         const isActive = item.label === activeNavigation;
@@ -280,8 +350,12 @@ const Dashboard = () => {
                             }`}
                           >
                             <div>
-                              <p className="text-sm font-semibold uppercase tracking-[0.25em]">{item.label}</p>
-                              <p className="text-xs text-slate-300/70">{item.description}</p>
+                              <p className="text-sm font-semibold uppercase tracking-[0.25em]">
+                                {item.label}
+                              </p>
+                              <p className="text-xs text-slate-300/70">
+                                {item.description}
+                              </p>
                             </div>
                             <span className="text-lg">{item.icon}</span>
                           </Link>
@@ -292,16 +366,29 @@ const Dashboard = () => {
                 </div>
 
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                  <p className="text-xs uppercase tracking-[0.3em] text-fuchsia-200/80">Derniers échanges</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-fuchsia-200/80">
+                    Derniers échanges
+                  </p>
                   <ul className="mt-4 space-y-4">
                     {lastMessages.length === 0 && (
-                      <li className="text-sm text-slate-200/70">Aucun échange récent. Lancez la conversation depuis votre chat projet.</li>
+                      <li className="text-sm text-slate-200/70">
+                        Aucun échange récent. Lancez la conversation depuis
+                        votre chat projet.
+                      </li>
                     )}
                     {lastMessages.map((thread) => (
-                      <li key={thread.quoteId} className="rounded-2xl border border-white/10 bg-[#0f1327]/80 p-4">
-                        <p className="text-sm font-semibold text-white">{thread.projectName}</p>
+                      <li
+                        key={thread.quoteId}
+                        className="rounded-2xl border border-white/10 bg-[#0f1327]/80 p-4"
+                      >
+                        <p className="text-sm font-semibold text-white">
+                          {thread.projectName}
+                        </p>
                         <p className="mt-2 text-xs text-slate-200/70">
-                          {thread.last?.from === "studio" ? "Studio VBG" : user?.name ?? "Vous"} · {thread.last?.content}
+                          {thread.last?.from === "studio"
+                            ? "Studio VBG"
+                            : user?.name ?? "Vous"}{" "}
+                          · {thread.last?.content}
                         </p>
                       </li>
                     ))}
@@ -309,17 +396,30 @@ const Dashboard = () => {
                 </div>
 
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/80">Projets en vitrine</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-200/80">
+                    Projets en vitrine
+                  </p>
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     {portfolioItems.slice(0, 2).map((item) => (
-                      <div key={item.id} className="rounded-2xl border border-white/10 bg-[#0f1327]/80 p-4">
-                        <p className="text-sm font-semibold text-white">{item.title}</p>
-                        <p className="mt-1 text-xs text-slate-200/70">{item.category} · {item.year}</p>
-                        <p className="mt-2 text-xs text-slate-300/70">{item.tagline}</p>
+                      <div
+                        key={item.id}
+                        className="rounded-2xl border border-white/10 bg-[#0f1327]/80 p-4"
+                      >
+                        <p className="text-sm font-semibold text-white">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-200/70">
+                          {item.category} · {item.year}
+                        </p>
+                        <p className="mt-2 text-xs text-slate-300/70">
+                          {item.tagline}
+                        </p>
                       </div>
                     ))}
                     {portfolioItems.length === 0 && (
-                      <p className="text-sm text-slate-200/70">Aucun projet publié pour le moment.</p>
+                      <p className="text-sm text-slate-200/70">
+                        Aucun projet publié pour le moment.
+                      </p>
                     )}
                   </div>
                 </div>
