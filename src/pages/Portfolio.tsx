@@ -1,11 +1,27 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useStudio } from "@/context/StudioContext";
+import { useStudio, type PortfolioItem } from "@/context/StudioContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Portfolio = () => {
-  const { portfolioItems } = useStudio();
-  const categories = useMemo(() => ["Tous", ...new Set(portfolioItems.map((item) => item.category))], [portfolioItems]);
+  const { portfolioItems, serviceCategories } = useStudio();
+  const categories = useMemo(() => ["Tous", ...serviceCategories], [serviceCategories]);
   const [filter, setFilter] = useState("Tous");
+  const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
+
+  const getEmbedUrl = useCallback((url: string) => {
+    const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+    if (match?.[1]) {
+      return `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1`;
+    }
+    return url;
+  }, []);
 
   const filtered = useMemo(
     () =>
@@ -25,6 +41,7 @@ const Portfolio = () => {
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(circle at 90% 90%, hsla(var(--visual-secondary)/0.2), transparent 60%)" }}
       />
+
       <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-28">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_25px_120px_rgba(14,165,233,0.2)] visual-accent-halo">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -72,7 +89,16 @@ const Portfolio = () => {
             {filtered.map((project, index) => (
               <article
                 key={project.id}
-                className="group relative flex h-full flex-col overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-900/40 to-slate-900/60 p-6 shadow-[0_20px_110px_rgba(56,189,248,0.15)] visual-accent-veil transition-transform duration-500 hover:-translate-y-2"
+                role="button"
+                tabIndex={0}
+                onClick={() => setActiveProject(project)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    setActiveProject(project);
+                  }
+                }}
+                className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-900/40 to-slate-900/60 p-6 shadow-[0_20px_110px_rgba(56,189,248,0.15)] visual-accent-veil transition-transform duration-500 hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-cyan-300/60"
               >
                 <span
                   className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
@@ -99,8 +125,11 @@ const Portfolio = () => {
                   <div className="rounded-2xl bg-white/5 p-3 text-center">{project.duration}</div>
                   <div className="rounded-2xl bg-white/5 p-3 text-center">{project.socialStack.join(" · ")}</div>
                 </div>
-                <div className="mt-6 overflow-hidden rounded-[2rem] border border-white/10">
+                <div className="relative mt-6 overflow-hidden rounded-[2rem] border border-white/10">
                   <img src={project.thumbnail} alt={project.title} className="h-56 w-full object-cover object-center" />
+                  <div className="absolute inset-x-6 bottom-10 hidden items-center justify-center rounded-full border border-white/20 bg-black/60 py-2 text-xs uppercase tracking-[0.3em] text-white backdrop-blur group-hover:flex">
+                    Ouvrir la fiche
+                  </div>
                 </div>
                 <div className="mt-6 space-y-3 text-sm text-slate-200/80">
                   <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Deliverables</p>
@@ -129,6 +158,70 @@ const Portfolio = () => {
             </div>
           )}
         </section>
+
+        <Dialog open={Boolean(activeProject)} onOpenChange={(open) => !open && setActiveProject(null)}>
+          <DialogContent className="max-w-4xl border border-white/10 bg-slate-950/95 text-white backdrop-blur">
+            {activeProject && (
+              <div className="space-y-8">
+                <DialogHeader className="space-y-3 text-left">
+                  <DialogTitle className="text-3xl font-bold text-white">{activeProject.title}</DialogTitle>
+                  <DialogDescription className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
+                    {activeProject.category} · {activeProject.duration} · {activeProject.year}
+                  </DialogDescription>
+                  <p className="text-base text-slate-200/80">{activeProject.tagline}</p>
+                </DialogHeader>
+                <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+                  <div className="space-y-4">
+                    <div className="aspect-video overflow-hidden rounded-[2.5rem] border border-white/10 bg-black">
+                      <iframe
+                        src={getEmbedUrl(activeProject.videoUrl)}
+                        title={activeProject.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200/80">
+                      {activeProject.description}
+                    </p>
+                  </div>
+                  <aside className="space-y-5 rounded-[2.5rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {activeProject.aiTools.map((tool) => (
+                          <span key={tool} className="rounded-full bg-cyan-500/10 visual-accent-chip px-3 py-1 text-xs text-cyan-100/80">
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables</p>
+                      <ul className="mt-2 space-y-2">
+                        {activeProject.deliverables.map((deliverable) => (
+                          <li key={deliverable} className="flex items-center gap-3 text-xs">
+                            <span className="h-2 w-2 rounded-full bg-cyan-300 visual-accent-dot" /> {deliverable}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</p>
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                        {activeProject.socialStack.map((channel) => (
+                          <span key={channel} className="rounded-full border border-white/20 bg-white/10 px-3 py-1">
+                            {channel}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
