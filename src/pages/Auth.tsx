@@ -1,6 +1,34 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { useStudio } from "@/context/StudioContext";
+import { cn } from "@/lib/utils";
+
+const membershipTiers = [
+  {
+    value: "Hyperdrive",
+    label: "Hyperdrive",
+    tagline: "Production intensive",
+    description:
+      "3 tournages prioritaires par mois, cellule IA dédiée et reportings hebdomadaires.",
+  },
+  {
+    value: "Cinematic",
+    label: "Cinematic",
+    tagline: "Pack signature",
+    description:
+      "Mix plateau / IA, direction artistique senior, livraison multi-formats en 7 jours.",
+  },
+  {
+    value: "Launchpad",
+    label: "Launchpad",
+    tagline: "Accélérateur",
+    description:
+      "Kit contenu mensuel, optimisation réseaux sociaux et accompagnement éditorial.",
+  },
+] as const;
+
+type MembershipPlan = (typeof membershipTiers)[number]["value"];
 
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "register">("register");
@@ -18,14 +46,28 @@ const Auth = () => {
     password: "",
     company: "",
     industry: "",
-    membership: "Hyperdrive" as const,
+    membership: membershipTiers[0].value as MembershipPlan,
   });
+
+  const membershipLabel = useMemo(() => {
+    return membershipTiers.find((tier) => tier.value === form.membership)?.label ?? "";
+  }, [form.membership]);
 
   useEffect(() => {
     if (user) {
       navigate(redirectPath, { replace: true });
     }
   }, [user, navigate, redirectPath]);
+
+  const resetForm = () =>
+    setForm({
+      name: "",
+      email: "",
+      password: "",
+      company: "",
+      industry: "",
+      membership: membershipTiers[0].value,
+    });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,7 +77,7 @@ const Auth = () => {
 
     try {
       if (mode === "register") {
-        if (!form.name || !form.email || !form.password) {
+        if (!form.name || !form.email || !form.password || !form.company || !form.industry) {
           setError("Merci de remplir tous les champs indispensables.");
           return;
         }
@@ -43,6 +85,7 @@ const Auth = () => {
         const response = await registerUser(form);
         if (response.success) {
           setSuccess(response.message ?? "Compte créé avec succès. Vous êtes désormais connecté·e.");
+          resetForm();
         } else {
           setError(response.message ?? "Impossible de créer le compte.");
         }
@@ -141,3 +184,101 @@ const Auth = () => {
                     onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
                     placeholder="Secteur d'activité"
                     required
+                  />
+                </div>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Formule sélectionnée</p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  {membershipTiers.map((tier) => {
+                    const isActive = tier.value === form.membership;
+                    return (
+                      <button
+                        key={tier.value}
+                        type="button"
+                        onClick={() => setForm((prev) => ({ ...prev, membership: tier.value }))}
+                        className={cn(
+                          "rounded-2xl border bg-white/5 px-4 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300",
+                          isActive
+                            ? "border-cyan-300/80 bg-cyan-500/20 text-white shadow-[0_10px_40px_rgba(56,189,248,0.25)]"
+                            : "border-white/10 text-slate-100/80 hover:border-cyan-200/40 hover:bg-white/10"
+                        )}
+                        aria-pressed={isActive}
+                      >
+                        <span className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-100/80 visual-accent-text-strong">
+                          {tier.label}
+                        </span>
+                        <p className="mt-2 text-xs text-slate-200/80">{tier.tagline}</p>
+                        <p className="mt-1 text-[0.7rem] text-slate-300/70">{tier.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-[0.7rem] text-slate-300/70">
+                  {membershipLabel} · ajustable à tout moment depuis le tableau de bord.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Adresse email</label>
+              <input
+                type="email"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                value={form.email}
+                onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                placeholder="vous@futurebrand.com"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
+              <input
+                type="password"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                value={form.password}
+                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                placeholder={mode === "register" ? "Créer un mot de passe sécurisé" : "Votre mot de passe"}
+                required
+                minLength={8}
+              />
+              {mode === "register" && (
+                <p className="mt-2 text-[0.7rem] text-slate-300/70">
+                  Au moins 8 caractères, une majuscule et un chiffre pour sécuriser votre espace client.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {error && (
+            <p className="rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</p>
+          )}
+
+          {success && (
+            <p className="rounded-2xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{success}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={cn(
+              "group relative w-full overflow-hidden rounded-full border border-cyan-200/40 bg-cyan-500/20 px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition",
+              isSubmitting && "cursor-not-allowed opacity-70"
+            )}
+          >
+            <span className="relative z-10">{isSubmitting ? "Traitement en cours..." : mode === "register" ? "Créer mon espace" : "Me connecter"}</span>
+            <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0" />
+          </button>
+
+          <p className="text-[0.7rem] text-slate-300/70">
+            En validant, vous acceptez les conditions générales Studio VBG et notre politique de confidentialité.
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Auth;
