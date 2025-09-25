@@ -937,6 +937,12 @@ All colors MUST be HSL.
     pointer-events: none;
   }
 
+  @media (hover: none) {
+    .portfolio-card-cta {
+      pointer-events: auto;
+    }
+  }
+
   .portfolio-card:hover .portfolio-card-overlay {
     opacity: 0.92;
   }
