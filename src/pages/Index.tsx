@@ -27,24 +27,8 @@ const Index = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    projectSpark: "",
-    urgency: "hier" as const,
-  });
+    projectSpark:
 
-  const heroProject = portfolioItems[0];
-
-  return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(circle at top, hsla(var(--visual-accent)/0.35), transparent 55%)" }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 animate-[spin_20s_linear_infinite]"
-        style={{
-          background:
-            "conic-gradient(from 45deg at 30% 30%, hsla(var(--visual-accent-soft)/0.22), hsla(var(--visual-secondary)/0.2), transparent 70%)",
-        }}
       />
       <div className="relative">
         <header className="mx-auto flex max-w-7xl flex-col gap-12 px-6 pt-20 pb-28 lg:flex-row lg:items-center">

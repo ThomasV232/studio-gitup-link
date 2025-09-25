@@ -16,8 +16,7 @@ const Portfolio = () => {
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
 
   const filtered = useMemo(
-    () =>
-      filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter),
+    () => (filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter)),
     [filter, portfolioItems],
   );
 
@@ -42,7 +41,7 @@ const Portfolio = () => {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 12% 18%, hsla(var(--visual-accent)/0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsla(var(--visual-secondary)/0.25), transparent 50%)",
+            "radial-gradient(circle at 12% 18%, hsl(var(--visual-accent) / 0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsl(var(--visual-secondary) / 0.25), transparent 50%)",
         }}
       />
       <div className="pointer-events-none absolute inset-0 mix-blend-screen">
@@ -57,7 +56,7 @@ const Portfolio = () => {
                 Studio VBG — Saison 2025
               </span>
               <h1 className="text-4xl font-black leading-tight sm:text-5xl">
-                Ressentez l'immersion d'une production IA & terrain parfaitement synchronisée
+                Ressentez l&apos;immersion d&apos;une production IA & terrain parfaitement synchronisée
               </h1>
               <p className="max-w-xl text-base text-slate-200/85 sm:text-lg">
                 Notre portfolio mélange captations haute fidélité, direction artistique générative et workflows Midjourney, Kling,
@@ -115,7 +114,7 @@ const Portfolio = () => {
                 </div>
               ) : (
                 <div className="mt-10 rounded-[2.75rem] border border-dashed border-white/20 bg-white/5 p-6 text-xs text-slate-200/65">
-                  Ajoutez vos premiers projets depuis le tableau de bord pour activer l'aperçu cinématique.
+                  Ajoutez vos premiers projets depuis le tableau de bord pour activer l&apos;aperçu cinématique.
                 </div>
               )}
             </div>
@@ -243,7 +242,7 @@ const Portfolio = () => {
 
           {filtered.length === 0 && (
             <div className="mt-16 rounded-[3.25rem] border border-white/10 bg-white/10 p-12 text-center text-sm text-slate-200/70">
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l'instant</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l&apos;instant</p>
               <p className="mt-4 text-2xl text-white">
                 Ajoutez une nouvelle réalisation depuis le tableau de bord pour alimenter cette catégorie.
               </p>
