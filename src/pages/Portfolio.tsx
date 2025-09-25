@@ -1,328 +1,718 @@
-import { useMemo, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
-import { useStudio, type PortfolioItem } from "@/context/StudioContext";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-const Portfolio = () => {
-  const { portfolioItems, serviceCategories } = useStudio();
-  const categories = useMemo(() => ["Tous", ...serviceCategories], [serviceCategories]);
-  const [filter, setFilter] = useState("Tous");
-  const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
 
-  const filtered = useMemo(
-    () => (filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter)),
-    [filter, portfolioItems],
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --visual-accent: 188 86% 64%;
+    --visual-accent-soft: 196 90% 78%;
+    --visual-secondary: 315 86% 66%;
+    --visual-tertiary: 251 96% 72%;
+    --visual-accent-foreground: 190 100% 92%;
+    --visual-border: 188 86% 64%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+.hero-ribbon {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem;
+  transition: transform 0.45s ease, opacity 0.45s ease;
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: none;
+}
+
+.hero-ribbon.hidden {
+  transform: translateY(-120%);
+  opacity: 0;
+}
+
+.hero-ribbon__content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: min(68rem, 100%);
+  border-radius: 999px;
+  border: 1px solid hsla(var(--visual-border) / 0.25);
+  background: linear-gradient(
+    120deg,
+    hsla(var(--visual-accent) / 0.22),
+    hsla(var(--visual-secondary) / 0.2)
   );
+  box-shadow: 0 20px 60px hsla(var(--visual-accent) / 0.18);
+  padding: 0.85rem 1.5rem;
+  backdrop-filter: blur(20px);
+  pointer-events: auto;
+}
 
-  const heroEpisodes = useMemo(() => {
-    const source = filter === "Tous" ? portfolioItems : filtered;
-    return source.slice(0, 3);
-  }, [filter, filtered, portfolioItems]);
+.hero-ribbon__pulse {
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, hsl(var(--visual-accent)), hsl(var(--visual-secondary)));
+  box-shadow: 0 0 0 0 hsla(var(--visual-accent) / 0.6);
+  animation: heroRibbonPulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
 
-  const highlightProject = heroEpisodes[0] ?? portfolioItems[0] ?? null;
+.hero-ribbon__text {
+  display: grid;
+  gap: 0.15rem;
+  flex: 1;
+}
 
-  const getEmbedUrl = useCallback((url: string) => {
-    const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
-    if (match?.[1]) {
-      return `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1`;
-    }
-    return url;
-  }, []);
+.hero-ribbon__headline {
+  font-size: clamp(0.95rem, 2vw, 1.125rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: hsl(var(--visual-accent-foreground));
+}
 
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 12% 18%, hsl(var(--visual-accent) / 0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsl(var(--visual-secondary) / 0.25), transparent 50%)",
-        }}
-      />
-      <div className="pointer-events-none absolute inset-0 mix-blend-screen">
-        <div className="portfolio-aurora-cloud" />
-      </div>
+.hero-ribbon__subheadline {
+  font-size: clamp(0.75rem, 1.6vw, 0.9rem);
+  color: hsla(var(--visual-accent-foreground) / 0.75);
+}
 
-      <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-28">
-        <section className="overflow-hidden rounded-[3.75rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-950/60 to-slate-950/90 p-12 shadow-[0_60px_160px_rgba(56,189,248,0.22)] visual-accent-halo">
-          <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div className="space-y-8">
-              <span className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
-                Studio VBG — Saison 2025
-              </span>
-              <h1 className="text-4xl font-black leading-tight sm:text-5xl">
-                Ressentez l'immersion d'une production IA & terrain parfaitement synchronisée
-              </h1>
-              <p className="max-w-xl text-base text-slate-200/85 sm:text-lg">
-                Notre portfolio mélange captations haute fidélité, direction artistique générative et workflows Midjourney, Kling,
-                Seedance et Veo orchestrés dans DaVinci & Adobe. Chaque capsule est contrôlable depuis le tableau de bord — ajoutez,
-                modifiez, publiez, recommencez.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/quote"
-                  className="inline-flex items-center gap-3 rounded-full border border-transparent bg-gradient-to-r from-cyan-400/80 via-fuchsia-500/80 to-amber-400/80 px-6 py-3 text-xs font-bold uppercase tracking-[0.4em] text-slate-950 shadow-lg shadow-cyan-400/40 transition duration-500 hover:scale-[1.03]"
-                >
-                  Demander un devis
-                </Link>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition duration-500 hover:bg-white/15"
-                >
-                  Contact rapide
-                </Link>
-              </div>
-              <p className="text-[11px] uppercase tracking-[0.4em] text-cyan-200/70 visual-accent-text">
-                Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2
-              </p>
-              {heroEpisodes.length > 0 ? (
-                <div className="mt-10 grid gap-5 lg:grid-cols-3">
-                  {heroEpisodes.map((project, index) => (
-                    <button
-                      key={project.id}
-                      type="button"
-                      onClick={() => setActiveProject(project)}
-                      className="portfolio-episode group text-left"
-                    >
-                      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.35em] text-slate-100/70">
-                        <span>Épisode {String(index + 1).padStart(2, "0")}</span>
-                        <span>{project.year}</span>
-                      </div>
-                      <h2 className="mt-4 text-xl font-semibold text-white">{project.title}</h2>
-                      <p className="mt-3 text-xs text-slate-200/75">{project.tagline}</p>
-                      <div className="mt-5 flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                        {project.aiTools.slice(0, 3).map((tool) => (
-                          <span key={tool} className="rounded-full bg-white/10 px-3 py-1">
-                            {tool}
-                          </span>
-                        ))}
-                        {project.aiTools.length > 3 && (
-                          <span className="rounded-full border border-white/20 px-3 py-1">+{project.aiTools.length - 3}</span>
-                        )}
-                      </div>
-                      <div className="mt-6 flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">
-                        <span>{project.duration}</span>
-                        <span>{project.category}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="mt-10 rounded-[2.75rem] border border-dashed border-white/20 bg-white/5 p-6 text-xs text-slate-200/65">
-                  Ajoutez vos premiers projets depuis le tableau de bord pour activer l'aperçu cinématique.
-                </div>
-              )}
-            </div>
-            <div className="relative">
-              <span className="portfolio-orbit planet-one" />
-              <span className="portfolio-orbit planet-two" />
-              <div className="portfolio-hero-card">
-                {highlightProject ? (
-                  <>
-                    <img
-                      src={highlightProject.thumbnail}
-                      alt={highlightProject.title}
-                      className="h-full w-full object-cover object-center"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-transparent" />
-                    <div className="absolute bottom-8 left-8 right-8 space-y-3">
-                      <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-200/70 visual-accent-text">
-                        {highlightProject.category}
-                      </p>
-                      <h2 className="text-3xl font-semibold text-white">{highlightProject.title}</h2>
-                      <p className="text-sm text-slate-200/80">{highlightProject.tagline}</p>
-                      <div className="flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                        {highlightProject.aiTools.slice(0, 4).map((tool) => (
-                          <span key={tool} className="rounded-full bg-white/10 px-3 py-1">
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-slate-300/70">
-                    Déposez votre première capsule vidéo pour activer la vitrine immersive.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
+.hero-ribbon__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.35rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-weight: 700;
+  background: hsla(var(--visual-accent) / 0.3);
+  color: hsl(var(--visual-accent-foreground));
+  border: 1px solid hsla(var(--visual-border) / 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  white-space: nowrap;
+}
 
-        <section className="mt-24 space-y-10">
-          <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 className="text-3xl font-bold sm:text-4xl">Réacteur de productions Studio VBG</h2>
-              <p className="mt-3 max-w-2xl text-sm text-slate-200/75">
-                Explorez nos capsules classées par univers. Chaque vignette déclenche une fiche immersive avec la vidéo YouTube, les
-                livrables et la stratégie IA correspondante.
-              </p>
-            </div>
-            <div className="portfolio-filter-scroll-wrapper overflow-x-auto whitespace-nowrap pb-2">
-              <nav className="flex w-max flex-nowrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.35em]">
-                {categories.map((category) => {
-                  const isActive = filter === category;
-                  return (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => setFilter(category)}
-                      className={`portfolio-filter-trigger ${
-                        isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
-                      }`}
-                      aria-pressed={isActive}
-                    >
-                      {category}
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-          </header>
+.hero-ribbon__cta:hover {
+  transform: translateY(-1px);
+  background: hsla(var(--visual-secondary) / 0.4);
+  box-shadow: 0 15px 35px hsla(var(--visual-secondary) / 0.28);
+}
 
-          <div className="portfolio-gallery grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {filtered.map((project) => (
-              <article
-                key={project.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => setActiveProject(project)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setActiveProject(project);
-                  }
-                }}
-                className="portfolio-card group"
-              >
-                <div className="portfolio-card-media">
-                  <img src={project.thumbnail} alt={project.title} className="h-full w-full object-cover object-center" />
-                  <div className="portfolio-card-overlay" />
-                  <div className="portfolio-card-copy">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">{project.category}</p>
-                    <h2 className="text-xl font-semibold text-white">{project.title}</h2>
-                    <p className="text-xs text-slate-200/75">{project.tagline}</p>
-                  </div>
-                </div>
-                <div className="portfolio-card-meta text-xs text-slate-200/80">
-                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-slate-200/60">
-                    <span>{project.year}</span>
-                    <span>{project.duration}</span>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                    {project.aiTools.slice(0, 3).map((tool) => (
-                      <span key={tool} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-                        {tool}
-                      </span>
-                    ))}
-                    {project.aiTools.length > 3 && (
-                      <span className="rounded-full border border-white/20 px-3 py-1">+{project.aiTools.length - 3}</span>
-                    )}
-                  </div>
-                  <div className="mt-4 text-[11px] uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                    Diffusions
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
-                    {project.socialStack.map((channel) => (
-                      <span key={channel} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-                        {channel}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="portfolio-card-cta">Ouvrir la capsule</div>
-              </article>
-            ))}
-          </div>
+@keyframes heroRibbonPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 hsla(var(--visual-accent) / 0.6);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 12px hsla(var(--visual-accent) / 0);
+    opacity: 0.5;
+  }
+}
 
-          {filtered.length === 0 && (
-            <div className="mt-16 rounded-[3.25rem] border border-white/10 bg-white/10 p-12 text-center text-sm text-slate-200/70">
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l'instant</p>
-              <p className="mt-4 text-2xl text-white">
-                Ajoutez une nouvelle réalisation depuis le tableau de bord pour alimenter cette catégorie.
-              </p>
-              <Link
-                to="/dashboard"
-                className="mt-6 inline-flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-              >
-                Ajouter un projet
-              </Link>
-            </div>
-          )}
-        </section>
+@media (max-width: 768px) {
+  .hero-ribbon {
+    top: 0.5rem;
+    padding: 0 1rem;
+  }
 
-        <Dialog open={Boolean(activeProject)} onOpenChange={(open) => !open && setActiveProject(null)}>
-          <DialogContent className="portfolio-dialog max-w-4xl border border-white/10 bg-slate-950/95 text-white backdrop-blur">
-            {activeProject && (
-              <div className="space-y-8">
-                <DialogHeader className="space-y-3 text-left">
-                  <DialogTitle className="text-3xl font-bold text-white">{activeProject.title}</DialogTitle>
-                  <DialogDescription className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                    {activeProject.category} · {activeProject.duration} · {activeProject.year}
-                  </DialogDescription>
-                  <p className="text-base text-slate-200/80">{activeProject.tagline}</p>
-                </DialogHeader>
-                <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-                  <div className="space-y-4">
-                    <div className="aspect-video overflow-hidden rounded-[2.5rem] border border-white/10 bg-black">
-                      <iframe
-                        src={getEmbedUrl(activeProject.videoUrl)}
-                        title={activeProject.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="h-full w-full"
-                      />
-                    </div>
-                    <p className="whitespace-pre-line text-sm leading-relaxed text-slate-200/80">
-                      {activeProject.description}
-                    </p>
-                  </div>
-                  <aside className="space-y-5 rounded-[2.5rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {activeProject.aiTools.map((tool) => (
-                          <span key={tool} className="rounded-full bg-cyan-500/10 visual-accent-chip px-3 py-1 text-xs text-cyan-100/80">
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables</p>
-                      <ul className="mt-2 space-y-2">
-                        {activeProject.deliverables.map((deliverable) => (
-                          <li key={deliverable} className="flex items-center gap-3 text-xs">
-                            <span className="h-2 w-2 rounded-full bg-cyan-300 visual-accent-dot" /> {deliverable}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</p>
-                      <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                        {activeProject.socialStack.map((channel) => (
-                          <span key={channel} className="rounded-full border border-white/20 bg-white/10 px-3 py-1">
-                            {channel}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </aside>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
-  );
-};
+  .hero-ribbon__content {
+    flex-direction: column;
+    border-radius: 2rem;
+    text-align: center;
+    padding: 1rem 1.25rem;
+  }
 
-export default Portfolio;
+  .hero-ribbon__cta {
+    width: 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  body.visual-nebula {
+    --visual-accent: 188 86% 64%;
+    --visual-accent-soft: 196 90% 78%;
+    --visual-secondary: 315 86% 66%;
+    --visual-tertiary: 251 96% 72%;
+    --visual-accent-foreground: 190 100% 92%;
+    --visual-border: 188 86% 64%;
+  }
+
+  body.visual-solstice {
+    --visual-accent: 34 97% 62%;
+    --visual-accent-soft: 17 94% 64%;
+    --visual-secondary: 296 76% 72%;
+    --visual-tertiary: 208 88% 70%;
+    --visual-accent-foreground: 35 100% 92%;
+    --visual-border: 34 97% 62%;
+  }
+}
+
+.visual-accent-text {
+  color: hsl(var(--visual-accent-foreground) / 0.8) !important;
+}
+
+.visual-accent-text-strong {
+  color: hsl(var(--visual-accent-foreground) / 0.95) !important;
+}
+
+.visual-accent-border {
+  border-color: hsla(var(--visual-border) / 0.45) !important;
+}
+
+.visual-accent-bg {
+  background-color: hsla(var(--visual-accent) / 0.18) !important;
+}
+
+.visual-accent-chip {
+  background-color: hsla(var(--visual-accent) / 0.12) !important;
+  color: hsl(var(--visual-accent-foreground) / 0.85) !important;
+}
+
+.visual-accent-dot {
+  background-color: hsl(var(--visual-accent) / 0.9) !important;
+  box-shadow: 0 0 12px hsla(var(--visual-accent) / 0.75) !important;
+}
+
+.visual-accent-gradient {
+  background-image: linear-gradient(
+      120deg,
+      hsla(var(--visual-accent) / 0.85),
+      hsla(var(--visual-secondary) / 0.75),
+      hsla(var(--visual-tertiary) / 0.8)
+    ) !important;
+}
+
+.visual-accent-underline {
+  text-decoration-color: hsla(var(--visual-accent) / 0.7) !important;
+}
+
+.visual-accent-shadow {
+  box-shadow: 0 10px 40px hsla(var(--visual-accent) / 0.32) !important;
+}
+
+.visual-accent-halo {
+  box-shadow: 0 25px 120px hsla(var(--visual-accent) / 0.2) !important;
+}
+
+.visual-accent-veil {
+  box-shadow: 0 20px 120px hsla(var(--visual-accent) / 0.18) !important;
+}
+
+.visual-accent-glow {
+  box-shadow: 0 15px 80px hsla(var(--visual-accent) / 0.22) !important;
+}
+
+.visual-accent-hover-shadow {
+  box-shadow: 0 35px 120px hsla(var(--visual-accent) / 0.24) !important;
+}
+
+.visual-secondary-veil {
+  box-shadow: 0 20px 100px hsla(var(--visual-secondary) / 0.18) !important;
+}
+
+.visual-secondary-glow {
+  box-shadow: 0 15px 50px hsla(var(--visual-secondary) / 0.28) !important;
+}
+
+@keyframes auroraDrift {
+  0% {
+    transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.02);
+    opacity: 0.65;
+  }
+  40% {
+    transform: translate3d(4%, 6%, 0) rotate(5deg) scale(1.08);
+    opacity: 0.85;
+  }
+  70% {
+    transform: translate3d(-2%, 8%, 0) rotate(-3deg) scale(1.04);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.02);
+    opacity: 0.65;
+  }
+}
+
+@keyframes holoSweep {
+  0% {
+    transform: translateX(-160%) skewX(-12deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(160%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
+@keyframes orbitGlow {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: blur(28px);
+    opacity: 0.55;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.08);
+    filter: blur(35px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    filter: blur(28px);
+    opacity: 0.55;
+  }
+}
+
+@keyframes floatPulse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) scale(1.01);
+  }
+}
+
+@keyframes bandAurora {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes bandShimmer {
+  0% {
+    transform: translateX(-130%) skewX(-12deg);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.45;
+  }
+  60% {
+    transform: translateX(20%) skewX(-12deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(130%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .portfolio-aurora-cloud {
+    position: absolute;
+    inset: -45%;
+    background:
+      radial-gradient(circle at 15% 20%, hsla(var(--visual-accent) / 0.35), transparent 55%),
+      radial-gradient(circle at 85% 30%, hsla(var(--visual-secondary) / 0.28), transparent 60%),
+      radial-gradient(circle at 55% 80%, hsla(var(--visual-tertiary) / 0.24), transparent 65%);
+    filter: blur(60px);
+    opacity: 0.75;
+    animation: auroraDrift 26s ease-in-out infinite;
+  }
+
+  .portfolio-orbit {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, hsla(var(--visual-accent) / 0.7), transparent 60%);
+    mix-blend-mode: screen;
+    animation: orbitGlow 18s linear infinite;
+    pointer-events: none;
+  }
+
+  .portfolio-orbit.planet-one {
+    top: -12%;
+    right: 14%;
+    width: 12rem;
+    height: 12rem;
+  }
+
+  .portfolio-orbit.planet-two {
+    bottom: -8%;
+    left: -12%;
+    width: 16rem;
+    height: 16rem;
+    animation-duration: 22s;
+  }
+
+  .portfolio-hero-card {
+    position: relative;
+    min-height: 30rem;
+    overflow: hidden;
+    border-radius: 3rem;
+    border: 1px solid hsla(var(--visual-border) / 0.35);
+    background: linear-gradient(150deg, hsla(var(--visual-accent) / 0.16), hsla(var(--visual-secondary) / 0.1));
+    box-shadow: 0 45px 140px hsla(var(--visual-accent) / 0.28);
+    isolation: isolate;
+  }
+
+  .portfolio-hero-card::after {
+    content: "";
+    position: absolute;
+    inset: -35%;
+    background: radial-gradient(circle at 30% 30%, hsla(var(--visual-tertiary) / 0.32), transparent 55%);
+    mix-blend-mode: screen;
+    opacity: 0.35;
+    animation: auroraDrift 22s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .portfolio-episode {
+    position: relative;
+    padding: 1.75rem;
+    border-radius: 2.5rem;
+    border: 1px solid hsla(var(--visual-border) / 0.25);
+    background: linear-gradient(145deg, hsla(var(--visual-accent) / 0.2), hsla(var(--visual-secondary) / 0.18) 55%, hsla(var(--visual-tertiary) / 0.14));
+    box-shadow: 0 30px 90px hsla(var(--visual-accent) / 0.16);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+  }
+
+  .portfolio-episode::before {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(circle at 20% 20%, hsla(var(--visual-tertiary) / 0.25), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+
+  .portfolio-episode::after {
+    content: "";
+    position: absolute;
+    inset: -15%;
+    background: linear-gradient(120deg, transparent 0%, hsla(var(--visual-accent) / 0.5) 45%, transparent 75%);
+    mix-blend-mode: screen;
+    opacity: 0;
+    animation: holoSweep 4.6s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .portfolio-episode:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 40px 120px hsla(var(--visual-accent) / 0.28);
+  }
+
+  .portfolio-episode:hover::before {
+    opacity: 0.6;
+  }
+
+  .portfolio-episode:hover::after {
+    opacity: 0.7;
+    animation-play-state: running;
+  }
+
+  /* Filters: scroll wrapper + triggers + states (version unifiée) */
+  .portfolio-filter-scroll-wrapper {
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    --portfolio-filter-fade: clamp(12px, 4vw, 52px);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--portfolio-filter-fade),
+      #000 calc(100% - var(--portfolio-filter-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--portfolio-filter-fade),
+      #000 calc(100% - var(--portfolio-filter-fade)),
+      transparent 100%
+    );
+  }
+
+  .portfolio-filter-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.85rem;
+    border: none;
+    border-radius: 9999px;
+    background: transparent;
+    color: hsla(0, 0%, 100%, 0.55);
+    transition: color 0.4s ease, transform 0.4s ease;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px hsla(var(--visual-border) / 0.12);
+  }
+
+  .portfolio-filter-trigger::after {
+    content: "";
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: -0.3rem;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, hsla(var(--visual-accent) / 0.5), hsla(var(--visual-secondary) / 0.35));
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  .portfolio-filter-trigger:hover {
+    color: hsla(0, 0%, 100%, 0.85);
+  }
+
+  .portfolio-filter-trigger:hover::after {
+    transform: scaleX(1);
+    opacity: 0.55;
+  }
+
+  .portfolio-filter-idle {
+    color: hsla(0, 0%, 100%, 0.65);
+  }
+
+  .portfolio-filter-idle:focus-visible {
+    outline: 2px solid hsla(var(--visual-border) / 0.45);
+    outline-offset: 4px;
+  }
+
+  .portfolio-filter-active {
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(
+      120deg,
+      hsla(var(--visual-accent) / 0.45),
+      hsla(var(--visual-secondary) / 0.35),
+      hsla(var(--visual-tertiary) / 0.4)
+    );
+    color: white;
+    box-shadow: 0 20px 48px hsla(var(--visual-accent) / 0.24);
+    border: 1px solid hsla(var(--visual-border) / 0.32);
+    transform: translateY(-2px);
+  }
+
+  .portfolio-filter-active::after {
+    display: none;
+  }
+
+  .portfolio-filter-active:focus-visible {
+    outline: 2px solid hsla(var(--visual-border) / 0.6);
+    outline-offset: 4px;
+  }
+
+  .portfolio-gallery {
+    position: relative;
+  }
+
+  .portfolio-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 3rem;
+    border: 1px solid hsla(var(--visual-border) / 0.25);
+    background: linear-gradient(
+      150deg,
+      hsla(var(--visual-accent) / 0.12),
+      hsla(var(--visual-secondary) / 0.12) 45%,
+      hsla(var(--visual-tertiary) / 0.15)
+    );
+    box-shadow: 0 35px 120px hsla(var(--visual-accent) / 0.2);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    cursor: pointer;
+    isolation: isolate;
+  }
+
+  .portfolio-card::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background:
+      radial-gradient(circle at 20% 20%, hsla(var(--visual-accent) / 0.3), transparent 55%),
+      radial-gradient(circle at 80% 40%, hsla(var(--visual-secondary) / 0.25), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    filter: blur(30px);
+    pointer-events: none;
+  }
+
+  .portfolio-card::after {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: linear-gradient(120deg, transparent 0%, hsla(var(--visual-accent) / 0.5) 50%, transparent 70%);
+    mix-blend-mode: screen;
+    opacity: 0;
+    animation: holoSweep 6s linear infinite;
+    animation-play-state: paused;
+    pointer-events: none;
+  }
+
+  .portfolio-card:hover {
+    transform: translateY(-12px) scale(1.015) rotate(-0.4deg);
+    box-shadow: 0 55px 160px hsla(var(--visual-accent) / 0.32);
+  }
+
+  .portfolio-card:hover::before {
+    opacity: 0.85;
+  }
+
+  .portfolio-card:hover::after {
+    opacity: 0.8;
+    animation-play-state: running;
+  }
+
+  .portfolio-card-media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+
+  .portfolio-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent, hsla(224 71% 4% / 0.35) 35%, hsla(224 71% 4% / 0.88));
+    transition: opacity 0.6s ease;
+  }
+
+  .portfolio-card-copy {
+    position: absolute;
+    left: 1.75rem;
+    right: 1.75rem;
+    bottom: 1.75rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .portfolio-card-meta {
+    padding: 1.75rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .portfolio-card-cta {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    background: hsla(229 84% 5% / 0.72);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  .portfolio-card:hover .portfolio-card-overlay {
+    opacity: 0.92;
+  }
+
+  .portfolio-card:hover .portfolio-card-cta {
+    opacity: 1;
+  }
+
+  .portfolio-dialog {
+    background: linear-gradient(160deg, hsla(229 84% 5% / 0.95), hsla(222 47% 11% / 0.92));
+    box-shadow: 0 45px 140px hsla(var(--visual-accent) / 0.32);
+    border-radius: 2.5rem;
+  }
+}
