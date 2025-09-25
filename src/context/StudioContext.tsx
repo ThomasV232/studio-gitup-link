@@ -2,7 +2,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { v4 as uuid } from "uuid";
 import type { User } from "@supabase/supabase-js";
-
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 // Local helper to generate shimmering gradient placeholders
@@ -202,6 +201,7 @@ const removeStorage = (key: string) => {
   window.localStorage.removeItem(key);
 };
 
+/* ---------- Données initiales ---------- */
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
@@ -351,34 +351,7 @@ const initialClients: ClientAccount[] = [
   },
 ];
 
-const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
-  const adminEmail = initialClients[0].email;
-  const hasAdmin = list.some((client) => client.email === adminEmail);
-  return hasAdmin ? list : [initialClients[0], ...list];
-};
-
-const loadInitialClients = () => {
-  const stored = readStorage<StoredClientAccount[]>(storageKeys.clients, initialClients);
-  const sanitized = stored.map(({ password: _password, ...client }) => ({
-    ...client,
-    avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
-  }));
-  return ensureAdminClient(sanitized);
-};
-const loadInitialPortfolio = () => readStorage<PortfolioItem[]>(storageKeys.portfolio, initialPortfolio);
-const loadInitialPricing = () => readStorage<PricingTier[]>(storageKeys.pricing, initialPricing);
-const loadInitialQuotes = () => readStorage<QuoteRequest[]>(storageKeys.quotes, initialQuotes);
-const loadInitialContacts = () => readStorage<ContactRequest[]>(storageKeys.contacts, []);
-const loadInitialChats = () => readStorage<ChatThread[]>(storageKeys.chats, initialChats);
-const loadInitialVisualMode = () => readStorage<VisualMode>(storageKeys.visualMode, "nebula");
-const loadInitialUser = () => {
-  const storedUser = readStorage<(ClientAccount & { password?: string }) | null>(storageKeys.user, null);
-  if (!storedUser) return null;
-  const { password: _password, ...safeUser } = storedUser;
-  const candidates = loadInitialClients();
-  return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
-};
-
+/* Ces deux blocs DOIVENT être placés avant loadInitialQuotes/loadInitialChats */
 const initialQuotes: QuoteRequest[] = [
   {
     id: uuid(),
@@ -410,13 +383,44 @@ const initialChats: ChatThread[] = [
       {
         id: uuid(),
         from: "studio",
-        content: "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
+        content:
+          "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
         timestamp: new Date().toISOString(),
       },
     ],
   },
 ];
 
+/* ---------- Chargement depuis localStorage ---------- */
+const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
+  const adminEmail = initialClients[0].email;
+  const hasAdmin = list.some((client) => client.email === adminEmail);
+  return hasAdmin ? list : [initialClients[0], ...list];
+};
+
+const loadInitialClients = () => {
+  const stored = readStorage<StoredClientAccount[]>(storageKeys.clients, initialClients);
+  const sanitized = stored.map(({ password: _password, ...client }) => ({
+    ...client,
+    avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
+  }));
+  return ensureAdminClient(sanitized);
+};
+const loadInitialPortfolio = () => readStorage<PortfolioItem[]>(storageKeys.portfolio, initialPortfolio);
+const loadInitialPricing = () => readStorage<PricingTier[]>(storageKeys.pricing, initialPricing);
+const loadInitialQuotes = () => readStorage<QuoteRequest[]>(storageKeys.quotes, initialQuotes);
+const loadInitialContacts = () => readStorage<ContactRequest[]>(storageKeys.contacts, []);
+const loadInitialChats = () => readStorage<ChatThread[]>(storageKeys.chats, initialChats);
+const loadInitialVisualMode = () => readStorage<VisualMode>(storageKeys.visualMode, "nebula");
+const loadInitialUser = () => {
+  const storedUser = readStorage<(ClientAccount & { password?: string }) | null>(storageKeys.user, null);
+  if (!storedUser) return null;
+  const { password: _password, ...safeUser } = storedUser;
+  const candidates = loadInitialClients();
+  return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
+};
+
+/* ---------- Provider ---------- */
 const StudioProvider = ({ children }: { children: ReactNode }) => {
   const supabase = getSupabaseClient();
   const [user, setUser] = useState<ClientAccount | null>(loadInitialUser);

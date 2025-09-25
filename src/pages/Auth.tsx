@@ -13,18 +13,18 @@ const membershipTiers = [
       "3 tournages prioritaires par mois, cellule IA dédiée et reportings hebdomadaires.",
   },
   {
-    value: "Cinematic",
-    label: "Cinematic",
-    tagline: "Pack signature",
+    value: "Impulse",
+    label: "Impulse",
+    tagline: "Starter",
     description:
-      "Mix plateau / IA, direction artistique senior, livraison multi-formats en 7 jours.",
+      "Lancement rapide : sprint créatif IA, tournage condensé, kit social optimisé.",
   },
   {
-    value: "Launchpad",
-    label: "Launchpad",
-    tagline: "Accélérateur",
+    value: "Continuum",
+    label: "Continuum",
+    tagline: "Retainer annuel",
     description:
-      "Kit contenu mensuel, optimisation réseaux sociaux et accompagnement éditorial.",
+      "Équipe dédiée, production continue, live trimestriels et optimisation permanente.",
   },
 ] as const;
 
@@ -120,7 +120,8 @@ const Auth = () => {
             </span>
             <h1 className="text-5xl font-black leading-tight">Accédez à l'espace client</h1>
             <p className="text-lg text-slate-200/80">
-              Créez votre compte ou connectez-vous pour consulter le tableau de bord, déposer un brief, suivre vos devis et échanger avec nos équipes.
+              Créez votre compte ou connectez-vous pour consulter le tableau de bord, déposer un brief, suivre vos devis
+              et échanger avec nos équipes.
             </p>
             <div className="grid gap-4 text-sm text-slate-200/70 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
@@ -134,6 +135,7 @@ const Auth = () => {
             </div>
           </div>
         </div>
+
         <form
           className="space-y-6 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
           onSubmit={handleSubmit}
@@ -187,6 +189,8 @@ const Auth = () => {
                   />
                 </div>
               </div>
+
+              {/* Sélecteur de formule compatible avec StudioContext */}
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Formule sélectionnée</p>
                 <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -268,7 +272,9 @@ const Auth = () => {
               isSubmitting && "cursor-not-allowed opacity-70"
             )}
           >
-            <span className="relative z-10">{isSubmitting ? "Traitement en cours..." : mode === "register" ? "Créer mon espace" : "Me connecter"}</span>
+            <span className="relative z-10">
+              {isSubmitting ? "Traitement en cours..." : mode === "register" ? "Créer mon espace" : "Me connecter"}
+            </span>
             <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0" />
           </button>
 
