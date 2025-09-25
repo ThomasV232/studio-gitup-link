@@ -133,7 +133,7 @@ const Index = () => {
                 <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
               </a>
               <Link
-                to={user ? "/dashboard" : "/auth"}
+                to={user ? "/dashboard" : "/auth?mode=login"}
                 className="group relative overflow-hidden rounded-full border border-white/20 bg-white/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-white transition hover:scale-105"
               >
                 <span className="relative z-10 flex items-center gap-3">
