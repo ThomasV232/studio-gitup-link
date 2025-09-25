@@ -41,6 +41,7 @@ const Portfolio = () => {
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(circle at 90% 90%, hsla(var(--visual-secondary)/0.2), transparent 60%)" }}
       />
+
       <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-28">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_25px_120px_rgba(14,165,233,0.2)] visual-accent-halo">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">

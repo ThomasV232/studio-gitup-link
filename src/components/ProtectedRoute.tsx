@@ -4,7 +4,13 @@ import { useStudio } from "@/context/StudioContext";
 
 const ADMIN_EMAIL = "volberg.thomas@gmail.com";
 
-export const ProtectedRoute = ({ children, requireAdmin = false }: { children: ReactNode; requireAdmin?: boolean }) => {
+export const ProtectedRoute = ({
+  children,
+  requireAdmin = false,
+}: {
+  children: ReactNode;
+  requireAdmin?: boolean;
+}) => {
   const { user } = useStudio();
   const location = useLocation();
 
