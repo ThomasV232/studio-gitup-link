@@ -29,8 +29,7 @@ export const WaveMenu = () => {
                 <div
                   className="pointer-events-none absolute inset-0"
                   style={{
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
                     animation: "bandShimmer 6s linear infinite",
                   }}
                 />
@@ -48,7 +47,7 @@ export const WaveMenu = () => {
                           "hover:border-white/40 hover:bg-white/15",
                           active
                             ? "border-cyan-300/80 bg-white/25 text-white shadow-[0_10px_40px_rgba(56,189,248,0.35)]"
-                            : "text-slate-200/90",
+                            : "text-slate-200/90"
                         )}
                       >
                         <span className="text-lg">{item.emoji}</span>
@@ -60,6 +59,7 @@ export const WaveMenu = () => {
                 </div>
               </div>
             </div>
+
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 to={user ? "/dashboard" : "/auth?mode=login"}

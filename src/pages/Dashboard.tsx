@@ -556,9 +556,7 @@ const Dashboard = () => {
 
                   {selectedClientQuote && (
                     <>
-                      <p className="text-sm text-slate-200/80">
-                        {STATUS_MESSAGES[selectedClientQuote.status]}
-                      </p>
+                      <p className="text-sm text-slate-200/80">{STATUS_MESSAGES[selectedClientQuote.status]}</p>
                       <div className="mt-6 grid gap-6 md:grid-cols-3">
                         {STATUS_STEPS.map((step, index) => {
                           const reached = timelineIndex >= index && timelineIndex !== -1;
@@ -607,8 +605,7 @@ const Dashboard = () => {
 
                       <div className="mt-6 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-slate-200/60">
                         <span>
-                          Deadline{" "}
-                          {selectedClientQuote.deadline ? formatDate(selectedClientQuote.deadline) : "À définir"}
+                          Deadline {selectedClientQuote.deadline ? formatDate(selectedClientQuote.deadline) : "À définir"}
                         </span>
                         <span>Créé le {formatDate(selectedClientQuote.createdAt)}</span>
                         <span>ID {selectedClientQuote.id.slice(0, 8)}...</span>
@@ -627,8 +624,7 @@ const Dashboard = () => {
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-12 text-center text-slate-200/80">
                 <h2 className="text-3xl font-semibold text-white">Aucune demande enregistrée pour l'instant</h2>
                 <p className="mt-4 text-sm">
-                  Lancez votre première demande en décrivant votre projet et laissez notre IA orchestrer la mise en
-                  production.
+                  Lancez votre première demande en décrivant votre projet et laissez notre IA orchestrer la mise en production.
                 </p>
                 <div className="mt-8 flex justify-center">
                   <Link
@@ -655,9 +651,7 @@ const Dashboard = () => {
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">
-                            {formatDate(quote.createdAt)}
-                          </p>
+                          <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">{formatDate(quote.createdAt)}</p>
                           <p className="text-base font-semibold text-white">{quote.projectName}</p>
                           <p className="text-xs text-slate-200/60">{quote.services.join(" • ")}</p>
                         </div>
@@ -712,10 +706,7 @@ const Dashboard = () => {
                       <div className="space-y-5">
                         <div className="max-h-72 space-y-4 overflow-y-auto pr-1">
                           {clientActiveChat.messages.map((message) => (
-                            <div
-                              key={message.id}
-                              className={`flex ${message.from === "client" ? "justify-end" : "justify-start"}`}
-                            >
+                            <div key={message.id} className={`flex ${message.from === "client" ? "justify-end" : "justify-start"}`}>
                               <div
                                 className={`max-w-[80%] rounded-2xl border px-4 py-3 text-sm shadow-sm ${
                                   message.from === "client"
@@ -780,21 +771,11 @@ const Dashboard = () => {
       year: Number(newProject.year),
       duration: newProject.duration,
       description: newProject.description,
-      thumbnail:
-        newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
+      thumbnail: newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
       videoUrl: newProject.videoUrl,
-      aiTools: newProject.aiTools
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
-      deliverables: newProject.deliverables
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
-      socialStack: newProject.socialStack
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
+      aiTools: newProject.aiTools.split(",").map((i) => i.trim()).filter(Boolean),
+      deliverables: newProject.deliverables.split(",").map((i) => i.trim()).filter(Boolean),
+      socialStack: newProject.socialStack.split(",").map((i) => i.trim()).filter(Boolean),
     });
     resetNewProject();
   };
@@ -830,18 +811,9 @@ const Dashboard = () => {
       description: editDraft.description,
       thumbnail: editDraft.thumbnail,
       videoUrl: editDraft.videoUrl,
-      aiTools: editDraft.aiTools
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
-      deliverables: editDraft.deliverables
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
-      socialStack: editDraft.socialStack
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean),
+      aiTools: editDraft.aiTools.split(",").map((i) => i.trim()).filter(Boolean),
+      deliverables: editDraft.deliverables.split(",").map((i) => i.trim()).filter(Boolean),
+      socialStack: editDraft.socialStack.split(",").map((i) => i.trim()).filter(Boolean),
     });
     setEditDraft(null);
   };
@@ -874,8 +846,7 @@ const Dashboard = () => {
               </span>
               <h1 className="text-5xl font-black leading-tight">Bienvenue {user.name.split(" ")[0]}</h1>
               <p className="text-lg text-slate-200/80">
-                Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est
-                synchronisé avec notre pipeline IA.
+                Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est synchronisé avec notre pipeline IA.
               </p>
             </div>
             <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
@@ -892,9 +863,7 @@ const Dashboard = () => {
           <div className="space-y-10">
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Ajouter un projet au portfolio</h2>
-              <p className="mt-2 text-sm text-slate-200/70">
-                Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.
-              </p>
+              <p className="mt-2 text-sm text-slate-200/70">Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.</p>
               <form className="mt-6 grid gap-4" onSubmit={handleAddProject}>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <input
@@ -1012,17 +981,10 @@ const Dashboard = () => {
               </form>
 
               {editDraft && (
-                <form
-                  className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6"
-                  onSubmit={handleUpdateProject}
-                >
+                <form className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6" onSubmit={handleUpdateProject}>
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-white">Modifier : {editDraft.title}</h3>
-                    <button
-                      type="button"
-                      onClick={cancelEdit}
-                      className="text-xs uppercase tracking-[0.3em] text-rose-300 hover:text-rose-200"
-                    >
+                    <button type="button" onClick={cancelEdit} className="text-xs uppercase tracking-[0.3em] text-rose-300 hover:text-rose-200">
                       Annuler
                     </button>
                   </div>
@@ -1108,10 +1070,7 @@ const Dashboard = () => {
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <div className="flex flex-wrap gap-4">
-                    <button
-                      type="submit"
-                      className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                    >
+                    <button type="submit" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                       Sauvegarder
                     </button>
                     <button
@@ -1135,18 +1094,10 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em]">
                       <span>{item.category}</span>
                       <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => startEditingProject(item.id)}
-                          className="text-cyan-200 hover:text-cyan-100"
-                        >
+                        <button type="button" onClick={() => startEditingProject(item.id)} className="text-cyan-200 hover:text-cyan-100">
                           Modifier
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => removePortfolioItem(item.id)}
-                          className="text-rose-300 hover:text-rose-200"
-                        >
+                        <button type="button" onClick={() => removePortfolioItem(item.id)} className="text-rose-300 hover:text-rose-200">
                           Supprimer
                         </button>
                       </div>
@@ -1195,9 +1146,7 @@ const Dashboard = () => {
                         {client.membership}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-200/60">
-                      {client.company} · {client.industry}
-                    </p>
+                    <p className="mt-2 text-xs text-slate-200/60">{client.company} · {client.industry}</p>
                   </div>
                 ))}
               </div>
@@ -1211,9 +1160,7 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-white">{quote.projectName}</p>
-                        <p className="text-xs text-slate-200/60">
-                          {quote.clientName} · {quote.budgetRange}
-                        </p>
+                        <p className="text-xs text-slate-200/60">{quote.clientName} · {quote.budgetRange}</p>
                       </div>
                       <select
                         value={quote.status}
@@ -1249,9 +1196,7 @@ const Dashboard = () => {
                       key={thread.quoteId}
                       type="button"
                       onClick={() => setSelectedChatId(thread.quoteId)}
-                      className={`w-full rounded-2xl border px-3 py-2 text-left ${
-                        thread.quoteId === selectedChatId ? "border-cyan-300 bg-white/20" : "border-white/10 bg-white/5"
-                      }`}
+                      className={`w-full rounded-2xl border px-3 py-2 text-left ${thread.quoteId === selectedChatId ? "border-cyan-300 bg-white/20" : "border-white/10 bg-white/5"}`}
                     >
                       <p className="font-semibold text-white">{thread.clientName}</p>
                       <p className="text-[0.65rem] text-slate-200/60">{thread.projectName}</p>
@@ -1263,14 +1208,7 @@ const Dashboard = () => {
                     <div className="flex h-full flex-col">
                       <div className="flex-1 space-y-3 overflow-y-auto pr-2">
                         {activeChat.messages.map((message) => (
-                          <div
-                            key={message.id}
-                            className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
-                              message.from === "studio"
-                                ? "ml-auto bg-cyan-500/20 visual-accent-bg text-cyan-100 visual-accent-text-strong"
-                                : "bg-white/10 text-slate-100"
-                            }`}
-                          >
+                          <div key={message.id} className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${message.from === "studio" ? "ml-auto bg-cyan-500/20 visual-accent-bg text-cyan-100 visual-accent-text-strong" : "bg-white/10 text-slate-100"}`}>
                             <p>{message.content}</p>
                             <p className="mt-1 text-[0.6rem] uppercase tracking-[0.2em] text-slate-200/50">
                               {new Date(message.timestamp).toLocaleString()}
@@ -1310,7 +1248,6 @@ const Dashboard = () => {
 export default Dashboard;
 
 /* --------------- utilitaires locaux supposés présents ailleurs ------------- */
-/* Si ces helpers ne sont pas déjà définis dans ton projet, ajoute-les ici. */
 function getTimeValue(iso: string) {
   return new Date(iso).getTime();
 }
@@ -1320,7 +1257,6 @@ function formatDate(iso: string) {
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString();
 }
-/* Map de messages de statut — adapte selon ton besoin */
 const STATUS_MESSAGES: Record<QuoteStatus, string> = {
   nouveau: "Votre brief est bien reçu. L'équipe le place en file et prépare l'analyse.",
   "en revue": "Notre équipe aligne la proposition : cadrage créatif, budget, équipe et pipeline IA.",
