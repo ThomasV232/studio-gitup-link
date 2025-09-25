@@ -6,6 +6,7 @@ const Auth = () => {
   const [mode, setMode] = useState<"login" | "register">("register");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { register: registerUser, login, user } = useStudio();
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,29 +27,37 @@ const Auth = () => {
     }
   }, [user, navigate, redirectPath]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setSuccess(null);
+    setIsSubmitting(true);
 
-    if (mode === "register") {
-      if (!form.name || !form.email || !form.password) {
-        setError("Merci de remplir tous les champs indispensables.");
-        return;
-      }
-      const response = registerUser(form);
-      if (response.success) {
-        setSuccess("Compte créé avec succès. Vous êtes désormais connecté·e.");
+    try {
+      if (mode === "register") {
+        if (!form.name || !form.email || !form.password) {
+          setError("Merci de remplir tous les champs indispensables.");
+          return;
+        }
+
+        const response = await registerUser(form);
+        if (response.success) {
+          setSuccess(
+            response.message ?? "Compte créé avec succès. Vous êtes désormais connecté·e.",
+          );
+        } else {
+          setError(response.message ?? "Impossible de créer le compte.");
+        }
       } else {
-        setError(response.message ?? "Impossible de créer le compte.");
+        const response = await login(form.email, form.password);
+        if (!response.success) {
+          setError(response.message ?? "Impossible de se connecter.");
+        } else {
+          setSuccess("Connexion réussie. Vous pouvez préparer votre brief.");
+        }
       }
-    } else {
-      const response = login(form.email, form.password);
-      if (!response.success) {
-        setError(response.message ?? "Impossible de se connecter.");
-      } else {
-        setSuccess("Connexion réussie. Vous pouvez préparer votre brief.");
-      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -179,9 +188,16 @@ const Auth = () => {
 
           <button
             type="submit"
-            className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white"
+            disabled={isSubmitting}
+            className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <span className="relative z-10">{mode === "register" ? "Créer mon compte" : "Connexion"}</span>
+            <span className="relative z-10">
+              {isSubmitting
+                ? "Traitement..."
+                : mode === "register"
+                  ? "Créer mon compte"
+                  : "Connexion"}
+            </span>
             <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
           </button>
 

@@ -1,6 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { v4 as uuid } from "uuid";
+import type { User } from "@supabase/supabase-js";
+import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 // Local helper to generate shimmering gradient placeholders
 const gradientPool = [
@@ -76,12 +78,22 @@ export type ClientAccount = {
   id: string;
   name: string;
   email: string;
-  password: string;
   company: string;
   industry: string;
   membership: "Impulse" | "Hyperdrive" | "Continuum";
   avatarHue: number;
   lastProject?: string;
+};
+
+type StoredClientAccount = ClientAccount & { password?: string };
+
+export type RegistrationPayload = {
+  name: string;
+  email: string;
+  password: string;
+  company: string;
+  industry: string;
+  membership: ClientAccount["membership"];
 };
 
 type VisualMode = "nebula" | "solstice";
@@ -116,8 +128,8 @@ type StudioContextValue = {
   visualMode: VisualMode;
   palette: VisualPalette;
   cycleVisualMode: () => void;
-  register: (payload: Omit<ClientAccount, "id" | "avatarHue">) => { success: boolean; message?: string };
-  login: (email: string, password: string) => { success: boolean; message?: string };
+  register: (payload: RegistrationPayload) => Promise<{ success: boolean; message?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
   updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
@@ -320,7 +332,6 @@ const initialClients: ClientAccount[] = [
     id: uuid(),
     name: "Thomas Volberg",
     email: "volberg.thomas@gmail.com",
-    password: "studioAdmin!42",
     company: "Studio VBG",
     industry: "Production vidéo",
     membership: "Continuum",
@@ -331,7 +342,6 @@ const initialClients: ClientAccount[] = [
     id: uuid(),
     name: "Lena Photon",
     email: "lena@quantumwear.ai",
-    password: "studioVBG!",
     company: "QuantumWear",
     industry: "Tech santé",
     membership: "Hyperdrive",
@@ -346,7 +356,14 @@ const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
   return hasAdmin ? list : [initialClients[0], ...list];
 };
 
-const loadInitialClients = () => ensureAdminClient(readStorage<ClientAccount[]>(storageKeys.clients, initialClients));
+const loadInitialClients = () => {
+  const stored = readStorage<StoredClientAccount[]>(storageKeys.clients, initialClients);
+  const sanitized = stored.map(({ password: _password, ...client }) => ({
+    ...client,
+    avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
+  }));
+  return ensureAdminClient(sanitized);
+};
 const loadInitialPortfolio = () => readStorage<PortfolioItem[]>(storageKeys.portfolio, initialPortfolio);
 const loadInitialPricing = () => readStorage<PricingTier[]>(storageKeys.pricing, initialPricing);
 const loadInitialQuotes = () => readStorage<QuoteRequest[]>(storageKeys.quotes, initialQuotes);
@@ -354,10 +371,11 @@ const loadInitialContacts = () => readStorage<ContactRequest[]>(storageKeys.cont
 const loadInitialChats = () => readStorage<ChatThread[]>(storageKeys.chats, initialChats);
 const loadInitialVisualMode = () => readStorage<VisualMode>(storageKeys.visualMode, "nebula");
 const loadInitialUser = () => {
-  const storedUser = readStorage<ClientAccount | null>(storageKeys.user, null);
+  const storedUser = readStorage<(ClientAccount & { password?: string }) | null>(storageKeys.user, null);
   if (!storedUser) return null;
+  const { password: _password, ...safeUser } = storedUser;
   const candidates = loadInitialClients();
-  return candidates.find((client) => client.email === storedUser.email) ?? storedUser;
+  return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
 };
 
 const initialQuotes: QuoteRequest[] = [
@@ -399,6 +417,7 @@ const initialChats: ChatThread[] = [
 ];
 
 const StudioProvider = ({ children }: { children: ReactNode }) => {
+  const supabase = getSupabaseClient();
   const [user, setUser] = useState<ClientAccount | null>(loadInitialUser);
   const [clients, setClients] = useState<ClientAccount[]>(loadInitialClients);
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(loadInitialPortfolio);
@@ -407,6 +426,77 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>(loadInitialContacts);
   const [chats, setChats] = useState<ChatThread[]>(loadInitialChats);
   const [visualMode, setVisualMode] = useState<VisualMode>(loadInitialVisualMode);
+
+  const syncClientFromSupabase = useCallback(
+    (supabaseUser: User): ClientAccount => {
+      const metadata = (supabaseUser.user_metadata ?? {}) as Partial<
+        RegistrationPayload & { avatarHue?: number; lastProject?: string }
+      >;
+
+      const nextClient: ClientAccount = {
+        id: supabaseUser.id,
+        name: metadata.name ?? supabaseUser.email ?? "Compte Studio VBG",
+        email: supabaseUser.email ?? "",
+        company: metadata.company ?? "",
+        industry: metadata.industry ?? "",
+        membership: (metadata.membership as ClientAccount["membership"]) ?? "Hyperdrive",
+        avatarHue:
+          typeof metadata.avatarHue === "number"
+            ? metadata.avatarHue
+            : Math.floor(Math.random() * 360),
+        lastProject: metadata.lastProject,
+      };
+
+      setClients((prev) => {
+        const exists = prev.some((client) => client.email === nextClient.email);
+        const updated = exists
+          ? prev.map((client) => (client.email === nextClient.email ? { ...client, ...nextClient } : client))
+          : [...prev, nextClient];
+        return ensureAdminClient(updated);
+      });
+
+      return nextClient;
+    },
+    [setClients],
+  );
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      return;
+    }
+
+    let isMounted = true;
+
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!isMounted) return;
+        const sessionUser = data.session?.user;
+        if (sessionUser) {
+          const nextClient = syncClientFromSupabase(sessionUser);
+          setUser(nextClient);
+        }
+      })
+      .catch((error) => {
+        console.error("Impossible de récupérer la session Supabase", error);
+      });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+      const sessionUser = session?.user;
+      if (sessionUser) {
+        const nextClient = syncClientFromSupabase(sessionUser);
+        setUser(nextClient);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, [supabase, syncClientFromSupabase]);
 
   useEffect(() => {
     const body = document.body;
@@ -461,36 +551,96 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     setVisualMode((current) => (current === "nebula" ? "solstice" : "nebula"));
   };
 
-  const register: StudioContextValue["register"] = (payload) => {
-    const { email } = payload;
-    const exists = clients.some((client) => client.email === email);
-    if (exists) {
-      return { success: false, message: "Un compte utilise déjà cet email." };
+  const register: StudioContextValue["register"] = async (payload) => {
+    const { password, ...profile } = payload;
+    const avatarHue = Math.floor(Math.random() * 360);
+
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Ajoutez les variables VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY.",
+      };
     }
 
-    const newClient: ClientAccount = {
-      ...payload,
-      id: uuid(),
-      avatarHue: Math.floor(Math.random() * 360),
-    };
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: profile.email,
+        password,
+        options: {
+          data: {
+            ...profile,
+            avatarHue,
+          },
+          emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
+        },
+      });
 
-    setClients((prev) => ensureAdminClient([...prev, newClient]));
-    setUser(newClient);
+      if (error) {
+        return { success: false, message: error.message };
+      }
 
-    return { success: true };
+      if (data.user) {
+        const syncedClient = syncClientFromSupabase(data.user);
+        if (data.session) {
+          setUser(syncedClient);
+        }
+      }
+
+      if (!data.session) {
+        return {
+          success: true,
+          message:
+            "Compte créé. Confirmez votre adresse email pour accéder au tableau de bord.",
+        };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Erreur d'inscription Supabase", error);
+      return {
+        success: false,
+        message: "Une erreur inattendue est survenue lors de l'inscription.",
+      };
+    }
   };
 
-  const login: StudioContextValue["login"] = (email, password) => {
-    const found = clients.find((client) => client.email === email && client.password === password);
-    if (!found) {
-      return { success: false, message: "Identifiants invalides ou compte inexistant." };
+  const login: StudioContextValue["login"] = async (email, password) => {
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Impossible de se connecter.",
+      };
     }
 
-    setUser(found);
-    return { success: true };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      if (data.user) {
+        const syncedClient = syncClientFromSupabase(data.user);
+        setUser(syncedClient);
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Erreur de connexion Supabase", error);
+      return {
+        success: false,
+        message: "Impossible de se connecter pour le moment.",
+      };
+    }
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    if (isSupabaseConfigured) {
+      supabase.auth.signOut().catch((error) => {
+        console.error("Erreur lors de la déconnexion Supabase", error);
+      });
+    }
+    setUser(null);
+  };
 
   const addPortfolioItem: StudioContextValue["addPortfolioItem"] = ({ gradient, ...payload }) => {
     const newItem: PortfolioItem = {
