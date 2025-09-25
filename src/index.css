@@ -392,20 +392,36 @@ All colors MUST be HSL.
   }
 
   .portfolio-filter {
-    border-radius: 9999px;
-    padding: 0.65rem 1.55rem;
-    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    transition: color 0.3s ease;
   }
 
   .portfolio-filter:hover {
-    transform: translateY(-2px);
+    color: rgba(226, 232, 240, 0.88);
+  }
+
+  .portfolio-filter-inactive {
+    color: rgba(226, 232, 240, 0.7);
   }
 
   .portfolio-filter-active {
+    border-radius: 9999px;
+    padding: 0.65rem 1.55rem;
     background: linear-gradient(120deg, hsla(var(--visual-accent) / 0.45), hsla(var(--visual-secondary) / 0.35), hsla(var(--visual-tertiary) / 0.4));
     color: white;
     box-shadow: 0 20px 60px hsla(var(--visual-accent) / 0.28);
     border: 1px solid hsla(var(--visual-border) / 0.35);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  }
+
+  .portfolio-filter-active:hover {
+    transform: translateY(-2px);
   }
 
   .portfolio-gallery {
