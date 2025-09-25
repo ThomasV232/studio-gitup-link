@@ -556,7 +556,6 @@ const Dashboard = () => {
 
                   {selectedClientQuote && (
                     <>
-                      {/* STATUS_MESSAGES doit être fourni par ailleurs */}
                       <p className="text-sm text-slate-200/80">
                         {STATUS_MESSAGES[selectedClientQuote.status]}
                       </p>
