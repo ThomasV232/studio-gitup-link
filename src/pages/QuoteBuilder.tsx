@@ -1,3 +1,4 @@
+/* src/pages/QuoteBuilder.tsx */
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
@@ -33,10 +34,16 @@ const QuoteBuilder = () => {
             Une fois votre compte actif, vous accédez au tableau de bord et au suivi en temps réel de votre dossier.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/auth" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+            <Link
+              to="/auth"
+              className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+            >
               Me connecter
             </Link>
-            <Link to="/" className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+            <Link
+              to="/"
+              className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+            >
               Explorer avant
             </Link>
           </div>
@@ -76,7 +83,10 @@ const QuoteBuilder = () => {
           </div>
         </header>
 
-        <form onSubmit={handleSubmit} className="mt-16 space-y-8 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-16 space-y-8 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
+        >
           <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-slate-200/70">
             <span>Étape {step + 1} / 3</span>
             <div className="flex gap-2">
@@ -170,7 +180,7 @@ const QuoteBuilder = () => {
                 />
               </div>
               <p className="text-xs text-slate-200/60">
-                Notre IA transforme ce brief en storyboard, sélection d'actifs et planning prévisionnel.
+                Notre IA transforme ce brief en storyboard, sélection d&apos;actifs et planning prévisionnel.
               </p>
             </div>
           )}
@@ -184,6 +194,7 @@ const QuoteBuilder = () => {
             >
               Retour
             </button>
+
             {step < 2 ? (
               <button
                 type="button"
@@ -205,7 +216,8 @@ const QuoteBuilder = () => {
 
           {successId && (
             <div className="rounded-3xl border border-emerald-200/40 bg-emerald-500/10 p-6 text-sm text-emerald-100">
-              Votre demande est enregistrée. Un espace de discussion dédié s'ouvrira dès validation du devis. ID : {successId.slice(0, 8)}...
+              Votre demande est enregistrée. Un espace de discussion dédié s&apos;ouvrira dès validation du devis. ID:{" "}
+              {successId.slice(0, 8)}...
             </div>
           )}
         </form>

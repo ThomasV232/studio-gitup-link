@@ -1,3 +1,4 @@
+/* src/pages/Portfolio.tsx */
 import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useStudio, type PortfolioItem } from "@/context/StudioContext";
@@ -11,22 +12,24 @@ import {
 
 const Portfolio = () => {
   const { portfolioItems, serviceCategories } = useStudio();
+
   const categories = useMemo(() => ["Tous", ...serviceCategories], [serviceCategories]);
   const [filter, setFilter] = useState("Tous");
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
 
+  // Liste filtrée unique (évite les divergences entre branches)
   const filtered = useMemo(
-    () =>
-      filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter),
+    () => (filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter)),
     [filter, portfolioItems],
   );
 
-  const heroEpisodes = useMemo(() => {
-    const source = filter === "Tous" ? portfolioItems : filtered;
-    return source.slice(0, 3);
-  }, [filter, filtered, portfolioItems]);
+  // Les 3 projets "épisodes" en hero (selon filtre)
+  const heroEpisodes = useMemo(() => filtered.slice(0, 3), [filtered]);
 
-  const highlightProject = heroEpisodes[0] ?? portfolioItems[0] ?? null;
+  // Projet à mettre en avant (1er des épisodes, sinon 1er filtré, sinon 1er global)
+  const highlightProject = useMemo<PortfolioItem | null>(() => {
+    return heroEpisodes[0] ?? filtered[0] ?? portfolioItems[0] ?? null;
+  }, [heroEpisodes, filtered, portfolioItems]);
 
   const getEmbedUrl = useCallback((url: string) => {
     const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
@@ -38,11 +41,12 @@ const Portfolio = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      {/* Fond visuel en HSL */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 12% 18%, hsla(var(--visual-accent)/0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsla(var(--visual-secondary)/0.25), transparent 50%)",
+            "radial-gradient(circle at 12% 18%, hsl(var(--visual-accent) / 0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsl(var(--visual-secondary) / 0.25), transparent 50%)",
         }}
       />
       <div className="pointer-events-none absolute inset-0 mix-blend-screen">
@@ -50,6 +54,7 @@ const Portfolio = () => {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-28">
+        {/* HERO */}
         <section className="overflow-hidden rounded-[3.75rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-950/60 to-slate-950/90 p-12 shadow-[0_60px_160px_rgba(56,189,248,0.22)] visual-accent-halo">
           <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div className="space-y-8">
@@ -57,13 +62,14 @@ const Portfolio = () => {
                 Studio VBG — Saison 2025
               </span>
               <h1 className="text-4xl font-black leading-tight sm:text-5xl">
-                Ressentez l'immersion d'une production IA & terrain parfaitement synchronisée
+                Ressentez l&apos;immersion d&apos;une production IA &amp; terrain parfaitement synchronisée
               </h1>
               <p className="max-w-xl text-base text-slate-200/85 sm:text-lg">
                 Notre portfolio mélange captations haute fidélité, direction artistique générative et workflows Midjourney, Kling,
-                Seedance et Veo orchestrés dans DaVinci & Adobe. Chaque capsule est contrôlable depuis le tableau de bord — ajoutez,
+                Seedance et Veo orchestrés dans DaVinci &amp; Adobe. Chaque capsule est contrôlable depuis le tableau de bord — ajoutez,
                 modifiez, publiez, recommencez.
               </p>
+
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/quote"
@@ -78,9 +84,11 @@ const Portfolio = () => {
                   Contact rapide
                 </Link>
               </div>
+
               <p className="text-[11px] uppercase tracking-[0.4em] text-cyan-200/70 visual-accent-text">
                 Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2
               </p>
+
               {heroEpisodes.length > 0 ? (
                 <div className="mt-10 grid gap-5 lg:grid-cols-3">
                   {heroEpisodes.map((project, index) => (
@@ -115,10 +123,11 @@ const Portfolio = () => {
                 </div>
               ) : (
                 <div className="mt-10 rounded-[2.75rem] border border-dashed border-white/20 bg-white/5 p-6 text-xs text-slate-200/65">
-                  Ajoutez vos premiers projets depuis le tableau de bord pour activer l'aperçu cinématique.
+                  Ajoutez vos premiers projets depuis le tableau de bord pour activer l&apos;aperçu cinématique.
                 </div>
               )}
             </div>
+
             <div className="relative">
               <span className="portfolio-orbit planet-one" />
               <span className="portfolio-orbit planet-two" />
@@ -156,6 +165,7 @@ const Portfolio = () => {
           </div>
         </section>
 
+        {/* FILTRES + GRILLE */}
         <section className="mt-24 space-y-10">
           <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -205,11 +215,14 @@ const Portfolio = () => {
                   <img src={project.thumbnail} alt={project.title} className="h-full w-full object-cover object-center" />
                   <div className="portfolio-card-overlay" />
                   <div className="portfolio-card-copy">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">{project.category}</p>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">
+                      {project.category}
+                    </p>
                     <h2 className="text-xl font-semibold text-white">{project.title}</h2>
                     <p className="text-xs text-slate-200/75">{project.tagline}</p>
                   </div>
                 </div>
+
                 <div className="portfolio-card-meta text-xs text-slate-200/80">
                   <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-slate-200/60">
                     <span>{project.year}</span>
@@ -225,9 +238,7 @@ const Portfolio = () => {
                       <span className="rounded-full border border-white/20 px-3 py-1">+{project.aiTools.length - 3}</span>
                     )}
                   </div>
-                  <div className="mt-4 text-[11px] uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                    Diffusions
-                  </div>
+                  <div className="mt-4 text-[11px] uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</div>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
                     {project.socialStack.map((channel) => (
                       <span key={channel} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
@@ -236,6 +247,7 @@ const Portfolio = () => {
                     ))}
                   </div>
                 </div>
+
                 <div className="portfolio-card-cta">Ouvrir la capsule</div>
               </article>
             ))}
@@ -243,7 +255,7 @@ const Portfolio = () => {
 
           {filtered.length === 0 && (
             <div className="mt-16 rounded-[3.25rem] border border-white/10 bg-white/10 p-12 text-center text-sm text-slate-200/70">
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l'instant</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l&apos;instant</p>
               <p className="mt-4 text-2xl text-white">
                 Ajoutez une nouvelle réalisation depuis le tableau de bord pour alimenter cette catégorie.
               </p>
@@ -257,6 +269,7 @@ const Portfolio = () => {
           )}
         </section>
 
+        {/* DIALOG */}
         <Dialog open={Boolean(activeProject)} onOpenChange={(open) => !open && setActiveProject(null)}>
           <DialogContent className="portfolio-dialog max-w-4xl border border-white/10 bg-slate-950/95 text-white backdrop-blur">
             {activeProject && (
@@ -268,6 +281,7 @@ const Portfolio = () => {
                   </DialogDescription>
                   <p className="text-base text-slate-200/80">{activeProject.tagline}</p>
                 </DialogHeader>
+
                 <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
                   <div className="space-y-4">
                     <div className="aspect-video overflow-hidden rounded-[2.5rem] border border-white/10 bg-black">
@@ -283,6 +297,7 @@ const Portfolio = () => {
                       {activeProject.description}
                     </p>
                   </div>
+
                   <aside className="space-y-5 rounded-[2.5rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
@@ -294,6 +309,7 @@ const Portfolio = () => {
                         ))}
                       </div>
                     </div>
+
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables</p>
                       <ul className="mt-2 space-y-2">
@@ -304,6 +320,7 @@ const Portfolio = () => {
                         ))}
                       </ul>
                     </div>
+
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</p>
                       <div className="mt-2 flex flex-wrap gap-2 text-xs">

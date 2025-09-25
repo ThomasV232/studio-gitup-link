@@ -150,6 +150,7 @@ const visualPalettes: Record<VisualMode, VisualPalette> = {
   },
 };
 
+// --- Données initiales ---
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
@@ -339,6 +340,7 @@ const initialChats: ChatThread[] = [
   },
 ];
 
+// --- Provider ---
 const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ClientAccount | null>(null);
   const [clients, setClients] = useState<ClientAccount[]>(initialClients);
@@ -369,21 +371,17 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register: StudioContextValue["register"] = (payload) => {
-    const { email } = payload;
-    const exists = clients.some((client) => client.email === email);
+    const exists = clients.some((client) => client.email === payload.email);
     if (exists) {
       return { success: false, message: "Un compte utilise déjà cet email." };
     }
-
     const newClient: ClientAccount = {
       ...payload,
       id: uuid(),
       avatarHue: Math.floor(Math.random() * 360),
     };
-
     setClients((prev) => [...prev, newClient]);
     setUser(newClient);
-
     return { success: true };
   };
 
@@ -392,7 +390,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     if (!found) {
       return { success: false, message: "Identifiants invalides ou compte inexistant." };
     }
-
     setUser(found);
     return { success: true };
   };
@@ -405,7 +402,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       gradient: gradient ?? gradientPool[Math.floor(Math.random() * gradientPool.length)],
     };
-
     setPortfolioItems((prev) => [newItem, ...prev]);
   };
 
@@ -423,7 +419,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
 
   const createQuoteRequest: StudioContextValue["createQuoteRequest"] = (payload) => {
     if (!user) return null;
-
     const newQuote: QuoteRequest = {
       ...payload,
       id: uuid(),
@@ -432,7 +427,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       status: "nouveau",
       createdAt: new Date().toISOString(),
     };
-
     setQuoteRequests((prev) => [newQuote, ...prev]);
     return newQuote;
   };
@@ -500,7 +494,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       createdAt: new Date().toISOString(),
     };
-
     setContactRequests((prev) => [newRequest, ...prev]);
   };
 

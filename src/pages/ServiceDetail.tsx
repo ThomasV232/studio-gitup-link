@@ -1,3 +1,4 @@
+/* src/pages/ServiceDetail.tsx */
 import { Link, useParams } from "react-router-dom";
 import { servicesData } from "@/lib/services";
 
@@ -10,7 +11,10 @@ const ServiceDetail = () => {
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 text-white">
         <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Service introuvable</p>
         <h1 className="mt-4 text-4xl font-bold">Ce module n'est pas disponible pour le moment.</h1>
-        <Link to="/services" className="mt-8 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+        <Link
+          to="/services"
+          className="mt-8 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+        >
           Retour aux services
         </Link>
       </div>
@@ -50,7 +54,7 @@ const ServiceDetail = () => {
               <p className="mt-4 text-lg leading-relaxed text-slate-200/80">{service.promise}</p>
             </div>
             <div className="space-y-6">
-              {service.phases.map((phase, index) => (
+              {service.phases.map((phase: any, index: number) => (
                 <div
                   key={phase.title}
                   className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8 shadow-[0_20px_90px_rgba(236,72,153,0.18)] visual-secondary-veil"
@@ -72,7 +76,7 @@ const ServiceDetail = () => {
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables inclus</p>
               <ul className="mt-4 space-y-3 text-sm text-slate-200/80">
-                {service.deliverables.map((item) => (
+                {service.deliverables.map((item: string) => (
                   <li key={item} className="flex items-start gap-3">
                     <span className="mt-1 h-2 w-2 rounded-full bg-cyan-300 visual-accent-dot" />
                     <span>{item}</span>
@@ -83,7 +87,7 @@ const ServiceDetail = () => {
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Chiffres clés</p>
               <ul className="mt-4 space-y-4 text-sm text-slate-200/80">
-                {service.metrics.map((metric) => (
+                {service.metrics.map((metric: any) => (
                   <li key={metric.label} className="rounded-2xl bg-slate-900/60 p-4">
                     <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">{metric.label}</p>
                     <p className="mt-2 text-2xl font-bold text-cyan-200 visual-accent-text">{metric.value}</p>
@@ -94,7 +98,9 @@ const ServiceDetail = () => {
             </div>
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8 text-sm text-slate-200/80">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Étape suivante</p>
-              <p className="mt-4">Intéressé par ce module ? Connectez-vous, demandez un devis et nous lançons la préproduction.</p>
+              <p className="mt-4">
+                Intéressé par ce module ? Connectez-vous, demandez un devis et nous lançons la préproduction.
+              </p>
               <div className="mt-6 flex flex-col gap-3">
                 <Link to="/auth" className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                   Me connecter
