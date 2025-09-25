@@ -5,7 +5,7 @@ import { useStudio } from "@/context/StudioContext";
 
 export const WaveMenu = () => {
   const location = useLocation();
-  const { visualMode, cycleVisualMode, palette, user } = useStudio();
+  const { user } = useStudio();
 
   return (
     <>
@@ -21,18 +21,6 @@ export const WaveMenu = () => {
             }}
           />
           <div className="relative flex flex-wrap items-center gap-4 px-6 py-3">
-            <button
-              type="button"
-              onClick={cycleVisualMode}
-              className="group relative flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-cyan-100 visual-accent-text shadow-[0_10px_30px_rgba(8,145,178,0.25)] visual-accent-shadow transition hover:scale-105"
-            >
-              <span
-                className="h-2.5 w-2.5 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.35)]"
-                style={{ background: `hsl(${palette.accent})` }}
-              />
-              {visualMode === "nebula" ? "Palette Solstice" : "Palette Nébula"}
-              <span className="pointer-events-none absolute inset-0 -z-10 translate-x-[-120%] bg-gradient-to-r from-cyan-400/40 via-transparent to-fuchsia-400/40 transition-transform duration-700 group-hover:translate-x-0" />
-            </button>
             <div className="flex min-w-0 flex-1 items-center">
               <div className="relative flex w-full items-center gap-2 overflow-hidden">
                 <div
@@ -78,15 +66,6 @@ export const WaveMenu = () => {
                   {user ? "Tableau de bord" : "Connexion"}
                 </span>
                 <span className="pointer-events-none absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
-              </Link>
-              <Link
-                to="/auth?mode=forgot"
-                className="group relative overflow-hidden rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/90 transition hover:text-white"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="text-base">🧠</span> Mot de passe oublié
-                </span>
-                <span className="pointer-events-none absolute inset-0 -z-0 translate-x-[-120%] bg-white/15 transition-transform duration-700 group-hover:translate-x-0" />
               </Link>
             </div>
           </div>
