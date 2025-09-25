@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
 import type { QuoteRequest } from "@/context/StudioContext";
 
+/* ----------------------------- NAV / STATUS UI ---------------------------- */
+
 const quickNavigation = [
   { label: "Accueil", description: "Page d'accueil", icon: "🏠", to: "/" },
   { label: "Services", description: "Offres & méthodologies", icon: "🛰️", to: "/services" },
@@ -13,27 +15,113 @@ const quickNavigation = [
 ];
 
 const quoteStatusCopy: Record<QuoteRequest["status"], { label: string; tone: string; border: string }> = {
-  nouveau: {
-    label: "Nouveau",
-    tone: "bg-cyan-500/15 text-cyan-100",
-    border: "border-cyan-400/40",
-  },
-  "en revue": {
-    label: "En revue",
-    tone: "bg-sky-500/15 text-sky-100",
-    border: "border-sky-400/40",
-  },
-  validé: {
-    label: "Validé",
-    tone: "bg-emerald-500/15 text-emerald-100",
-    border: "border-emerald-400/40",
-  },
-  refusé: {
-    label: "Réorienté",
-    tone: "bg-rose-500/15 text-rose-100",
-    border: "border-rose-400/40",
-  },
+  nouveau: { label: "Nouveau", tone: "bg-cyan-500/15 text-cyan-100", border: "border-cyan-400/40" },
+  "en revue": { label: "En revue", tone: "bg-sky-500/15 text-sky-100", border: "border-sky-400/40" },
+  validé: { label: "Validé", tone: "bg-emerald-500/15 text-emerald-100", border: "border-emerald-400/40" },
+  refusé: { label: "Réorienté", tone: "bg-rose-500/15 text-rose-100", border: "border-rose-400/40" },
 };
+
+/* -------------------------- ADMIN / ACCOUNT HELPERS ----------------------- */
+
+const ADMIN_EMAIL = "volberg.thomas@gmail.com";
+
+const membershipOptions = [
+  { value: "Hyperdrive", label: "Hyperdrive", description: "Production intensive pour contenus à cadence élevée." },
+  { value: "Continuum", label: "Continuum", description: "Accompagnement annuel avec équipe dédiée." },
+  { value: "Impulse", label: "Impulse", description: "Starter agile pour lancer votre présence vidéo." },
+] as const;
+
+type MembershipValue = (typeof membershipOptions)[number]["value"];
+
+type AccountDraft = {
+  name: string;
+  company: string;
+  industry: string;
+  membership: MembershipValue;
+  lastProject: string;
+};
+
+/* ------------------------- QUOTES TIMELINE HELPERS ------------------------ */
+
+type QuoteStatus = QuoteRequest["status"];
+type QuoteStep = Extract<QuoteStatus, "nouveau" | "en revue" | "validé">;
+
+const STATUS_STEPS: Array<{ key: QuoteStep; title: string; description: string }> = [
+  { key: "nouveau", title: "Brief reçu", description: "Votre demande est horodatée, l'équipe la priorise dans la file Studio VBG." },
+  { key: "en revue", title: "Analyse créative", description: "Nous alignons budget, équipe et pipeline IA avant de vous soumettre la proposition." },
+  { key: "validé", title: "Kick-off", description: "Le devis est signé, la salle de chat projet et la préproduction s'activent." },
+];
+
+const STATUS_BADGES: Record<QuoteStatus, string> = {
+  nouveau: "border-cyan-200/40 bg-cyan-500/10 text-cyan-100",
+  "en revue": "border-sky-200/40 bg-sky-500/10 text-sky-100",
+  validé: "border-emerald-200/40 bg-emerald-500/10 text-emerald-100",
+  refusé: "border-rose-300/50 bg-rose-500/10 text-rose-100",
+};
+
+const STATUS_LABELS: Record<QuoteStatus, string> = {
+  nouveau: "Nouveau",
+  "en revue": "En revue",
+  validé: "Validé",
+  refusé: "Réorienté",
+};
+
+const STATUS_MESSAGES: Record<QuoteStatus, string> = {
+  nouveau: "Brief reçu, notre IA prépare un storyboard exploratoire.",
+  "en revue": "Nos producers challenge le brief avec budget, planning et outils IA.",
+  validé: "Proposition acceptée : préparation des tournages, booking équipe et lancement chat.",
+  refusé: "Nous vous recontactons pour ajuster l'approche ou proposer une alternative.",
+};
+
+const formatDate = (value: string) => {
+  if (!value) return "À définir";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", year: "numeric" }).format(date);
+};
+
+const formatTime = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" }).format(date);
+};
+
+const getTimeValue = (value: string) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+};
+
+/* ---------------------------- PORTFOLIO HELPERS --------------------------- */
+
+type PortfolioDraft = {
+  title: string;
+  tagline: string;
+  category: string;
+  year: number;
+  duration: string;
+  description: string;
+  thumbnail: string;
+  videoUrl: string;
+  aiTools: string;
+  deliverables: string;
+  socialStack: string;
+};
+
+const getDefaultProject = (categories: string[]): PortfolioDraft => ({
+  title: "",
+  tagline: "",
+  category: categories[0] ?? "Entreprise",
+  year: new Date().getFullYear(),
+  duration: "00:45",
+  description: "",
+  thumbnail: "",
+  videoUrl: "",
+  aiTools: "",
+  deliverables: "",
+  socialStack: "",
+});
+
+/* -------------------------------- COMPONENT ------------------------------- */
 
 const Dashboard = () => {
   const {
@@ -51,10 +139,10 @@ const Dashboard = () => {
     updatePricingTier,
     advanceQuoteStatus,
     appendChatMessage,
+    updateAccount,
   } = useStudio();
 
   const isAdmin = user?.email === ADMIN_EMAIL;
-
   const userId = user?.id ?? null;
 
   const myQuotes = useMemo(() => {
@@ -83,6 +171,16 @@ const Dashboard = () => {
   const [metadataError, setMetadataError] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
 
+  const [accountDraft, setAccountDraft] = useState<AccountDraft>(() => ({
+    name: user?.name ?? "",
+    company: user?.company ?? "",
+    industry: user?.industry ?? "",
+    membership: (user?.membership ?? "Hyperdrive") as MembershipValue,
+    lastProject: user?.lastProject ?? "",
+  }));
+  const [isSavingAccount, setIsSavingAccount] = useState(false);
+  const [accountFeedback, setAccountFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
   const activeChat = useMemo(() => chats.find((chat) => chat.quoteId === selectedChatId), [chats, selectedChatId]);
 
   const [clientSelectedQuoteId, setClientSelectedQuoteId] = useState(() => myQuotes[0]?.id ?? "");
@@ -91,21 +189,29 @@ const Dashboard = () => {
 
   useEffect(() => {
     setClientSelectedQuoteId((current) => {
-      if (myQuotes.length === 0) {
-        return "";
-      }
-      return myQuotes.some((quote) => quote.id === current) ? current : myQuotes[0].id;
+      if (myQuotes.length === 0) return "";
+      return myQuotes.some((q) => q.id === current) ? current : myQuotes[0].id;
     });
   }, [myQuotes]);
 
   useEffect(() => {
     setClientSelectedChatId((current) => {
-      if (myChats.length === 0) {
-        return "";
-      }
-      return myChats.some((thread) => thread.quoteId === current) ? current : myChats[0].quoteId;
+      if (myChats.length === 0) return "";
+      return myChats.some((t) => t.quoteId === current) ? current : myChats[0].quoteId;
     });
   }, [myChats]);
+
+  useEffect(() => {
+    if (!user) return;
+    setAccountDraft({
+      name: user.name,
+      company: user.company,
+      industry: user.industry,
+      membership: user.membership as MembershipValue,
+      lastProject: user.lastProject ?? "",
+    });
+    setAccountFeedback(null);
+  }, [user]);
 
   const clientActiveChat = useMemo(
     () => myChats.find((thread) => thread.quoteId === clientSelectedChatId) ?? null,
@@ -116,6 +222,40 @@ const Dashboard = () => {
     () => myQuotes.find((quote) => quote.id === clientSelectedQuoteId) ?? null,
     [clientSelectedQuoteId, myQuotes],
   );
+
+  const handleAccountSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!user) return;
+
+    setIsSavingAccount(true);
+    setAccountFeedback(null);
+
+    const response = await updateAccount({
+      name: accountDraft.name.trim(),
+      company: accountDraft.company.trim(),
+      industry: accountDraft.industry.trim(),
+      membership: accountDraft.membership,
+      lastProject: accountDraft.lastProject.trim().length > 0 ? accountDraft.lastProject.trim() : null,
+    });
+
+    setIsSavingAccount(false);
+    setAccountFeedback({
+      type: response.success ? "success" : "error",
+      message: response.message ?? (response.success ? "Profil mis à jour." : "La mise à jour du profil a échoué. Réessayez."),
+    });
+  };
+
+  const handleAccountReset = () => {
+    if (!user) return;
+    setAccountDraft({
+      name: user.name,
+      company: user.company,
+      industry: user.industry,
+      membership: user.membership as MembershipValue,
+      lastProject: user.lastProject ?? "",
+    });
+    setAccountFeedback(null);
+  };
 
   const handleClientSendMessage = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -140,7 +280,6 @@ const Dashboard = () => {
       setMetadataError("Ajoutez un lien YouTube pour importer un projet.");
       return;
     }
-
     const id = extractYoutubeId(youtubeUrl.trim());
     if (!id) {
       setMetadataError("Le lien YouTube n'est pas reconnu. Essayez avec l'URL complète.");
@@ -154,9 +293,7 @@ const Dashboard = () => {
 
     try {
       const oEmbedResponse = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`);
-      if (!oEmbedResponse.ok) {
-        throw new Error("Impossible de récupérer les informations depuis YouTube.");
-      }
+      if (!oEmbedResponse.ok) throw new Error("Impossible de récupérer les informations depuis YouTube.");
       const oEmbedData = await oEmbedResponse.json();
 
       let description = "";
@@ -164,22 +301,19 @@ const Dashboard = () => {
         const pageResponse = await fetch(`https://r.jina.ai/https://www.youtube.com/watch?v=${id}`);
         if (pageResponse.ok) {
           const raw = await pageResponse.text();
-          const match = raw.match(/"shortDescription":"(.*?)"/);
-          if (match?.[1]) {
-            description = match[1]
-              .replace(/\\n/g, "\n")
-              .replace(/\\"/g, '"')
-              .replace(/\\'/g, "'");
+          const m = raw.match(/"shortDescription":"(.*?)"/);
+          if (m?.[1]) {
+            description = m[1].replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\'/g, "'");
           }
         }
       } catch {
-        // Ignore description fallback when the YouTube page can't be fetched
+        /* ignore */
       }
 
       const taglineCandidate = description
         .split(/\n|\./)
-        .map((line) => line.trim())
-        .find((line) => line.length > 0);
+        .map((l) => l.trim())
+        .find((l) => l.length > 0);
 
       setNewProject((prev) => ({
         ...prev,
@@ -196,9 +330,9 @@ const Dashboard = () => {
     }
   }, [extractYoutubeId, youtubeUrl]);
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
+
+  /* --------------------------- CLIENT VIEW (non-admin) --------------------------- */
 
   if (!isAdmin) {
     const hasQuotes = myQuotes.length > 0;
@@ -211,14 +345,8 @@ const Dashboard = () => {
 
     return (
       <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(circle at 15% 20%, hsla(var(--visual-accent)/0.24), transparent 60%)" }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(circle at 80% 85%, hsla(var(--visual-secondary)/0.2), transparent 65%)" }}
-        />
+        <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 15% 20%, hsla(var(--visual-accent)/0.24), transparent 60%)" }} />
+        <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 80% 85%, hsla(var(--visual-secondary)/0.2), transparent 65%)" }} />
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-24">
           <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.18)] visual-accent-veil">
             <div className="space-y-6">
@@ -226,20 +354,12 @@ const Dashboard = () => {
                 Espace client · Studio VBG
               </span>
               <h1 className="text-5xl font-black leading-tight">Bonjour {user.name.split(" ")[0] ?? user.name}</h1>
-              <p className="text-lg text-slate-200/80">
-                Suivez vos demandes de devis, consultez les étapes clés et échangez avec le producteur dédié.
-              </p>
+              <p className="text-lg text-slate-200/80">Suivez vos demandes de devis, consultez les étapes clés et échangez avec le producteur dédié.</p>
               <div className="flex flex-wrap gap-3">
-                <Link
-                  to="/quote"
-                  className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                >
+                <Link to="/quote" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                   Nouvelle demande
                 </Link>
-                <a
-                  href="mailto:hello@studiovbg.com?subject=Studio%20VBG%20-%20Suivi%20de%20devis"
-                  className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 hover:text-white"
-                >
+                <a href="mailto:hello@studiovbg.com?subject=Studio%20VBG%20-%20Suivi%20de%20devis" className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 hover:text-white">
                   Parler à un producer
                 </a>
               </div>
@@ -252,22 +372,87 @@ const Dashboard = () => {
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">En cours</p>
-                <p className="mt-2 text-2xl font-semibold text-white">
-                  {myQuotes.filter((quote) => quote.status === "nouveau" || quote.status === "en revue").length}
-                </p>
+                <p className="mt-2 text-2xl font-semibold text-white">{myQuotes.filter((q) => q.status === "nouveau" || q.status === "en revue").length}</p>
                 <p className="text-xs text-slate-200/60">Briefs en analyse créative ou en cadrage budgétaire.</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Validés</p>
-                <p className="mt-2 text-2xl font-semibold text-white">
-                  {myQuotes.filter((quote) => quote.status === "validé").length}
-                </p>
+                <p className="mt-2 text-2xl font-semibold text-white">{myQuotes.filter((q) => q.status === "validé").length}</p>
                 <p className="text-xs text-slate-200/60">Projets prêts à démarrer avec chat ouvert.</p>
               </div>
             </div>
           </header>
 
           <section className="mt-16 space-y-12">
+            {/* Profil client */}
+            <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_90px_rgba(56,189,248,0.12)] visual-accent-veil">
+              <form className="space-y-8" onSubmit={handleAccountSubmit}>
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="space-y-3">
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Profil client</p>
+                    <h2 className="text-3xl font-bold text-white">Vos informations</h2>
+                    <p className="text-sm text-slate-200/70">Complétez votre identité et vos préférences pour que l'IA prépare des recommandations sur-mesure.</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 md:justify-end">
+                    <button type="button" onClick={handleAccountReset} className="rounded-full border border-white/15 bg-white/5 px-5 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-slate-200/80 transition hover:text-white">
+                      Réinitialiser
+                    </button>
+                    <button type="submit" disabled={isSavingAccount} className={`rounded-full border px-5 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.3em] transition ${isSavingAccount ? "cursor-not-allowed border-cyan-200/30 bg-cyan-500/10 text-white/70" : "border-cyan-200/40 bg-cyan-500/20 text-white hover:scale-[1.02]"}`}>
+                      {isSavingAccount ? "Enregistrement..." : "Enregistrer"}
+                    </button>
+                  </div>
+                </div>
+
+                {accountFeedback && (
+                  <p className={`rounded-2xl border px-4 py-3 text-sm ${accountFeedback.type === "success" ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100" : "border-rose-400/40 bg-rose-500/10 text-rose-100"}`}>
+                    {accountFeedback.message}
+                  </p>
+                )}
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom complet</label>
+                    <input className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none" value={accountDraft.name} onChange={(e) => { setAccountDraft((p) => ({ ...p, name: e.target.value })); setAccountFeedback(null); }} placeholder="Nom et prénom" required />
+                  </div>
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Entreprise</label>
+                    <input className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none" value={accountDraft.company} onChange={(e) => { setAccountDraft((p) => ({ ...p, company: e.target.value })); setAccountFeedback(null); }} placeholder="Votre structure ou collectif" />
+                  </div>
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Secteur</label>
+                    <input className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none" value={accountDraft.industry} onChange={(e) => { setAccountDraft((p) => ({ ...p, industry: e.target.value })); setAccountFeedback(null); }} placeholder="Ex. Tech, Luxe, Événementiel..." />
+                  </div>
+                  <div className="hidden md:block" />
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Formule active</p>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                      {membershipOptions.map((option) => {
+                        const isActive = accountDraft.membership === option.value;
+                        return (
+                          <button key={option.value} type="button" onClick={() => { setAccountDraft((p) => ({ ...p, membership: option.value })); setAccountFeedback(null); }} className={`rounded-2xl border px-4 py-3 text-left transition ${isActive ? "border-cyan-300/80 bg-cyan-500/20 text-white shadow-[0_10px_35px_rgba(56,189,248,0.25)]" : "border-white/10 bg-white/5 text-slate-200/80 hover:border-cyan-200/40 hover:bg-white/10"}`} aria-pressed={isActive}>
+                            <span className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-100/80 visual-accent-text-strong">
+                              {option.label}
+                            </span>
+                            <p className="mt-2 text-xs text-slate-200/80">{option.description}</p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="mt-2 text-[0.7rem] text-slate-300/70">Ajustable à tout moment selon l'intensité de vos campagnes.</p>
+                  </div>
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Dernier projet marquant</label>
+                    <textarea rows={4} className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" value={accountDraft.lastProject} onChange={(e) => { setAccountDraft((p) => ({ ...p, lastProject: e.target.value })); setAccountFeedback(null); }} placeholder="Partagez un tournage, un lancement ou un succès que vous souhaitez prolonger." />
+                    <p className="mt-2 text-[0.7rem] text-slate-300/70">Ces éléments nourrissent les prompts IA et facilitent la préparation des briefs.</p>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Suivi des devis */}
             {hasQuotes ? (
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
                 <div className="flex flex-col gap-6">
@@ -275,14 +460,10 @@ const Dashboard = () => {
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Suivi de dossier</p>
                       <h2 className="mt-2 text-3xl font-bold text-white">{selectedClientQuote?.projectName}</h2>
-                      <p className="mt-2 text-sm text-slate-200/70">
-                        Créé le {selectedClientQuote ? formatDate(selectedClientQuote.createdAt) : "-"} · Budget {selectedClientQuote?.budgetRange}
-                      </p>
+                      <p className="mt-2 text-sm text-slate-200/70">Créé le {selectedClientQuote ? formatDate(selectedClientQuote.createdAt) : "-"} · Budget {selectedClientQuote?.budgetRange}</p>
                     </div>
                     {selectedClientQuote && (
-                      <span
-                        className={`inline-flex h-10 items-center gap-2 rounded-full border px-5 text-xs font-semibold uppercase tracking-[0.3em] ${STATUS_BADGES[selectedClientQuote.status]}`}
-                      >
+                      <span className={`inline-flex h-10 items-center gap-2 rounded-full border px-5 text-xs font-semibold uppercase tracking-[0.3em] ${STATUS_BADGES[selectedClientQuote.status]}`}>
                         {STATUS_LABELS[selectedClientQuote.status]}
                       </span>
                     )}
@@ -291,16 +472,7 @@ const Dashboard = () => {
                   {myQuotes.length > 1 && (
                     <div className="flex flex-wrap gap-2">
                       {myQuotes.map((quote) => (
-                        <button
-                          key={quote.id}
-                          type="button"
-                          onClick={() => setClientSelectedQuoteId(quote.id)}
-                          className={`rounded-full border px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] transition ${
-                            clientSelectedQuoteId === quote.id
-                              ? "border-cyan-300 bg-white/20 text-white"
-                              : "border-white/15 bg-white/5 text-slate-200/70 hover:border-cyan-200/40 hover:text-white"
-                          }`}
-                        >
+                        <button key={quote.id} type="button" onClick={() => setClientSelectedQuoteId(quote.id)} className={`rounded-full border px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] transition ${clientSelectedQuoteId === quote.id ? "border-cyan-300 bg-white/20 text-white" : "border-white/15 bg-white/5 text-slate-200/70 hover:border-cyan-200/40 hover:text-white"}`}>
                           {quote.projectName}
                         </button>
                       ))}
@@ -316,13 +488,7 @@ const Dashboard = () => {
                           const isCurrent = timelineIndex === index;
                           return (
                             <div key={step.key} className="relative rounded-2xl border border-white/10 bg-white/5 p-5">
-                              <div
-                                className={`flex h-12 w-12 items-center justify-center rounded-full border text-sm font-semibold uppercase tracking-[0.2em] transition ${
-                                  reached
-                                    ? "border-cyan-300 bg-white/20 text-white shadow-[0_0_25px_rgba(56,189,248,0.35)]"
-                                    : "border-white/15 text-slate-200/70"
-                                } ${isCurrent ? "scale-[1.05]" : ""}`}
-                              >
+                              <div className={`flex h-12 w-12 items-center justify-center rounded-full border text-sm font-semibold uppercase tracking-[0.2em] transition ${reached ? "border-cyan-300 bg-white/20 text-white shadow-[0_0_25px_rgba(56,189,248,0.35)]" : "border-white/15 text-slate-200/70"} ${isCurrent ? "scale-[1.05]" : ""}`}>
                                 {reached ? "✓" : index + 1}
                               </div>
                               <div className="mt-4 space-y-2">
@@ -333,15 +499,13 @@ const Dashboard = () => {
                           );
                         })}
                       </div>
+
                       <div className="mt-6 grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                           <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Services inclus</p>
                           <div className="mt-3 flex flex-wrap gap-2">
                             {selectedClientQuote.services.map((service) => (
-                              <span
-                                key={service}
-                                className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-100"
-                              >
+                              <span key={service} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-100">
                                 {service}
                               </span>
                             ))}
@@ -354,11 +518,13 @@ const Dashboard = () => {
                           </p>
                         </div>
                       </div>
+
                       <div className="mt-6 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-slate-200/60">
                         <span>Deadline {selectedClientQuote.deadline ? formatDate(selectedClientQuote.deadline) : "À définir"}</span>
                         <span>Créé le {formatDate(selectedClientQuote.createdAt)}</span>
                         <span>ID {selectedClientQuote.id.slice(0, 8)}...</span>
                       </div>
+
                       {selectedClientQuote.status === "refusé" && (
                         <div className="mt-6 rounded-2xl border border-rose-300/40 bg-rose-500/10 p-5 text-sm text-rose-100">
                           Nous revenons vers vous avec une proposition alternative ou un ajustement budgétaire.
@@ -371,40 +537,29 @@ const Dashboard = () => {
             ) : (
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-12 text-center text-slate-200/80">
                 <h2 className="text-3xl font-semibold text-white">Aucune demande enregistrée pour l'instant</h2>
-                <p className="mt-4 text-sm">
-                  Lancez votre première demande en décrivant votre projet et laissez notre IA orchestrer la mise en production.
-                </p>
+                <p className="mt-4 text-sm">Lancez votre première demande en décrivant votre projet et laissez notre IA orchestrer la mise en production.</p>
                 <div className="mt-8 flex justify-center">
-                  <Link
-                    to="/quote"
-                    className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                  >
+                  <Link to="/quote" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                     Démarrer un brief
                   </Link>
                 </div>
               </div>
             )}
 
+            {/* Historique + Chat */}
             <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-8 shadow-[0_20px_80px_rgba(236,72,153,0.15)] visual-secondary-veil">
                 <h2 className="text-2xl font-bold text-white">Historique des demandes</h2>
                 <div className="mt-6 space-y-4 text-sm text-slate-200/70">
                   {myQuotes.map((quote) => (
-                    <div
-                      key={quote.id}
-                      className={`flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-200/40 hover:bg-white/10 ${
-                        clientSelectedQuoteId === quote.id ? "border-cyan-300 bg-white/15" : ""
-                      }`}
-                    >
+                    <div key={quote.id} className={`flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-200/40 hover:bg-white/10 ${clientSelectedQuoteId === quote.id ? "border-cyan-300 bg-white/15" : ""}`}>
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
                           <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">{formatDate(quote.createdAt)}</p>
                           <p className="text-base font-semibold text-white">{quote.projectName}</p>
                           <p className="text-xs text-slate-200/60">{quote.services.join(" • ")}</p>
                         </div>
-                        <span
-                          className={`inline-flex h-8 items-center rounded-full border px-4 text-[0.65rem] font-semibold uppercase tracking-[0.3em] ${STATUS_BADGES[quote.status]}`}
-                        >
+                        <span className={`inline-flex h-8 items-center rounded-full border px-4 text-[0.65rem] font-semibold uppercase tracking-[0.3em] ${STATUS_BADGES[quote.status]}`}>
                           {STATUS_LABELS[quote.status]}
                         </span>
                       </div>
@@ -412,14 +567,7 @@ const Dashboard = () => {
                         <span>Budget {quote.budgetRange}</span>
                         <span>Deadline {quote.deadline ? formatDate(quote.deadline) : "À définir"}</span>
                         {quote.status === "validé" && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setClientSelectedQuoteId(quote.id);
-                              setClientSelectedChatId(quote.id);
-                            }}
-                            className="rounded-full border border-emerald-300/40 bg-emerald-500/10 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-emerald-100"
-                          >
+                          <button type="button" onClick={() => { setClientSelectedQuoteId(quote.id); setClientSelectedChatId(quote.id); }} className="rounded-full border border-emerald-300/40 bg-emerald-500/10 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-emerald-100">
                             Ouvrir le chat
                           </button>
                         )}
@@ -435,16 +583,7 @@ const Dashboard = () => {
                   <div className="mt-6 flex flex-col gap-5">
                     <div className="flex flex-wrap gap-2">
                       {myChats.map((thread) => (
-                        <button
-                          key={thread.quoteId}
-                          type="button"
-                          onClick={() => setClientSelectedChatId(thread.quoteId)}
-                          className={`rounded-full border px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] transition ${
-                            clientSelectedChatId === thread.quoteId
-                              ? "border-emerald-300 bg-white/20 text-white"
-                              : "border-white/15 bg-white/5 text-slate-200/70 hover:border-emerald-200/40 hover:text-white"
-                          }`}
-                        >
+                        <button key={thread.quoteId} type="button" onClick={() => setClientSelectedChatId(thread.quoteId)} className={`rounded-full border px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] transition ${clientSelectedChatId === thread.quoteId ? "border-emerald-300 bg-white/20 text-white" : "border-white/15 bg-white/5 text-slate-200/70 hover:border-emerald-200/40 hover:text-white"}`}>
                           {thread.projectName}
                         </button>
                       ))}
@@ -453,44 +592,23 @@ const Dashboard = () => {
                       <div className="space-y-5">
                         <div className="max-h-72 space-y-4 overflow-y-auto pr-1">
                           {clientActiveChat.messages.map((message) => (
-                            <div
-                              key={message.id}
-                              className={`flex ${message.from === "client" ? "justify-end" : "justify-start"}`}
-                            >
-                              <div
-                                className={`max-w-[80%] rounded-2xl border px-4 py-3 text-sm shadow-sm ${
-                                  message.from === "client"
-                                    ? "border-cyan-200/40 bg-cyan-500/20 text-cyan-100"
-                                    : "border-white/10 bg-white/5 text-slate-100"
-                                }`}
-                              >
+                            <div key={message.id} className={`flex ${message.from === "client" ? "justify-end" : "justify-start"}`}>
+                              <div className={`max-w-[80%] rounded-2xl border px-4 py-3 text-sm shadow-sm ${message.from === "client" ? "border-cyan-200/40 bg-cyan-500/20 text-cyan-100" : "border-white/10 bg-white/5 text-slate-100"}`}>
                                 <p>{message.content}</p>
-                                <p className="mt-2 text-[0.6rem] uppercase tracking-[0.3em] text-white/50">
-                                  {formatTime(message.timestamp)}
-                                </p>
+                                <p className="mt-2 text-[0.6rem] uppercase tracking-[0.3em] text-white/50">{formatTime(message.timestamp)}</p>
                               </div>
                             </div>
                           ))}
                         </div>
                         <form onSubmit={handleClientSendMessage} className="flex gap-3">
-                          <input
-                            value={clientChatInput}
-                            onChange={(event) => setClientChatInput(event.target.value)}
-                            placeholder="Votre message"
-                            className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-emerald-300/60 focus:outline-none"
-                          />
-                          <button
-                            type="submit"
-                            className="rounded-full border border-emerald-300/40 bg-emerald-500/10 px-5 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-emerald-100"
-                          >
+                          <input value={clientChatInput} onChange={(e) => setClientChatInput(e.target.value)} placeholder="Votre message" className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-emerald-300/60 focus:outline-none" />
+                          <button type="submit" className="rounded-full border border-emerald-300/40 bg-emerald-500/10 px-5 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-emerald-100">
                             Envoyer
                           </button>
                         </form>
                       </div>
                     ) : (
-                      <p className="text-sm text-slate-200/70">
-                        Dès qu'un devis est validé, une conversation dédiée s'affichera ici pour caler la production.
-                      </p>
+                      <p className="text-sm text-slate-200/70">Dès qu'un devis est validé, une conversation dédiée s'affichera ici pour caler la production.</p>
                     )}
                   </div>
                 ) : (
@@ -506,14 +624,14 @@ const Dashboard = () => {
     );
   }
 
+  /* ------------------------------- ADMIN VIEW ------------------------------ */
+
   const handleAddProject = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!newProject.videoUrl) {
       setMetadataError("Ajoutez ou importez un lien YouTube pour ce projet.");
       return;
     }
-
     addPortfolioItem({
       title: newProject.title,
       tagline: newProject.tagline,
@@ -521,21 +639,18 @@ const Dashboard = () => {
       year: Number(newProject.year),
       duration: newProject.duration,
       description: newProject.description,
-      thumbnail:
-        newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
+      thumbnail: newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
       videoUrl: newProject.videoUrl,
-      aiTools: newProject.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
-      deliverables: newProject.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
-      socialStack: newProject.socialStack.split(",").map((item) => item.trim()).filter(Boolean),
+      aiTools: newProject.aiTools.split(",").map((i) => i.trim()).filter(Boolean),
+      deliverables: newProject.deliverables.split(",").map((i) => i.trim()).filter(Boolean),
+      socialStack: newProject.socialStack.split(",").map((i) => i.trim()).filter(Boolean),
     });
-
     resetNewProject();
   };
 
   const startEditingProject = (projectId: string) => {
     const project = portfolioItems.find((item) => item.id === projectId);
     if (!project) return;
-
     setEditDraft({
       id: project.id,
       title: project.title,
@@ -555,7 +670,6 @@ const Dashboard = () => {
   const handleUpdateProject = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!editDraft) return;
-
     updatePortfolioItem(editDraft.id, {
       title: editDraft.title,
       tagline: editDraft.tagline,
@@ -565,32 +679,26 @@ const Dashboard = () => {
       description: editDraft.description,
       thumbnail: editDraft.thumbnail,
       videoUrl: editDraft.videoUrl,
-      aiTools: editDraft.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
-      deliverables: editDraft.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
-      socialStack: editDraft.socialStack.split(",").map((item) => item.trim()).filter(Boolean),
+      aiTools: editDraft.aiTools.split(",").map((i) => i.trim()).filter(Boolean),
+      deliverables: editDraft.deliverables.split(",").map((i) => i.trim()).filter(Boolean),
+      socialStack: editDraft.socialStack.split(",").map((i) => i.trim()).filter(Boolean),
     });
-
     setEditDraft(null);
   };
 
   const cancelEdit = () => setEditDraft(null);
 
   const handleSendMessage = () => {
-    if (!activeChat || !chatInput.trim()) return;
-    appendChatMessage(activeChat.quoteId, { from: "studio", content: chatInput.trim() });
+    const chat = activeChat;
+    if (!chat || !chatInput.trim()) return;
+    appendChatMessage(chat.quoteId, { from: "studio", content: chatInput.trim() });
     setChatInput("");
   };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(circle at 15% 15%, hsla(var(--visual-accent)/0.25), transparent 60%)" }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(circle at 85% 80%, hsla(var(--visual-secondary)/0.2), transparent 60%)" }}
-      />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 15% 15%, hsla(var(--visual-accent)/0.25), transparent 60%)" }} />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 85% 80%, hsla(var(--visual-secondary)/0.2), transparent 60%)" }} />
       <div className="relative mx-auto max-w-7xl px-6 pb-32 pt-24">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.2)] visual-accent-veil">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -599,137 +707,64 @@ const Dashboard = () => {
                 Dashboard Studio VBG
               </span>
               <h1 className="text-5xl font-black leading-tight">Bienvenue {user.name.split(" ")[0]}</h1>
-              <p className="text-lg text-slate-200/80">
-                Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est synchronisé avec notre pipeline IA.
-              </p>
+              <p className="text-lg text-slate-200/80">Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est synchronisé avec notre pipeline IA.</p>
             </div>
             <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Stat instantané</p>
-              <p className="mt-3 text-white">{portfolioItems.length} projets en cours · {quoteRequests.length} devis · {contactRequests.length} demandes rapides</p>
+              <p className="mt-3 text-white">
+                {portfolioItems.length} projets en cours · {quoteRequests.length} devis · {contactRequests.length} demandes rapides
+              </p>
             </div>
           </div>
         </header>
 
         <section className="mt-16 grid gap-10 xl:grid-cols-[1.1fr_0.9fr]">
+          {/* Portfolio Admin */}
           <div className="space-y-10">
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Ajouter un projet au portfolio</h2>
               <p className="mt-2 text-sm text-slate-200/70">Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.</p>
               <form className="mt-6 grid gap-4" onSubmit={handleAddProject}>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <input
-                    required
-                    value={newProject.title}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, title: event.target.value }))}
-                    placeholder="Titre"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
-                  <input
-                    required
-                    value={newProject.tagline}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, tagline: event.target.value }))}
-                    placeholder="Tagline"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
+                  <input required value={newProject.title} onChange={(e) => setNewProject((p) => ({ ...p, title: e.target.value }))} placeholder="Titre" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                  <input required value={newProject.tagline} onChange={(e) => setNewProject((p) => ({ ...p, tagline: e.target.value }))} placeholder="Tagline" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-[1.5fr_auto]">
-                  <input
-                    value={youtubeUrl}
-                    onChange={(event) => setYoutubeUrl(event.target.value)}
-                    placeholder="Lien YouTube (youtu.be ou youtube.com)"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleImportMetadata}
-                    disabled={isImportingMetadata}
-                    className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white disabled:cursor-not-allowed disabled:opacity-60"
-                  >
+                  <input value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="Lien YouTube (youtu.be ou youtube.com)" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                  <button type="button" onClick={handleImportMetadata} disabled={isImportingMetadata} className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white disabled:cursor-not-allowed disabled:opacity-60">
                     {isImportingMetadata ? "Import..." : "Importer"}
                   </button>
                 </div>
                 {metadataError && <p className="text-xs text-rose-300">{metadataError}</p>}
                 <div className="grid gap-4 sm:grid-cols-4">
-                  <select
-                    value={newProject.category}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, category: event.target.value }))}
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  >
+                  <select value={newProject.category} onChange={(e) => setNewProject((p) => ({ ...p, category: e.target.value }))} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none">
                     {serviceCategories.map((category) => (
                       <option key={category} value={category} className="bg-slate-900 text-white">
                         {category}
                       </option>
                     ))}
                   </select>
-                  <input
-                    value={newProject.year}
-                    type="number"
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, year: Number(event.target.value) }))}
-                    placeholder="Année"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
-                  <input
-                    value={newProject.duration}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, duration: event.target.value }))}
-                    placeholder="Durée"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
-                  <input
-                    value={newProject.videoUrl}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, videoUrl: event.target.value }))}
-                    placeholder="Lien vidéo final"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
+                  <input value={newProject.year} type="number" onChange={(e) => setNewProject((p) => ({ ...p, year: Number(e.target.value) }))} placeholder="Année" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                  <input value={newProject.duration} onChange={(e) => setNewProject((p) => ({ ...p, duration: e.target.value }))} placeholder="Durée" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                  <input value={newProject.videoUrl} onChange={(e) => setNewProject((p) => ({ ...p, videoUrl: e.target.value }))} placeholder="Lien vidéo final" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                 </div>
-                <input
-                  value={newProject.thumbnail}
-                  onChange={(event) => setNewProject((prev) => ({ ...prev, thumbnail: event.target.value }))}
-                  placeholder="URL vignette (optionnel si import)"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                />
-                <textarea
-                  value={newProject.description}
-                  onChange={(event) => setNewProject((prev) => ({ ...prev, description: event.target.value }))}
-                  rows={4}
-                  placeholder="Description punchy"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                />
+                <input value={newProject.thumbnail} onChange={(e) => setNewProject((p) => ({ ...p, thumbnail: e.target.value }))} placeholder="URL vignette (optionnel si import)" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                <textarea value={newProject.description} onChange={(e) => setNewProject((p) => ({ ...p, description: e.target.value }))} rows={4} placeholder="Description punchy" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <input
-                    value={newProject.aiTools}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, aiTools: event.target.value }))}
-                    placeholder="IA tools (séparés par virgule)"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
-                  <input
-                    value={newProject.deliverables}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, deliverables: event.target.value }))}
-                    placeholder="Livrables"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
-                  <input
-                    value={newProject.socialStack}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, socialStack: event.target.value }))}
-                    placeholder="Stack social"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
+                  <input value={newProject.aiTools} onChange={(e) => setNewProject((p) => ({ ...p, aiTools: e.target.value }))} placeholder="IA tools (séparés par virgule)" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                  <input value={newProject.deliverables} onChange={(e) => setNewProject((p) => ({ ...p, deliverables: e.target.value }))} placeholder="Livrables" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                  <input value={newProject.socialStack} onChange={(e) => setNewProject((p) => ({ ...p, socialStack: e.target.value }))} placeholder="Stack social" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                 </div>
                 <div className="flex flex-wrap gap-4">
-                  <button
-                    type="submit"
-                    className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                  >
+                  <button type="submit" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                     Ajouter au portfolio
                   </button>
-                  <button
-                    type="button"
-                    onClick={resetNewProject}
-                    className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                  >
+                  <button type="button" onClick={resetNewProject} className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                     Réinitialiser
                   </button>
                 </div>
               </form>
+
               {editDraft && (
                 <form className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6" onSubmit={handleUpdateProject}>
                   <div className="flex items-center justify-between">
@@ -739,103 +774,33 @@ const Dashboard = () => {
                     </button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <input
-                      required
-                      value={editDraft.title}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, title: event.target.value } : prev))}
-                      placeholder="Titre"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
-                    <input
-                      required
-                      value={editDraft.tagline}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, tagline: event.target.value } : prev))}
-                      placeholder="Tagline"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
+                    <input required value={editDraft.title} onChange={(e) => setEditDraft((p) => (p ? { ...p, title: e.target.value } : p))} placeholder="Titre" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                    <input required value={editDraft.tagline} onChange={(e) => setEditDraft((p) => (p ? { ...p, tagline: e.target.value } : p))} placeholder="Tagline" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-4">
-                    <select
-                      value={editDraft.category}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, category: event.target.value } : prev))}
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    >
+                    <select value={editDraft.category} onChange={(e) => setEditDraft((p) => (p ? { ...p, category: e.target.value } : p))} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none">
                       {serviceCategories.map((category) => (
                         <option key={category} value={category} className="bg-slate-900 text-white">
                           {category}
                         </option>
                       ))}
                     </select>
-                    <input
-                      value={editDraft.year}
-                      type="number"
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, year: Number(event.target.value) } : prev))}
-                      placeholder="Année"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
-                    <input
-                      value={editDraft.duration}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, duration: event.target.value } : prev))}
-                      placeholder="Durée"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
-                    <input
-                      value={editDraft.videoUrl}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, videoUrl: event.target.value } : prev))}
-                      placeholder="Lien vidéo"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
+                    <input value={editDraft.year} type="number" onChange={(e) => setEditDraft((p) => (p ? { ...p, year: Number(e.target.value) } : p))} placeholder="Année" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                    <input value={editDraft.duration} onChange={(e) => setEditDraft((p) => (p ? { ...p, duration: e.target.value } : p))} placeholder="Durée" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                    <input value={editDraft.videoUrl} onChange={(e) => setEditDraft((p) => (p ? { ...p, videoUrl: e.target.value } : p))} placeholder="Lien vidéo" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                   </div>
-                  <textarea
-                    value={editDraft.description}
-                    onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, description: event.target.value } : prev))}
-                    rows={4}
-                    placeholder="Description"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
+                  <textarea value={editDraft.description} onChange={(e) => setEditDraft((p) => (p ? { ...p, description: e.target.value } : p))} rows={4} placeholder="Description" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                   <div className="grid gap-4 sm:grid-cols-3">
-                    <input
-                      value={editDraft.thumbnail}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, thumbnail: event.target.value } : prev))}
-                      placeholder="Vignette"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
-                    <input
-                      value={editDraft.aiTools}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, aiTools: event.target.value } : prev))}
-                      placeholder="IA Tools"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
-                    <input
-                      value={editDraft.deliverables}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, deliverables: event.target.value } : prev))}
-                      placeholder="Livrables"
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    />
+                    <input value={editDraft.thumbnail} onChange={(e) => setEditDraft((p) => (p ? { ...p, thumbnail: e.target.value } : p))} placeholder="Vignette" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                    <input value={editDraft.aiTools} onChange={(e) => setEditDraft((p) => (p ? { ...p, aiTools: e.target.value } : p))} placeholder="IA Tools" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                    <input value={editDraft.deliverables} onChange={(e) => setEditDraft((p) => (p ? { ...p, deliverables: e.target.value } : p))} placeholder="Livrables" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                   </div>
-                  <input
-                    value={editDraft.socialStack}
-                    onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, socialStack: event.target.value } : prev))}
-                    placeholder="Stack social"
-                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  />
+                  <input value={editDraft.socialStack} onChange={(e) => setEditDraft((p) => (p ? { ...p, socialStack: e.target.value } : p))} placeholder="Stack social" className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
                   <div className="flex flex-wrap gap-4">
-                    <button
-                      type="submit"
-                      className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                    >
+                    <button type="submit" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                       Sauvegarder
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (editDraft) {
-                          removePortfolioItem(editDraft.id);
-                          setEditDraft(null);
-                        }
-                      }}
-                      className="rounded-full border border-rose-300/60 bg-rose-500/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-rose-100"
-                    >
+                    <button type="button" onClick={() => { if (editDraft) { removePortfolioItem(editDraft.id); setEditDraft(null); } }} className="rounded-full border border-rose-300/60 bg-rose-500/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-rose-100">
                       Supprimer
                     </button>
                   </div>
@@ -847,18 +812,10 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em]">
                       <span>{item.category}</span>
                       <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => startEditingProject(item.id)}
-                          className="text-cyan-200 hover:text-cyan-100"
-                        >
+                        <button type="button" onClick={() => startEditingProject(item.id)} className="text-cyan-200 hover:text-cyan-100">
                           Modifier
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => removePortfolioItem(item.id)}
-                          className="text-rose-300 hover:text-rose-200"
-                        >
+                        <button type="button" onClick={() => removePortfolioItem(item.id)} className="text-rose-300 hover:text-rose-200">
                           Supprimer
                         </button>
                       </div>
@@ -870,18 +827,14 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* Tarifs */}
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.18)] visual-secondary-veil">
               <h2 className="text-2xl font-bold">Gestion des tarifs</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {pricingTiers.map((tier) => (
                   <div key={tier.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">{tier.name}</p>
-                    <input
-                      type="number"
-                      className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                      value={tier.price}
-                      onChange={(event) => updatePricingTier(tier.id, { price: Number(event.target.value) })}
-                    />
+                    <input type="number" className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" value={tier.price} onChange={(e) => updatePricingTier(tier.id, { price: Number(e.target.value) })} />
                     <p className="mt-2 text-xs text-slate-200/60">{tier.description}</p>
                     <p className="mt-2 text-xs text-slate-200/60">{tier.sla}</p>
                   </div>
@@ -890,6 +843,7 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* Sidebar admin */}
           <aside className="space-y-10">
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-8 shadow-[0_20px_80px_rgba(56,189,248,0.15)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Comptes clients</h2>
@@ -905,7 +859,9 @@ const Dashboard = () => {
                         {client.membership}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-200/60">{client.company} · {client.industry}</p>
+                    <p className="mt-2 text-xs text-slate-200/60">
+                      {client.company} · {client.industry}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -919,13 +875,11 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-white">{quote.projectName}</p>
-                        <p className="text-xs text-slate-200/60">{quote.clientName} · {quote.budgetRange}</p>
+                        <p className="text-xs text-slate-200/60">
+                          {quote.clientName} · {quote.budgetRange}
+                        </p>
                       </div>
-                      <select
-                        value={quote.status}
-                        onChange={(event) => advanceQuoteStatus(quote.id, event.target.value as typeof quote.status)}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.3em] text-white"
-                      >
+                      <select value={quote.status} onChange={(e) => advanceQuoteStatus(quote.id, e.target.value as typeof quote.status)} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.3em] text-white">
                         <option value="nouveau">Nouveau</option>
                         <option value="en revue">En revue</option>
                         <option value="validé">Validé</option>
@@ -934,11 +888,7 @@ const Dashboard = () => {
                     </div>
                     <p className="mt-2 text-xs text-slate-200/60">Deadline : {quote.deadline}</p>
                     <p className="mt-2 text-xs text-slate-200/60">Services : {quote.services.join(", ")}</p>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedChatId(quote.id)}
-                      className="mt-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white"
-                    >
+                    <button type="button" onClick={() => setSelectedChatId(quote.id)} className="mt-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white">
                       Ouvrir le chat
                     </button>
                   </div>
@@ -951,14 +901,7 @@ const Dashboard = () => {
               <div className="mt-4 flex gap-4">
                 <div className="w-1/3 space-y-2 text-xs text-slate-200/70">
                   {chats.map((thread) => (
-                    <button
-                      key={thread.quoteId}
-                      type="button"
-                      onClick={() => setSelectedChatId(thread.quoteId)}
-                      className={`w-full rounded-2xl border px-3 py-2 text-left ${
-                        thread.quoteId === selectedChatId ? "border-cyan-300 bg-white/20" : "border-white/10 bg-white/5"
-                      }`}
-                    >
+                    <button key={thread.quoteId} type="button" onClick={() => setSelectedChatId(thread.quoteId)} className={`w-full rounded-2xl border px-3 py-2 text-left ${thread.quoteId === selectedChatId ? "border-cyan-300 bg-white/20" : "border-white/10 bg-white/5"}`}>
                       <p className="font-semibold text-white">{thread.clientName}</p>
                       <p className="text-[0.65rem] text-slate-200/60">{thread.projectName}</p>
                     </button>
@@ -969,14 +912,7 @@ const Dashboard = () => {
                     <div className="flex h-full flex-col">
                       <div className="flex-1 space-y-3 overflow-y-auto pr-2">
                         {activeChat.messages.map((message) => (
-                          <div
-                            key={message.id}
-                            className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
-                              message.from === "studio"
-                                ? "ml-auto bg-cyan-500/20 visual-accent-bg text-cyan-100 visual-accent-text-strong"
-                                : "bg-white/10 text-slate-100"
-                            }`}
-                          >
+                          <div key={message.id} className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${message.from === "studio" ? "ml-auto bg-cyan-500/20 visual-accent-bg text-cyan-100 visual-accent-text-strong" : "bg-white/10 text-slate-100"}`}>
                             <p>{message.content}</p>
                             <p className="mt-1 text-[0.6rem] uppercase tracking-[0.2em] text-slate-200/50">
                               {new Date(message.timestamp).toLocaleString()}
@@ -985,17 +921,8 @@ const Dashboard = () => {
                         ))}
                       </div>
                       <div className="mt-4 flex items-center gap-2">
-                        <input
-                          value={chatInput}
-                          onChange={(event) => setChatInput(event.target.value)}
-                          placeholder="Répondre avec panache"
-                          className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleSendMessage}
-                          className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                        >
+                        <input value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Répondre avec panache" className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none" />
+                        <button type="button" onClick={handleSendMessage} className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white">
                           Envoyer
                         </button>
                       </div>
