@@ -10,7 +10,10 @@ const ServiceDetail = () => {
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 text-white">
         <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70">Service introuvable</p>
         <h1 className="mt-4 text-4xl font-bold">On dirait que ce module est encore en R&D.</h1>
-        <Link to="/services" className="mt-8 rounded-full border border-cyan-200/40 bg-cyan-500/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+        <Link
+          to="/services"
+          className="mt-8 rounded-full border border-cyan-200/40 bg-cyan-500/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+        >
           Retour aux services
         </Link>
       </div>
@@ -43,8 +46,9 @@ const ServiceDetail = () => {
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Narration</p>
               <p className="mt-4 text-lg leading-relaxed text-slate-200/80">{service.promise}</p>
             </div>
+
             <div className="space-y-6">
-              {service.phases.map((phase, index) => (
+              {service.phases.map((phase: any, index: number) => (
                 <div
                   key={phase.title}
                   className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8 shadow-[0_20px_90px_rgba(236,72,153,0.18)]"
@@ -62,11 +66,12 @@ const ServiceDetail = () => {
               ))}
             </div>
           </div>
+
           <aside className="space-y-8">
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Livrables inclus</p>
               <ul className="mt-4 space-y-3 text-sm text-slate-200/80">
-                {service.deliverables.map((item) => (
+                {service.deliverables.map((item: string) => (
                   <li key={item} className="flex items-start gap-3">
                     <span className="mt-1 h-2 w-2 rounded-full bg-cyan-300" />
                     <span>{item}</span>
@@ -74,10 +79,11 @@ const ServiceDetail = () => {
                 ))}
               </ul>
             </div>
+
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Chiffres clés</p>
               <ul className="mt-4 space-y-4 text-sm text-slate-200/80">
-                {service.metrics.map((metric) => (
+                {service.metrics.map((metric: any) => (
                   <li key={metric.label} className="rounded-2xl bg-slate-900/60 p-4">
                     <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">{metric.label}</p>
                     <p className="mt-2 text-2xl font-bold text-cyan-200">{metric.value}</p>
@@ -86,14 +92,23 @@ const ServiceDetail = () => {
                 ))}
               </ul>
             </div>
+
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8 text-sm text-slate-200/80">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Prochain move</p>
-              <p className="mt-4">Prêt·e à valider ce module ? Connectez-vous, demandez un devis et on lance la pré-production.</p>
+              <p className="mt-4">
+                Prêt·e à valider ce module ? Connectez-vous, demandez un devis et on lance la pré-production.
+              </p>
               <div className="mt-6 flex flex-col gap-3">
-                <Link to="/auth" className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+                <Link
+                  to="/auth"
+                  className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+                >
                   Me connecter
                 </Link>
-                <Link to="/quote" className="rounded-full border border-cyan-200/40 bg-cyan-500/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+                <Link
+                  to="/quote"
+                  className="rounded-full border border-cyan-200/40 bg-cyan-500/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+                >
                   Demander un devis
                 </Link>
               </div>

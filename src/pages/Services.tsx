@@ -60,7 +60,7 @@ const Services = () => {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.3em] text-cyan-100/80">
-                    {service.stack.map((tool) => (
+                    {service.stack.map((tool: string) => (
                       <span key={tool} className="rounded-full border border-cyan-200/30 bg-cyan-500/10 px-4 py-2">
                         {tool}
                       </span>
@@ -77,7 +77,7 @@ const Services = () => {
                   <div className="rounded-3xl border border-white/10 bg-white/10 p-6">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Livrables</p>
                     <ul className="mt-4 space-y-2 text-sm text-slate-200/80">
-                      {service.deliverables.map((item) => (
+                      {service.deliverables.map((item: string) => (
                         <li key={item} className="flex items-center gap-3">
                           <span className="h-2 w-2 rounded-full bg-cyan-300" /> {item}
                         </li>
@@ -87,8 +87,11 @@ const Services = () => {
                   <div className="rounded-3xl border border-white/10 bg-white/10 p-6">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Chiffres clés</p>
                     <ul className="mt-4 space-y-3 text-sm text-slate-200/80">
-                      {service.metrics.map((metric) => (
-                        <li key={metric.label} className="flex items-center justify-between rounded-2xl bg-slate-900/60 px-4 py-3">
+                      {service.metrics.map((metric: { label: string; value: string }) => (
+                        <li
+                          key={metric.label}
+                          className="flex items-center justify-between rounded-2xl bg-slate-900/60 px-4 py-3"
+                        >
                           <span>{metric.label}</span>
                           <span className="text-cyan-200">{metric.value}</span>
                         </li>

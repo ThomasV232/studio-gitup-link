@@ -4,35 +4,35 @@ const timeline = [
     title: "Brief cosmique",
     description:
       "On décode votre univers, vos objectifs, vos inside jokes. Notre IA résume, priorise et propose des premières punchlines.",
-    vibe: "bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.25),transparent_70%)]",
+    gradient: "radial-gradient(circle at top, hsla(var(--visual-accent)/0.25), transparent 70%)",
   },
   {
     id: "design",
     title: "Design narratif",
     description:
       "Moodboards Midjourney V7, script génératif, découpage shotlist. Chaque scène a son hook, son moment humour, son CTA.",
-    vibe: "bg-[radial-gradient(circle_at_60%_20%,rgba(236,72,153,0.25),transparent_70%)]",
+    gradient: "radial-gradient(circle at 60% 20%, hsla(var(--visual-secondary)/0.28), transparent 70%)",
   },
   {
     id: "shoot",
     title: "Tournage chorégraphié",
     description:
       "Seedance Pro prédit les mouvements, Kling 2.5 projette les décors, nos équipes rigolent mais restent focus.",
-    vibe: "bg-[radial-gradient(circle_at_30%_80%,rgba(249,115,22,0.2),transparent_70%)]",
+    gradient: "radial-gradient(circle at 30% 80%, hsla(var(--visual-tertiary)/0.24), transparent 70%)",
   },
   {
     id: "post",
     title: "Post-prod synchrone",
     description:
       "Veo 3 accélère le montage, Davinci peaufine, Suno AI livre le sound design, LypSync V2 anime les punchlines.",
-    vibe: "bg-[radial-gradient(circle_at_bottom_right,rgba(94,234,212,0.2),transparent_70%)]",
+    gradient: "radial-gradient(circle at bottom right, hsla(var(--visual-accent-soft)/0.24), transparent 70%)",
   },
   {
     id: "launch",
     title: "Launch orchestré",
     description:
       "On publie, on tracke, on ajuste. Les memes partent, les stats montent, le chat se remplit de gifs heureux.",
-    vibe: "bg-[radial-gradient(circle_at_50%_50%,rgba(129,140,248,0.25),transparent_70%)]",
+    gradient: "radial-gradient(circle at 50% 50%, hsla(var(--visual-secondary)/0.22), transparent 70%)",
   },
 ];
 
@@ -41,9 +41,9 @@ const Process = () => {
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       <div className="pointer-events-none absolute inset-0 bg-[conic-gradient(from_60deg_at_50%_50%,rgba(8,145,178,0.2),transparent_70%)]" />
       <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-28">
-        <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.2)]">
+        <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.2)] visual-accent-veil">
           <div className="space-y-6">
-            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80">
+            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
               Processus Studio VBG
             </span>
             <h1 className="text-5xl font-black leading-tight">La méthode orbitale qui fait sourire vos KPI</h1>
@@ -57,7 +57,8 @@ const Process = () => {
           {timeline.map((step, index) => (
             <article
               key={step.id}
-              className={`relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/5 p-10 shadow-[0_20px_110px_rgba(56,189,248,0.15)] ${step.vibe}`}
+              className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/5 p-10 shadow-[0_20px_110px_rgba(56,189,248,0.15)] visual-accent-veil"
+              style={{ backgroundImage: step.gradient }}
             >
               <span className="absolute left-12 top-8 text-6xl font-black text-white/10">0{index + 1}</span>
               <div className="relative grid gap-6 lg:grid-cols-[1.2fr_1fr]">
@@ -66,7 +67,9 @@ const Process = () => {
                   <p className="text-lg text-slate-200/80">{step.description}</p>
                 </div>
                 <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-6 text-sm text-slate-200/70">
-                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Ce qui se passe réellement</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
+                    Ce qui se passe réellement
+                  </p>
                   <p className="mt-3">
                     {index === 0 && "Notre IA résume les 14 slides reçues, extrait les insights et propose 3 hooks."}
                     {index === 1 && "On produit des scripts comiques, des visuels 3D et un plan d'attaque social média."}
@@ -81,7 +84,7 @@ const Process = () => {
         </section>
 
         <section className="mt-16 rounded-[3rem] border border-white/10 bg-white/5 p-12 text-center text-sm text-slate-200/70">
-          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">Prêt·e à rejoindre l'orbite ?</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Prêt·e à rejoindre l'orbite ?</p>
           <p className="mt-6 text-3xl font-semibold text-white">
             Connectez-vous, briefez-nous, on déclenche le mode hyperdrive de Studio VBG.
           </p>

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { v4 as uuid } from "uuid";
 
 // Local helper to generate shimmering gradient placeholders
@@ -83,6 +83,38 @@ export type ClientAccount = {
   lastProject?: string;
 };
 
+// ---- Visual system (nebula / solstice)
+type VisualMode = "nebula" | "solstice";
+
+type VisualPalette = {
+  accent: string;
+  accentSoft: string;
+  secondary: string;
+  tertiary: string;
+  accentForeground: string;
+  border: string;
+};
+
+const visualPalettes: Record<VisualMode, VisualPalette> = {
+  nebula: {
+    accent: "188 86% 64%",
+    accentSoft: "196 90% 78%",
+    secondary: "315 86% 66%",
+    tertiary: "251 96% 72%",
+    accentForeground: "190 100% 92%",
+    border: "188 86% 64%",
+  },
+  solstice: {
+    accent: "34 97% 62%",
+    accentSoft: "17 94% 64%",
+    secondary: "296 76% 72%",
+    tertiary: "208 88% 70%",
+    accentForeground: "35 100% 92%",
+    border: "34 97% 62%",
+  },
+};
+
+// ---- Context
 type StudioContextValue = {
   user: ClientAccount | null;
   clients: ClientAccount[];
@@ -91,6 +123,9 @@ type StudioContextValue = {
   quoteRequests: QuoteRequest[];
   contactRequests: ContactRequest[];
   chats: ChatThread[];
+  visualMode: VisualMode;
+  palette: VisualPalette;
+  cycleVisualMode: () => void;
   register: (payload: Omit<ClientAccount, "id" | "avatarHue">) => { success: boolean; message?: string };
   login: (email: string, password: string) => { success: boolean; message?: string };
   logout: () => void;
@@ -98,7 +133,9 @@ type StudioContextValue = {
   updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
   removePortfolioItem: (id: string) => void;
   updatePricingTier: (id: string, updates: Partial<PricingTier>) => void;
-  createQuoteRequest: (payload: Omit<QuoteRequest, "id" | "status" | "createdAt" | "clientId" | "clientName">) => QuoteRequest | null;
+  createQuoteRequest: (
+    payload: Omit<QuoteRequest, "id" | "status" | "createdAt" | "clientId" | "clientName">
+  ) => QuoteRequest | null;
   advanceQuoteStatus: (id: string, status: QuoteRequest["status"]) => void;
   appendChatMessage: (quoteId: string, message: Omit<ChatMessage, "id" | "timestamp">) => void;
   recordContactRequest: (payload: Omit<ContactRequest, "id" | "createdAt">) => void;
@@ -106,6 +143,7 @@ type StudioContextValue = {
 
 const StudioContext = createContext<StudioContextValue | undefined>(undefined);
 
+// ---- Mock data
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
@@ -245,6 +283,27 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [chats, setChats] = useState<ChatThread[]>(initialChats);
 
+  const [visualMode, setVisualMode] = useState<VisualMode>("nebula");
+
+  useEffect(() => {
+    const body = document.body;
+    body.classList.remove("visual-nebula", "visual-solstice");
+    body.classList.add(`visual-${visualMode}`);
+
+    const palette = visualPalettes[visualMode];
+    const root = document.documentElement;
+    root.style.setProperty("--visual-accent", palette.accent);
+    root.style.setProperty("--visual-accent-soft", palette.accentSoft);
+    root.style.setProperty("--visual-secondary", palette.secondary);
+    root.style.setProperty("--visual-tertiary", palette.tertiary);
+    root.style.setProperty("--visual-accent-foreground", palette.accentForeground);
+    root.style.setProperty("--visual-border", palette.border);
+  }, [visualMode]);
+
+  const cycleVisualMode = () => {
+    setVisualMode((current) => (current === "nebula" ? "solstice" : "nebula"));
+  };
+
   const register: StudioContextValue["register"] = (payload) => {
     const { email } = payload;
     const exists = clients.some((client) => client.email === email);
@@ -282,7 +341,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       gradient: gradient ?? gradientPool[Math.floor(Math.random() * gradientPool.length)],
     };
-
     setPortfolioItems((prev) => [newItem, ...prev]);
   };
 
@@ -359,11 +417,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
               ...thread,
               messages: [
                 ...thread.messages,
-                {
-                  ...message,
-                  id: uuid(),
-                  timestamp: new Date().toISOString(),
-                },
+                { ...message, id: uuid(), timestamp: new Date().toISOString() },
               ],
             }
           : thread,
@@ -377,7 +431,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       createdAt: new Date().toISOString(),
     };
-
     setContactRequests((prev) => [newRequest, ...prev]);
   };
 
@@ -389,6 +442,9 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     quoteRequests,
     contactRequests,
     chats,
+    visualMode,
+    palette: visualPalettes[visualMode],
+    cycleVisualMode,
     register,
     login,
     logout,
