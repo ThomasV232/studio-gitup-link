@@ -216,7 +216,7 @@ const QuoteBuilder = () => {
 
           {successId && (
             <div className="rounded-3xl border border-emerald-200/40 bg-emerald-500/10 p-6 text-sm text-emerald-100">
-              Votre demande est enregistrée. Un espace de discussion dédié s&apos;ouvrira dès validation du devis. ID :{" "}
+              Votre demande est enregistrée. Un espace de discussion dédié s&apos;ouvrira dès validation du devis. ID:{" "}
               {successId.slice(0, 8)}...
             </div>
           )}

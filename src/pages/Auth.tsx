@@ -2,6 +2,8 @@ import { FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
 
+type Membership = "Impulse" | "Hyperdrive" | "Continuum";
+
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "register">("register");
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +19,7 @@ const Auth = () => {
     password: "",
     company: "",
     industry: "",
-    membership: "Hyperdrive" as const,
+    membership: "Hyperdrive" as Membership,
   });
 
   useEffect(() => {
@@ -58,14 +60,14 @@ const Auth = () => {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 10% 10%, hsla(var(--visual-accent)/0.22), transparent 60%)",
+            "radial-gradient(circle at 10% 10%, hsl(var(--visual-accent) / 0.22), transparent 60%)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 90% 90%, hsla(var(--visual-secondary)/0.22), transparent 60%)",
+            "radial-gradient(circle at 90% 90%, hsl(var(--visual-secondary) / 0.22), transparent 60%)",
         }}
       />
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 pb-24 pt-28 lg:grid-cols-[1.2fr_1fr]">
@@ -104,6 +106,7 @@ const Auth = () => {
             </div>
           </div>
         </div>
+
         <form
           className="space-y-6 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
           onSubmit={handleSubmit}
@@ -113,17 +116,13 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => {
-                setMode((prev) =>
-                  prev === "register" ? "login" : "register"
-                );
+                setMode((prev) => (prev === "register" ? "login" : "register"));
                 setError(null);
                 setSuccess(null);
               }}
               className="rounded-full border border-white/20 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white"
             >
-              {mode === "register"
-                ? "J'ai déjà un compte"
-                : "Créer un compte"}
+              {mode === "register" ? "J'ai déjà un compte" : "Créer un compte"}
             </button>
           </div>
 
@@ -143,6 +142,7 @@ const Auth = () => {
                   required
                 />
               </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">
@@ -152,10 +152,7 @@ const Auth = () => {
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     value={form.company}
                     onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        company: event.target.value,
-                      }))
+                      setForm((prev) => ({ ...prev, company: event.target.value }))
                     }
                     placeholder="Nom de l'entreprise"
                     required
@@ -169,16 +166,14 @@ const Auth = () => {
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     value={form.industry}
                     onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        industry: event.target.value,
-                      }))
+                      setForm((prev) => ({ ...prev, industry: event.target.value }))
                     }
                     placeholder="Secteur d'activité"
                     required
                   />
                 </div>
               </div>
+
               <div>
                 <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">
                   Programme
@@ -189,17 +184,13 @@ const Auth = () => {
                   onChange={(event) =>
                     setForm((prev) => ({
                       ...prev,
-                      membership: event.target.value as typeof prev.membership,
+                      membership: event.target.value as Membership,
                     }))
                   }
                 >
                   <option value="Impulse">Impulse (starter)</option>
-                  <option value="Hyperdrive">
-                    Hyperdrive (campagne multi-format)
-                  </option>
-                  <option value="Continuum">
-                    Continuum (retainer annuel)
-                  </option>
+                  <option value="Hyperdrive">Hyperdrive (campagne multi-format)</option>
+                  <option value="Continuum">Continuum (retainer annuel)</option>
                 </select>
               </div>
             </div>
@@ -221,6 +212,7 @@ const Auth = () => {
                 required
               />
             </div>
+
             <div>
               <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">
                 Mot de passe

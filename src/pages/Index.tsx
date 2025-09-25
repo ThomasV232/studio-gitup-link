@@ -57,9 +57,13 @@ const Dashboard = () => {
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [isImportingMetadata, setIsImportingMetadata] = useState(false);
   const [metadataError, setMetadataError] = useState<string | null>(null);
-  const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
+  const [editDraft, setEditDraft] =
+    useState<(PortfolioDraft & { id: string }) | null>(null);
 
-  const activeChat = useMemo(() => chats.find((chat) => chat.quoteId === selectedChatId), [chats, selectedChatId]);
+  const activeChat = useMemo(
+    () => chats.find((chat) => chat.quoteId === selectedChatId),
+    [chats, selectedChatId]
+  );
   const isAdmin = user?.email === ADMIN_EMAIL;
 
   const resetNewProject = () => {
@@ -88,10 +92,14 @@ const Dashboard = () => {
     setIsImportingMetadata(true);
     setMetadataError(null);
 
-    const canonicalUrl = youtubeUrl.includes("http") ? youtubeUrl.trim() : `https://www.youtube.com/watch?v=${id}`;
+    const canonicalUrl = youtubeUrl.includes("http")
+      ? youtubeUrl.trim()
+      : `https://www.youtube.com/watch?v=${id}`;
 
     try {
-      const oEmbedResponse = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`);
+      const oEmbedResponse = await fetch(
+        `https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`
+      );
       if (!oEmbedResponse.ok) {
         throw new Error("Impossible de récupérer les informations depuis YouTube.");
       }
@@ -99,7 +107,9 @@ const Dashboard = () => {
 
       let description = "";
       try {
-        const pageResponse = await fetch(`https://r.jina.ai/https://www.youtube.com/watch?v=${id}`);
+        const pageResponse = await fetch(
+          `https://r.jina.ai/https://www.youtube.com/watch?v=${id}`
+        );
         if (pageResponse.ok) {
           const raw = await pageResponse.text();
           const match = raw.match(/"shortDescription":"(.*?)"/);
@@ -128,7 +138,9 @@ const Dashboard = () => {
         videoUrl: canonicalUrl,
       }));
     } catch (error) {
-      setMetadataError(error instanceof Error ? error.message : "Import impossible. Essayez manuellement.");
+      setMetadataError(
+        error instanceof Error ? error.message : "Import impossible. Essayez manuellement."
+      );
     } finally {
       setIsImportingMetadata(false);
     }
@@ -142,10 +154,15 @@ const Dashboard = () => {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 px-6 text-center text-white">
         <div className="max-w-lg space-y-6 rounded-[3rem] border border-white/10 bg-white/5 p-12">
-          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Accès restreint</p>
-          <h1 className="text-4xl font-black leading-tight">Ce tableau de bord est réservé à l'équipe Studio VBG.</h1>
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
+            Accès restreint
+          </p>
+          <h1 className="text-4xl font-black leading-tight">
+            Ce tableau de bord est réservé à l'équipe Studio VBG.
+          </h1>
           <p className="text-lg text-slate-200/80">
-            Connectez-vous avec le compte administrateur pour gérer le portfolio, les devis et les échanges clients.
+            Connectez-vous avec le compte administrateur pour gérer le portfolio,
+            les devis et les échanges clients.
           </p>
         </div>
       </div>
@@ -168,7 +185,8 @@ const Dashboard = () => {
       duration: newProject.duration,
       description: newProject.description,
       thumbnail:
-        newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
+        newProject.thumbnail ||
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
       videoUrl: newProject.videoUrl,
       aiTools: newProject.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
       deliverables: newProject.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
