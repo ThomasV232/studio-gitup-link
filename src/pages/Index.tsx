@@ -189,6 +189,38 @@ const Index = () => {
           </div>
         </header>
 
+        <section className="homepage-filmstrip" aria-label="Extraits du portfolio Studio VBG">
+          <div className="filmstrip-track">
+            {portfolioItems.slice(0, 4).map((project) => (
+              <Link
+                key={project.id}
+                to="/portfolio"
+                className="filmstrip-card"
+                aria-label={`Voir le projet ${project.title} dans le portfolio`}
+              >
+                <span className="filmstrip-card-category">{project.category}</span>
+                <img
+                  src={project.thumbnail}
+                  alt={`Aperçu du projet ${project.title}`}
+                  className="filmstrip-card-thumb"
+                />
+                <div className="filmstrip-card-meta">
+                  <h3>{project.title}</h3>
+                  <p>
+                    {project.duration} · {project.year}
+                  </p>
+                </div>
+                <span className="filmstrip-card-arrow" aria-hidden>↗</span>
+              </Link>
+            ))}
+          </div>
+          <div className="filmstrip-action">
+            <Link to="/portfolio" className="filmstrip-action-link">
+              Voir le portfolio
+            </Link>
+          </div>
+        </section>
+
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div
             className="absolute inset-0 -z-10 blur-3xl"
