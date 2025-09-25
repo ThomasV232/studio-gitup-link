@@ -172,11 +172,10 @@ const Portfolio = () => {
                     key={category}
                     type="button"
                     onClick={() => setFilter(category)}
-                    className={`portfolio-filter ${
-                      isActive
-                        ? "portfolio-filter-active"
-                        : "border border-white/15 bg-white/5 text-slate-200/70 hover:bg-white/10"
+                    className={`portfolio-filter-trigger ${
+                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
                     }`}
+                    aria-pressed={isActive}
                   >
                     {category}
                   </button>
