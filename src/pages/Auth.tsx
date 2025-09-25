@@ -227,17 +227,15 @@ const Auth = () => {
                   Connexion
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={() => changeMode(mode === "forgot" ? "login" : "forgot")}
-                className={cn(
-                  "rounded-full border border-white/20 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] transition",
-                  mode === "forgot" ? "bg-white/20 text-slate-900" : "text-white"
-                )}
-                aria-pressed={mode === "forgot"}
-              >
-                Mot de passe oublié
-              </button>
+              {mode === "forgot" && (
+                <button
+                  type="button"
+                  onClick={() => changeMode("login")}
+                  className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:text-white"
+                >
+                  Retour connexion
+                </button>
+              )}
             </div>
           </div>
 
@@ -344,7 +342,7 @@ const Auth = () => {
                   <button
                     type="button"
                     onClick={() => changeMode("forgot")}
-                    className="mt-3 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-cyan-200/80 transition hover:text-cyan-100"
+                    className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-200/70 transition hover:text-white"
                   >
                     Mot de passe oublié ?
                   </button>
@@ -357,23 +355,6 @@ const Auth = () => {
                 </p>
               </div>
             )}
-            <div>
-              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
-              <input
-                type="password"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                value={form.password}
-                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-                placeholder={mode === "register" ? "Créer un mot de passe sécurisé" : "Votre mot de passe"}
-                required
-                minLength={8}
-              />
-              {mode === "register" && (
-                <p className="mt-2 text-[0.7rem] text-slate-300/70">
-                  Au moins 8 caractères, une majuscule et un chiffre pour sécuriser votre espace client.
-                </p>
-              )}
-            </div>
           </div>
 
           {error && (
