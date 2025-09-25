@@ -79,15 +79,6 @@ export const WaveMenu = () => {
                 </span>
                 <span className="pointer-events-none absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
               </Link>
-              <Link
-                to="/auth?mode=forgot"
-                className="group relative overflow-hidden rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/90 transition hover:text-white"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="text-base">🧠</span> Mot de passe oublié
-                </span>
-                <span className="pointer-events-none absolute inset-0 -z-0 translate-x-[-120%] bg-white/15 transition-transform duration-700 group-hover:translate-x-0" />
-              </Link>
             </div>
           </div>
         </div>
