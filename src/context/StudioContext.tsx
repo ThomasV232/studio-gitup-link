@@ -130,6 +130,7 @@ type StudioContextValue = {
   cycleVisualMode: () => void;
   register: (payload: RegistrationPayload) => Promise<{ success: boolean; message?: string }>;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  requestPasswordReset: (email: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
   updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
@@ -633,6 +634,38 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const requestPasswordReset: StudioContextValue["requestPasswordReset"] = async (email) => {
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Impossible d'envoyer un lien de réinitialisation.",
+      };
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo:
+          typeof window !== "undefined" ? `${window.location.origin}/auth?mode=login` : undefined,
+      });
+
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      return {
+        success: true,
+        message:
+          "Si cette adresse est associée à un compte, un email de réinitialisation vient de vous être envoyé.",
+      };
+    } catch (error) {
+      console.error("Erreur lors de la demande de réinitialisation Supabase", error);
+      return {
+        success: false,
+        message: "Impossible d'envoyer un lien de réinitialisation pour le moment.",
+      };
+    }
+  };
+
   const logout = () => {
     if (isSupabaseConfigured) {
       supabase.auth.signOut().catch((error) => {
@@ -761,6 +794,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     cycleVisualMode,
     register,
     login,
+    requestPasswordReset,
     logout,
     addPortfolioItem,
     updatePortfolioItem,
