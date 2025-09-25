@@ -130,7 +130,11 @@ type StudioContextValue = {
   cycleVisualMode: () => void;
   register: (payload: RegistrationPayload) => Promise<{ success: boolean; message?: string }>;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  requestPasswordReset: (email: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
+  updateAccount: (
+    updates: Partial<Omit<ClientAccount, "id">> & { lastProject?: string | null }
+  ) => Promise<{ success: boolean; message?: string }>;
   addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
   updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
   removePortfolioItem: (id: string) => void;
@@ -460,6 +464,34 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     [setClients],
   );
 
+  const projectClientUpdate = useCallback(
+    (nextClient: ClientAccount) => {
+      setUser(nextClient);
+      setClients((prev) => {
+        const exists = prev.some((client) => client.id === nextClient.id);
+        const updated = exists
+          ? prev.map((client) => (client.id === nextClient.id ? nextClient : client))
+          : [...prev, nextClient];
+        return ensureAdminClient(updated);
+      });
+      setQuoteRequests((prev) =>
+        prev.map((quote) =>
+          quote.clientId === nextClient.id ? { ...quote, clientName: nextClient.name } : quote,
+        ),
+      );
+      setChats((prev) =>
+        prev.map((thread) => {
+          const relatedQuote = quoteRequests.find((quote) => quote.id === thread.quoteId);
+          if (relatedQuote?.clientId === nextClient.id) {
+            return { ...thread, clientName: nextClient.name };
+          }
+          return thread;
+        }),
+      );
+    },
+    [quoteRequests],
+  );
+
   useEffect(() => {
     if (!isSupabaseConfigured) {
       return;
@@ -497,6 +529,12 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       listener.subscription.unsubscribe();
     };
   }, [supabase, syncClientFromSupabase]);
+
+  useEffect(() => {
+    if (user && visualMode !== "nebula") {
+      setVisualMode("nebula");
+    }
+  }, [user, visualMode]);
 
   useEffect(() => {
     const body = document.body;
@@ -633,6 +671,38 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const requestPasswordReset: StudioContextValue["requestPasswordReset"] = async (email) => {
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Impossible d'envoyer un lien de réinitialisation.",
+      };
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo:
+          typeof window !== "undefined" ? `${window.location.origin}/auth?mode=login` : undefined,
+      });
+
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      return {
+        success: true,
+        message:
+          "Si cette adresse est associée à un compte, un email de réinitialisation vient de vous être envoyé.",
+      };
+    } catch (error) {
+      console.error("Erreur lors de la demande de réinitialisation Supabase", error);
+      return {
+        success: false,
+        message: "Impossible d'envoyer un lien de réinitialisation pour le moment.",
+      };
+    }
+  };
+
   const logout = () => {
     if (isSupabaseConfigured) {
       supabase.auth.signOut().catch((error) => {
@@ -640,6 +710,77 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       });
     }
     setUser(null);
+  };
+
+  const updateAccount: StudioContextValue["updateAccount"] = async (updates) => {
+    if (!user) {
+      return {
+        success: false,
+        message: "Vous devez être connecté pour modifier votre profil.",
+      };
+    }
+
+    const nextLastProject =
+      updates.lastProject === undefined
+        ? user.lastProject
+        : updates.lastProject === null || updates.lastProject === ""
+          ? undefined
+          : updates.lastProject;
+
+    const nextSnapshot: ClientAccount = {
+      ...user,
+      ...updates,
+      lastProject: nextLastProject,
+    };
+
+    if (!isSupabaseConfigured) {
+      projectClientUpdate(nextSnapshot);
+      return {
+        success: true,
+        message: "Profil mis à jour (mode démo). Activez Supabase pour synchroniser dans le cloud.",
+      };
+    }
+
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        ...(updates.email && updates.email !== user.email ? { email: updates.email } : {}),
+        data: {
+          name: nextSnapshot.name,
+          company: nextSnapshot.company,
+          industry: nextSnapshot.industry,
+          membership: nextSnapshot.membership,
+          avatarHue: nextSnapshot.avatarHue,
+          lastProject:
+            updates.lastProject === undefined
+              ? user.lastProject ?? null
+              : updates.lastProject === null || updates.lastProject === ""
+                ? null
+                : updates.lastProject,
+        },
+      });
+
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      if (data.user) {
+        const syncedClient = syncClientFromSupabase(data.user);
+        projectClientUpdate({ ...syncedClient });
+      } else {
+        projectClientUpdate(nextSnapshot);
+      }
+
+      return {
+        success: true,
+        message: "Profil mis à jour.",
+      };
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil Supabase", error);
+      return {
+        success: false,
+        message: "Impossible de mettre à jour votre profil pour le moment.",
+      };
+    }
   };
 
   const addPortfolioItem: StudioContextValue["addPortfolioItem"] = ({ gradient, ...payload }) => {
@@ -761,7 +902,9 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     cycleVisualMode,
     register,
     login,
+    requestPasswordReset,
     logout,
+    updateAccount,
     addPortfolioItem,
     updatePortfolioItem,
     removePortfolioItem,
