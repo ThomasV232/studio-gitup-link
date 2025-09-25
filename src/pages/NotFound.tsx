@@ -1,3 +1,4 @@
+/* src/pages/NotFound.tsx */
 import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -22,13 +23,13 @@ const NotFound = () => {
         <span className="text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">Erreur 404</span>
         <h1 className="text-5xl font-black">Page non disponible</h1>
         <p className="text-lg text-slate-200/80">
-          L'adresse demandée n'existe pas ou plus. Retournez à l'accueil pour poursuivre votre navigation.
+          L’adresse demandée n’existe pas ou plus. Retournez à l’accueil pour poursuivre votre navigation.
         </p>
         <Link
           to="/"
           className="inline-flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
         >
-          Retour à l'accueil
+          Retour à l’accueil
         </Link>
       </div>
     </div>

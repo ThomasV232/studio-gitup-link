@@ -150,6 +150,7 @@ const visualPalettes: Record<VisualMode, VisualPalette> = {
   },
 };
 
+// --- Données initiales ---
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
@@ -167,86 +168,6 @@ const initialPortfolio: PortfolioItem[] = [
     deliverables: ["Film principal 16:9", "Version onboarding 9:16", "Kit de présentation interne"],
     socialStack: ["Intranet", "LinkedIn", "YouTube"],
   },
-  {
-    id: uuid(),
-    title: "Aftermovie NeoSolar · Festival IA & lumière",
-    tagline: "Aftermovie immersif pour un festival dédié à l'innovation lumineuse",
-    category: SERVICE_CATEGORIES[1],
-    year: 2024,
-    duration: "02:08",
-    description:
-      "Captation événementielle associant drones FPV, Seedance Pro pour anticiper les mouvements de foule et montage synchronisé Suno AI. Objectif : donner envie de s'inscrire dès l'ouverture de la prochaine édition.",
-    thumbnail: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
-    gradient: gradientPool[1],
-    aiTools: ["Seedance Pro", "Suno AI", "DaVinci Resolve"],
-    deliverables: ["Aftermovie 4K", "Teaser 30s", "Stories pré-event"],
-    socialStack: ["Instagram", "TikTok", "YouTube Shorts"],
-  },
-  {
-    id: uuid(),
-    title: "Skyline Loop · Visite immobilière narrée par IA",
-    tagline: "Visite premium d'un penthouse avec narration IA",
-    category: SERVICE_CATEGORIES[2],
-    year: 2025,
-    duration: "01:05",
-    description:
-      "Visite immersive en drone FPV avec overlays data générés par Kling 2.5 et voix off Suno IA. Chaque pièce est présentée comme un chapitre et l'appel à l'action est piloté via QR code interactif.",
-    thumbnail: "https://images.unsplash.com/photo-1487956382158-bb926046304a?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=0pdqf4P9MB8",
-    gradient: gradientPool[2],
-    aiTools: ["Midjourney V7", "Kling 2.5", "Suno AI"],
-    deliverables: ["Film 16:9", "Version VR", "Carousel LinkedIn"],
-    socialStack: ["YouTube", "Website", "Meta Ads"],
-  },
-  {
-    id: uuid(),
-    title: "Snackverse · Série sociale pour WaveBite",
-    tagline: "Série verticale de 12 épisodes conçue pour la conversion",
-    category: SERVICE_CATEGORIES[3],
-    year: 2025,
-    duration: "00:45",
-    description:
-      "Production sociale verticale pilotée par IA : scripts testés via GPT CopyLab, tournage en LED volume, montage automatisé Veo 3 et templates livrés aux équipes internes.",
-    thumbnail: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
-    gradient: gradientPool[3],
-    aiTools: ["Veo 3", "Midjourney V7", "Adobe Premiere Pro"],
-    deliverables: ["Série 12x45s", "Capsules additionnelles", "Scripts automatisés"],
-    socialStack: ["TikTok", "Snap", "YouTube Shorts"],
-  },
-  {
-    id: uuid(),
-    title: "Orbit Lovers · Mariage futuriste en live",
-    tagline: "Cérémonie captée en direct avec diffusion privée",
-    category: SERVICE_CATEGORIES[4],
-    year: 2024,
-    duration: "03:20",
-    description:
-      "Captation mariage premium : drones, steadycam, robot caméra et IA pour générer les vœux animés. Diffusion live privée et montage highlight livré avant la fin de la réception.",
-    thumbnail: "https://images.unsplash.com/photo-1520854221050-0f4caff449fb?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=oUFJJNQGwhk",
-    gradient: gradientPool[4],
-    aiTools: ["Seedance Pro", "DaVinci Resolve", "Suno AI"],
-    deliverables: ["Live multi-cam", "Highlight 3min", "Stories pour les invités"],
-    socialStack: ["YouTube privé", "Instagram", "Galerie partagée"],
-  },
-  {
-    id: uuid(),
-    title: "LogoVerse · Identité motion générée",
-    tagline: "Création d'identité motion design propulsée par l'IA",
-    category: SERVICE_CATEGORIES[5],
-    year: 2025,
-    duration: "00:36",
-    description:
-      "Création de logo animé via Midjourney V7 puis animatic Kling 2.5. Sound design Suno AI et packaging template pour diffusion OTT et dispositifs immersifs.",
-    thumbnail: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
-    gradient: gradientPool[0],
-    aiTools: ["Midjourney V7", "Kling 2.5", "After Effects"],
-    deliverables: ["Logo animé 4 formats", "Banque transitions", "Kit son identité"],
-    socialStack: ["Behance", "Vimeo", "TikTok"],
-  },
 ];
 
 const initialPricing: PricingTier[] = [
@@ -257,22 +178,6 @@ const initialPricing: PricingTier[] = [
     description: "Idéal pour un lancement ou un événement clé avec délais courts",
     deliverables: ["Sprint créatif IA", "Tournage studio 4h", "Kit social 6 formats"],
     sla: "Livraison 4K sous 72 heures",
-  },
-  {
-    id: uuid(),
-    name: "Hyperdrive",
-    price: 9700,
-    description: "Campagne multi-canal pilotée par notre pipeline intelligent",
-    deliverables: ["Storyboard Midjourney V7", "Tournage bi-cam", "Montage Davinci + VFX Veo 3"],
-    sla: "Pilotage complet sur 21 jours",
-  },
-  {
-    id: uuid(),
-    name: "Continuum",
-    price: 18200,
-    description: "Programme annuel incluant production continue, live et data storytelling",
-    deliverables: ["Retainer production mensuelle", "Lives trimestriels Seedance", "Veille tendances et optimisation"],
-    sla: "Équipe dédiée et dashboard 24/7",
   },
 ];
 
@@ -288,24 +193,13 @@ const initialClients: ClientAccount[] = [
     avatarHue: 24,
     lastProject: "Pulse HoloBoard",
   },
-  {
-    id: uuid(),
-    name: "Lena Photon",
-    email: "lena@quantumwear.ai",
-    password: "studioVBG!",
-    company: "QuantumWear",
-    industry: "Tech santé",
-    membership: "Hyperdrive",
-    avatarHue: 182,
-    lastProject: "Sillage Quantique",
-  },
 ];
 
 const initialQuotes: QuoteRequest[] = [
   {
     id: uuid(),
-    clientId: initialClients[1].id,
-    clientName: initialClients[1].name,
+    clientId: initialClients[0].id,
+    clientName: initialClients[0].name,
     projectName: "Activation wearable SXSW",
     budgetRange: "12k€ - 18k€",
     deadline: "2025-03-11",
@@ -320,7 +214,7 @@ const initialQuotes: QuoteRequest[] = [
 const initialChats: ChatThread[] = [
   {
     quoteId: initialQuotes[0].id,
-    clientName: initialClients[1].name,
+    clientName: initialClients[0].name,
     projectName: initialQuotes[0].projectName,
     messages: [
       {
@@ -329,16 +223,11 @@ const initialChats: ChatThread[] = [
         content: "On peut ajouter une version 9:16 verticale ?",
         timestamp: new Date().toISOString(),
       },
-      {
-        id: uuid(),
-        from: "studio",
-        content: "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
-        timestamp: new Date().toISOString(),
-      },
     ],
   },
 ];
 
+// --- Provider ---
 const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ClientAccount | null>(null);
   const [clients, setClients] = useState<ClientAccount[]>(initialClients);
@@ -369,30 +258,23 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register: StudioContextValue["register"] = (payload) => {
-    const { email } = payload;
-    const exists = clients.some((client) => client.email === email);
+    const exists = clients.some((client) => client.email === payload.email);
     if (exists) {
       return { success: false, message: "Un compte utilise déjà cet email." };
     }
-
     const newClient: ClientAccount = {
       ...payload,
       id: uuid(),
       avatarHue: Math.floor(Math.random() * 360),
     };
-
     setClients((prev) => [...prev, newClient]);
     setUser(newClient);
-
     return { success: true };
   };
 
   const login: StudioContextValue["login"] = (email, password) => {
-    const found = clients.find((client) => client.email === email && client.password === password);
-    if (!found) {
-      return { success: false, message: "Identifiants invalides ou compte inexistant." };
-    }
-
+    const found = clients.find((c) => c.email === email && c.password === password);
+    if (!found) return { success: false, message: "Identifiants invalides ou compte inexistant." };
     setUser(found);
     return { success: true };
   };
@@ -405,7 +287,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       gradient: gradient ?? gradientPool[Math.floor(Math.random() * gradientPool.length)],
     };
-
     setPortfolioItems((prev) => [newItem, ...prev]);
   };
 
@@ -423,7 +304,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
 
   const createQuoteRequest: StudioContextValue["createQuoteRequest"] = (payload) => {
     if (!user) return null;
-
     const newQuote: QuoteRequest = {
       ...payload,
       id: uuid(),
@@ -432,45 +312,13 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       status: "nouveau",
       createdAt: new Date().toISOString(),
     };
-
     setQuoteRequests((prev) => [newQuote, ...prev]);
     return newQuote;
   };
 
-  const ensureChatThread = (quoteId: string, clientName: string, projectName: string) => {
-    setChats((prev) => {
-      const exists = prev.some((thread) => thread.quoteId === quoteId);
-      if (exists) return prev;
-      return [
-        ...prev,
-        {
-          quoteId,
-          clientName,
-          projectName,
-          messages: [
-            {
-              id: uuid(),
-              from: "studio",
-              content: "Bonjour, nous ouvrons ce canal pour préciser votre projet.",
-              timestamp: new Date().toISOString(),
-            },
-          ],
-        },
-      ];
-    });
-  };
-
   const advanceQuoteStatus: StudioContextValue["advanceQuoteStatus"] = (id, status) => {
     setQuoteRequests((prev) =>
-      prev.map((quote) => {
-        if (quote.id === id) {
-          if (status === "validé") {
-            ensureChatThread(quote.id, quote.clientName, quote.projectName);
-          }
-          return { ...quote, status };
-        }
-        return quote;
-      }),
+      prev.map((quote) => (quote.id === id ? { ...quote, status } : quote)),
     );
   };
 
@@ -480,14 +328,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
         thread.quoteId === quoteId
           ? {
               ...thread,
-              messages: [
-                ...thread.messages,
-                {
-                  ...message,
-                  id: uuid(),
-                  timestamp: new Date().toISOString(),
-                },
-              ],
+              messages: [...thread.messages, { ...message, id: uuid(), timestamp: new Date().toISOString() }],
             }
           : thread,
       ),
@@ -495,12 +336,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const recordContactRequest: StudioContextValue["recordContactRequest"] = (payload) => {
-    const newRequest: ContactRequest = {
-      ...payload,
-      id: uuid(),
-      createdAt: new Date().toISOString(),
-    };
-
+    const newRequest: ContactRequest = { ...payload, id: uuid(), createdAt: new Date().toISOString() };
     setContactRequests((prev) => [newRequest, ...prev]);
   };
 
@@ -534,9 +370,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
 
 const useStudio = () => {
   const context = useContext(StudioContext);
-  if (!context) {
-    throw new Error("useStudio doit être utilisé dans un StudioProvider");
-  }
+  if (!context) throw new Error("useStudio doit être utilisé dans un StudioProvider");
   return context;
 };
 

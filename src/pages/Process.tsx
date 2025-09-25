@@ -1,3 +1,4 @@
+/* src/pages/Process.tsx */
 const timeline = [
   {
     id: "brief",
@@ -46,6 +47,7 @@ const Process = () => {
             "conic-gradient(from 60deg at 50% 50%, hsla(var(--visual-accent)/0.22), transparent 70%)",
         }}
       />
+
       <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-28">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.2)] visual-accent-veil">
           <div className="space-y-6">
@@ -54,7 +56,7 @@ const Process = () => {
             </span>
             <h1 className="text-5xl font-black leading-tight">Notre méthodologie de production vidéo</h1>
             <p className="text-lg text-slate-200/80">
-              De la définition du brief à la diffusion, chaque étape est orchestrée pour garantir une qualité constante et une visibilité complète sur l'avancement.
+              De la définition du brief à la diffusion, chaque étape est orchestrée pour garantir une qualité constante et une visibilité complète sur l&apos;avancement.
             </p>
           </div>
         </header>
@@ -72,6 +74,7 @@ const Process = () => {
                   <h2 className="text-3xl font-extrabold">{step.title}</h2>
                   <p className="text-lg text-slate-200/80">{step.description}</p>
                 </div>
+
                 <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-6 text-sm text-slate-200/70">
                   <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables associés</p>
                   <p className="mt-3">

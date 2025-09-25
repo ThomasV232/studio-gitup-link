@@ -1,3 +1,4 @@
+/* src/pages/Portfolio.tsx */
 import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useStudio, type PortfolioItem } from "@/context/StudioContext";
@@ -14,6 +15,7 @@ const Portfolio = () => {
   const categories = useMemo(() => ["Tous", ...serviceCategories], [serviceCategories]);
   const [filter, setFilter] = useState("Tous");
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
+
   const highlightProject = useMemo(
     () =>
       (filter === "Tous" ? portfolioItems[0] : portfolioItems.find((item) => item.category === filter)) ||
@@ -47,7 +49,9 @@ const Portfolio = () => {
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(circle at 90% 85%, hsla(var(--visual-secondary)/0.25), transparent 50%)" }}
       />
+
       <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-24">
+        {/* HERO / HIGHLIGHT */}
         <section className="overflow-hidden rounded-[3.5rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-950/40 to-slate-950/80 p-12 shadow-[0_45px_140px_rgba(56,189,248,0.22)] visual-accent-halo">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-7">
@@ -55,10 +59,11 @@ const Portfolio = () => {
                 Studio VBG Originals
               </span>
               <h1 className="text-4xl font-black leading-tight sm:text-5xl">
-                Des références vidéo pilotées par l'IA et la production terrain
+                Des références vidéo pilotées par l&apos;IA et la production terrain
               </h1>
               <p className="text-base text-slate-200/85 sm:text-lg">
-                Chaque projet illustre notre maîtrise des tournages premium et des optimisations IA. Tous les éléments peuvent être mis à jour, archivés ou dupliqués depuis le tableau de bord.
+                Chaque projet illustre notre maîtrise des tournages premium et des optimisations IA. Tous les éléments peuvent
+                être mis à jour, archivés ou dupliqués depuis le tableau de bord.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -78,6 +83,7 @@ const Portfolio = () => {
                 Kling 2.5 · Midjourney V7 · Seedance Pro · Veo 3 · Suno AI
               </p>
             </div>
+
             <div className="relative">
               <div className="absolute -left-14 -top-14 h-24 w-24 rounded-full bg-cyan-400/30 blur-3xl" />
               <div className="absolute -bottom-10 -right-16 h-32 w-32 rounded-full bg-fuchsia-500/20 blur-3xl" />
@@ -91,7 +97,9 @@ const Portfolio = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
                     <div className="absolute bottom-8 left-8 right-8 space-y-3">
-                      <p className="text-[10px] uppercase tracking-[0.4em] text-cyan-200/70 visual-accent-text">{highlightProject.category}</p>
+                      <p className="text-[10px] uppercase tracking-[0.4em] text-cyan-200/70 visual-accent-text">
+                        {highlightProject.category}
+                      </p>
                       <h2 className="text-2xl font-bold text-white">{highlightProject.title}</h2>
                       <p className="text-xs text-slate-200/80">{highlightProject.tagline}</p>
                     </div>
@@ -106,6 +114,7 @@ const Portfolio = () => {
           </div>
         </section>
 
+        {/* FILTERS + GRID */}
         <section className="mt-20">
           <nav className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.35em]">
             {categories.map((category) => {
@@ -151,11 +160,13 @@ const Portfolio = () => {
                     <p className="text-xs text-slate-200/75">{project.tagline}</p>
                   </div>
                 </div>
+
                 <div className="space-y-4 px-6 pb-6 pt-5 text-xs text-slate-200/75">
                   <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.35em] text-slate-200/60">
                     <span>{project.year}</span>
                     <span>{project.duration}</span>
                   </div>
+
                   <div className="flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
                     {project.aiTools.slice(0, 3).map((tool) => (
                       <span key={tool} className="rounded-full bg-cyan-500/10 visual-accent-chip px-3 py-1">
@@ -163,9 +174,12 @@ const Portfolio = () => {
                       </span>
                     ))}
                     {project.aiTools.length > 3 && (
-                      <span className="rounded-full border border-white/15 px-3 py-1">+{project.aiTools.length - 3}</span>
+                      <span className="rounded-full border border-white/15 px-3 py-1">
+                        +{project.aiTools.length - 3}
+                      </span>
                     )}
                   </div>
+
                   <div className="text-[11px] uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</div>
                   <div className="flex flex-wrap gap-2 text-[11px]">
                     {project.socialStack.map((channel) => (
@@ -175,6 +189,7 @@ const Portfolio = () => {
                     ))}
                   </div>
                 </div>
+
                 <div className="absolute inset-0 hidden items-center justify-center bg-slate-950/70 text-[11px] uppercase tracking-[0.35em] text-white backdrop-blur-md transition group-hover:flex">
                   Ouvrir la fiche
                 </div>
@@ -184,8 +199,10 @@ const Portfolio = () => {
 
           {filtered.length === 0 && (
             <div className="mt-16 rounded-[3.25rem] border border-white/10 bg-white/10 p-12 text-center text-sm text-slate-200/70">
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l'instant</p>
-              <p className="mt-4 text-2xl text-white">Ajoutez une nouvelle réalisation depuis le tableau de bord pour alimenter cette catégorie.</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l&apos;instant</p>
+              <p className="mt-4 text-2xl text-white">
+                Ajoutez une nouvelle réalisation depuis le tableau de bord pour alimenter cette catégorie.
+              </p>
               <Link
                 to="/dashboard"
                 className="mt-6 inline-flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
@@ -196,6 +213,7 @@ const Portfolio = () => {
           )}
         </section>
 
+        {/* DIALOG */}
         <Dialog open={Boolean(activeProject)} onOpenChange={(open) => !open && setActiveProject(null)}>
           <DialogContent className="max-w-4xl border border-white/10 bg-slate-950/95 text-white backdrop-blur">
             {activeProject && (
@@ -207,6 +225,7 @@ const Portfolio = () => {
                   </DialogDescription>
                   <p className="text-base text-slate-200/80">{activeProject.tagline}</p>
                 </DialogHeader>
+
                 <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
                   <div className="space-y-4">
                     <div className="aspect-video overflow-hidden rounded-[2.5rem] border border-white/10 bg-black">
@@ -222,17 +241,22 @@ const Portfolio = () => {
                       {activeProject.description}
                     </p>
                   </div>
+
                   <aside className="space-y-5 rounded-[2.5rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {activeProject.aiTools.map((tool) => (
-                          <span key={tool} className="rounded-full bg-cyan-500/10 visual-accent-chip px-3 py-1 text-xs text-cyan-100/80">
+                          <span
+                            key={tool}
+                            className="rounded-full bg-cyan-500/10 visual-accent-chip px-3 py-1 text-xs text-cyan-100/80"
+                          >
                             {tool}
                           </span>
                         ))}
                       </div>
                     </div>
+
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables</p>
                       <ul className="mt-2 space-y-2">
@@ -243,6 +267,7 @@ const Portfolio = () => {
                         ))}
                       </ul>
                     </div>
+
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</p>
                       <div className="mt-2 flex flex-wrap gap-2 text-xs">
