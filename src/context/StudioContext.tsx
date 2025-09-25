@@ -310,6 +310,90 @@ const initialPortfolio: PortfolioItem[] = [
   },
 ];
 
+/* ---------- Données initiales ---------- */
+const initialPortfolio: PortfolioItem[] = [
+  {
+    id: uuid(),
+    title: "Pulse HoloBoard · Lancement corporate QuantumLoop",
+    tagline: "Accompagnement de 12 000 collaborateurs avec un dispositif immersif",
+    category: SERVICE_CATEGORIES[0],
+    year: 2025,
+    duration: "01:32",
+    description:
+      "Film d'entreprise réalisé sur plateau robotisé avec incrustations temps réel Kling 2.5. Script co-écrit avec notre IA rédactionnelle pour rendre accessible la transformation digitale et déclinaisons dédiées aux équipes internes.",
+    thumbnail: "https://images.unsplash.com/photo-1522199992901-41860af3a7f3?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=s6zR2T9vn2c",
+    gradient: gradientPool[0],
+    aiTools: ["Midjourney V7", "Kling 2.5", "DaVinci Resolve"],
+    deliverables: ["Film principal 16:9", "Version onboarding 9:16", "Kit de présentation interne"],
+    socialStack: ["Intranet", "LinkedIn", "YouTube"],
+  },
+  {
+    id: uuid(),
+    title: "Aftermovie NeoSolar · Festival IA & lumière",
+    tagline: "Aftermovie immersif pour un festival dédié à l'innovation lumineuse",
+    category: SERVICE_CATEGORIES[1],
+    year: 2024,
+    duration: "02:08",
+    description:
+      "Captation événementielle associant drones FPV, Seedance Pro pour anticiper les mouvements de foule et montage synchronisé Suno AI. Objectif : donner envie de s'inscrire dès l'ouverture de la prochaine édition.",
+    thumbnail: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+    gradient: gradientPool[1],
+    aiTools: ["Seedance Pro", "Suno AI", "DaVinci Resolve"],
+    deliverables: ["Aftermovie 4K", "Teaser 30s", "Stories pré-event"],
+    socialStack: ["Instagram", "TikTok", "YouTube Shorts"],
+  },
+  {
+    id: uuid(),
+    title: "Skyline Loop · Visite immobilière narrée par IA",
+    tagline: "Visite premium d'un penthouse avec narration IA",
+    category: SERVICE_CATEGORIES[2],
+    year: 2025,
+    duration: "01:05",
+    description:
+      "Visite immersive en drone FPV avec overlays data générés par Kling 2.5 et voix off Suno IA. Chaque pièce est présentée comme un chapitre et l'appel à l'action est piloté via QR code interactif.",
+    thumbnail: "https://images.unsplash.com/photo-1487956382158-bb926046304a?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=0pdqf4P9MB8",
+    gradient: gradientPool[2],
+    aiTools: ["Midjourney V7", "Kling 2.5", "Suno AI"],
+    deliverables: ["Film 16:9", "Version VR", "Carousel LinkedIn"],
+    socialStack: ["YouTube", "Website", "Meta Ads"],
+  },
+  {
+    id: uuid(),
+    title: "Snackverse · Série sociale pour WaveBite",
+    tagline: "Série verticale de 12 épisodes conçue pour la conversion",
+    category: SERVICE_CATEGORIES[3],
+    year: 2025,
+    duration: "00:45",
+    description:
+      "Production sociale verticale pilotée par IA : scripts testés via GPT CopyLab, tournage en LED volume, montage automatisé Veo 3 et templates livrés aux équipes internes.",
+    thumbnail: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    gradient: gradientPool[3],
+    aiTools: ["Veo 3", "Midjourney V7", "Adobe Premiere Pro"],
+    deliverables: ["Série 12x45s", "Capsules additionnelles", "Scripts automatisés"],
+    socialStack: ["TikTok", "Snap", "YouTube Shorts"],
+  },
+  {
+    id: uuid(),
+    title: "Orbit Lovers · Mariage futuriste en live",
+    tagline: "Cérémonie captée en direct avec diffusion privée",
+    category: SERVICE_CATEGORIES[4],
+    year: 2024,
+    duration: "03:20",
+    description:
+      "Captation mariage premium : drones, steadycam, robot caméra et IA pour générer les vœux animés. Diffusion live privée et montage highlight livré avant la fin de la réception.",
+    thumbnail: "https://images.unsplash.com/photo-1520854221050-0f4caff449fb?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=oUFJJNQGwhk",
+    gradient: gradientPool[4],
+    aiTools: ["Seedance Pro", "DaVinci Resolve", "Suno AI"],
+    deliverables: ["Live multi-cam", "Highlight 3min", "Stories pour les invités"],
+    socialStack: ["YouTube privé", "Instagram", "Galerie partagée"],
+  },
+];
+
 const initialPricing: PricingTier[] = [
   {
     id: uuid(),
@@ -373,6 +457,47 @@ const initialCredentials: StoredCredential[] = [
   },
 ];
 
+/* Ces deux blocs DOIVENT être placés avant loadInitialQuotes/loadInitialChats */
+const initialQuotes: QuoteRequest[] = [
+  {
+    id: uuid(),
+    clientId: initialClients[1].id,
+    clientName: initialClients[1].name,
+    projectName: "Activation wearable SXSW",
+    budgetRange: "12k€ - 18k€",
+    deadline: "2025-03-11",
+    services: ["Captation multicam", "Scénarisation assistée par IA", "Pack réseaux sociaux"],
+    status: "en revue",
+    moodboardPrompt:
+      "Imagine a slow-motion capture of biometric data turning into aurora borealis patterns inside a dome stage.",
+    createdAt: new Date().toISOString(),
+  },
+];
+
+const initialChats: ChatThread[] = [
+  {
+    quoteId: initialQuotes[0].id,
+    clientName: initialClients[1].name,
+    projectName: initialQuotes[0].projectName,
+    messages: [
+      {
+        id: uuid(),
+        from: "client",
+        content: "On peut ajouter une version 9:16 verticale ?",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        id: uuid(),
+        from: "studio",
+        content:
+          "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  },
+];
+
+/* ---------- Chargement depuis localStorage ---------- */
 const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
   const adminEmail = initialClients[0].email;
   const hasAdmin = list.some((client) => client.email === adminEmail);
@@ -403,7 +528,7 @@ const loadInitialUser = () => {
 const loadInitialCredentials = () =>
   readStorage<StoredCredential[]>(storageKeys.credentials, initialCredentials);
 
-const initialQuotes: QuoteRequest[] = [
+const initialQuotes2: QuoteRequest[] = [
   {
     id: uuid(),
     clientId: initialClients[1].id,
@@ -419,11 +544,11 @@ const initialQuotes: QuoteRequest[] = [
   },
 ];
 
-const initialChats: ChatThread[] = [
+const initialChats2: ChatThread[] = [
   {
-    quoteId: initialQuotes[0].id,
+    quoteId: initialQuotes2[0].id,
     clientName: initialClients[1].name,
-    projectName: initialQuotes[0].projectName,
+    projectName: initialQuotes2[0].projectName,
     messages: [
       {
         id: uuid(),
@@ -488,6 +613,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!supabase) {
+    if (!isSupabaseConfigured) {
       return;
     }
 
@@ -623,6 +749,13 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       };
     }
 
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Ajoutez les variables VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY.",
+      };
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: profile.email,
@@ -693,6 +826,13 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       return { success: true, message: "Connexion réussie." };
     }
 
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Impossible de se connecter.",
+      };
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
@@ -733,6 +873,13 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       };
     }
 
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Impossible d'envoyer le lien de réinitialisation.",
+      };
+    }
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
@@ -757,6 +904,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     if (supabase) {
+    if (isSupabaseConfigured) {
       supabase.auth.signOut().catch((error) => {
         console.error("Erreur lors de la déconnexion Supabase", error);
       });

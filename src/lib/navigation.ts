@@ -33,6 +33,6 @@ export const navigationItems = [
     label: "Dashboard",
     to: "/dashboard",
     emoji: "🛠️",
-    tooltip: "Back-office",
+    tooltip: "Tableau de bord",
   },
 ];
