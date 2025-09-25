@@ -170,7 +170,38 @@ const initialPortfolio: PortfolioItem[] = [
     deliverables: ["Film HQ 16:9", "Version onboarding 9:16", "Pack slides & memes internes"],
     socialStack: ["Intranet", "LinkedIn", "YouTube"],
   },
-  // ... (les autres items idem)
+  {
+    id: uuid(),
+    title: "Sillage Quantique · Teaser wearable QuantumWear",
+    tagline: "Quand ton poignet prédit l'avenir (et ton style)",
+    category: SERVICE_CATEGORIES[1],
+    year: 2025,
+    duration: "00:47",
+    description:
+      "Spot produit hybride alliant captation macro 8K et simulation particules Houdini. Montage rythmé sur soundtrack Murph générative pour incarner la fusion tech-émotion.",
+    thumbnail: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    gradient: gradientPool[1],
+    aiTools: ["Houdini", "Murph AI", "After Effects"],
+    deliverables: ["Spot 16:9 premium", "Cut mobile 9:16", "Variations CTA e-commerce"],
+    socialStack: ["Instagram", "TikTok", "Site web"],
+  },
+  {
+    id: uuid(),
+    title: "Nexus Immersif · Showroom virtuel Spatial House",
+    tagline: "Visiter 40 appartements depuis son canapé (en VR)",
+    category: SERVICE_CATEGORIES[2],
+    year: 2024,
+    duration: "02:15",
+    description:
+      "Parcours immersif métaverse avec scans LiDAR photogrammétriques. Interface Unity customisée et narration IA Claude personnalisée par profil acquéreur.",
+    thumbnail: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    gradient: gradientPool[2],
+    aiTools: ["Unity 3D", "Claude AI", "Gaussian Splatting"],
+    deliverables: ["App VR Oculus", "Version web 360°", "Dashboard analytics vendeur"],
+    socialStack: ["LinkedIn", "YouTube", "Site web"],
+  },
 ];
 
 const initialPricing: PricingTier[] = [
@@ -266,7 +297,156 @@ const initialChats: ChatThread[] = [
 // --- StudioProvider + useStudio (inchangé, sauf intégration de serviceCategories) ---
 
 const StudioProvider = ({ children }: { children: ReactNode }) => {
-  // ... états et fonctions identiques à ton code
+  const [user, setUser] = useState<ClientAccount | null>(null);
+  const [clients, setClients] = useState<ClientAccount[]>(initialClients);
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialPortfolio);
+  const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(initialPricing);
+  const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>(initialQuotes);
+  const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
+  const [chats, setChats] = useState<ChatThread[]>(initialChats);
+  const [visualMode, setVisualMode] = useState<VisualMode>("nebula");
+
+  useEffect(() => {
+    const updateCSSVariables = () => {
+      const root = document.documentElement;
+      const palette = visualPalettes[visualMode];
+      
+      root.style.setProperty("--accent", palette.accent);
+      root.style.setProperty("--accent-soft", palette.accentSoft);
+      root.style.setProperty("--secondary", palette.secondary);
+      root.style.setProperty("--tertiary", palette.tertiary);
+      root.style.setProperty("--accent-foreground", palette.accentForeground);
+      root.style.setProperty("--border", palette.border);
+    };
+
+    updateCSSVariables();
+  }, [visualMode]);
+
+  const cycleVisualMode = () => {
+    setVisualMode(prev => prev === "nebula" ? "solstice" : "nebula");
+  };
+
+  const register = (payload: Omit<ClientAccount, "id" | "avatarHue">) => {
+    const existingClient = clients.find(c => c.email === payload.email);
+    if (existingClient) {
+      return { success: false, message: "Un compte avec cet email existe déjà" };
+    }
+
+    const newClient: ClientAccount = {
+      ...payload,
+      id: uuid(),
+      avatarHue: Math.floor(Math.random() * 360),
+    };
+
+    setClients(prev => [...prev, newClient]);
+    setUser(newClient);
+    return { success: true };
+  };
+
+  const login = (email: string, password: string) => {
+    const client = clients.find(c => c.email === email && c.password === password);
+    if (!client) {
+      return { success: false, message: "Email ou mot de passe incorrect" };
+    }
+
+    setUser(client);
+    return { success: true };
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
+
+  const addPortfolioItem = (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => {
+    const newItem: PortfolioItem = {
+      ...payload,
+      id: uuid(),
+      gradient: payload.gradient || gradientPool[Math.floor(Math.random() * gradientPool.length)],
+      videoUrl: payload.videoUrl || "",
+    };
+
+    setPortfolioItems(prev => [newItem, ...prev]);
+  };
+
+  const updatePortfolioItem = (id: string, updates: Partial<PortfolioItem>) => {
+    setPortfolioItems(prev => prev.map(item => 
+      item.id === id ? { ...item, ...updates } : item
+    ));
+  };
+
+  const removePortfolioItem = (id: string) => {
+    setPortfolioItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const updatePricingTier = (id: string, updates: Partial<PricingTier>) => {
+    setPricingTiers(prev => prev.map(tier => 
+      tier.id === id ? { ...tier, ...updates } : tier
+    ));
+  };
+
+  const createQuoteRequest = (payload: Omit<QuoteRequest, "id" | "status" | "createdAt" | "clientId" | "clientName">) => {
+    if (!user) return null;
+
+    const newQuote: QuoteRequest = {
+      ...payload,
+      id: uuid(),
+      clientId: user.id,
+      clientName: user.name,
+      status: "nouveau",
+      createdAt: new Date().toISOString(),
+    };
+
+    setQuoteRequests(prev => [newQuote, ...prev]);
+    return newQuote;
+  };
+
+  const advanceQuoteStatus = (id: string, status: QuoteRequest["status"]) => {
+    setQuoteRequests(prev => prev.map(quote => 
+      quote.id === id ? { ...quote, status } : quote
+    ));
+  };
+
+  const appendChatMessage = (quoteId: string, message: Omit<ChatMessage, "id" | "timestamp">) => {
+    const newMessage: ChatMessage = {
+      ...message,
+      id: uuid(),
+      timestamp: new Date().toISOString(),
+    };
+
+    setChats(prev => {
+      const existingChat = prev.find(chat => chat.quoteId === quoteId);
+      if (existingChat) {
+        return prev.map(chat => 
+          chat.quoteId === quoteId 
+            ? { ...chat, messages: [...chat.messages, newMessage] }
+            : chat
+        );
+      } else {
+        const quote = quoteRequests.find(q => q.id === quoteId);
+        if (quote) {
+          const newChat: ChatThread = {
+            quoteId,
+            clientName: quote.clientName,
+            projectName: quote.projectName,
+            messages: [newMessage],
+          };
+          return [...prev, newChat];
+        }
+        return prev;
+      }
+    });
+  };
+
+  const recordContactRequest = (payload: Omit<ContactRequest, "id" | "createdAt">) => {
+    const newRequest: ContactRequest = {
+      ...payload,
+      id: uuid(),
+      createdAt: new Date().toISOString(),
+    };
+
+    setContactRequests(prev => [newRequest, ...prev]);
+  };
+
   const value: StudioContextValue = {
     user,
     clients,

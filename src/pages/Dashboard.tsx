@@ -18,7 +18,7 @@ type PortfolioDraft = {
   socialStack: string;
 };
 
-const getDefaultProject = (categories: string[]): PortfolioDraft => ({
+const getDefaultProject = (categories: readonly string[]): PortfolioDraft => ({
   title: "",
   tagline: "",
   category: categories[0] ?? "Entreprise",
