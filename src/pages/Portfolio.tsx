@@ -1,718 +1,149 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import { useEffect, useMemo, useState } from "react";
+import { Play } from "lucide-react";
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+import { useStudio } from "@/context/StudioContext";
+import { cn } from "@/lib/utils";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+const ALL_CATEGORY = "Tous les projets";
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+const Portfolio = () => {
+  const { portfolioItems, serviceCategories } = useStudio();
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+  const categories = useMemo(() => {
+    const unique = new Set<string>([...serviceCategories]);
+    portfolioItems.forEach((item) => unique.add(item.category));
+    return [ALL_CATEGORY, ...unique];
+  }, [portfolioItems, serviceCategories]);
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+  const [activeCategory, setActiveCategory] = useState(() => categories[0] ?? ALL_CATEGORY);
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+  useEffect(() => {
+    if (!categories.length) {
+      return;
+    }
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    if (!categories.includes(activeCategory)) {
+      setActiveCategory(categories[0]);
+    }
+  }, [categories, activeCategory]);
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+  const filteredItems = useMemo(() => {
+    if (activeCategory === ALL_CATEGORY) {
+      return portfolioItems;
+    }
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    return portfolioItems.filter((item) => item.category === activeCategory);
+  }, [activeCategory, portfolioItems]);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
+      />
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-20 sm:px-10 lg:py-24">
+        <header className="space-y-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            Films génératifs orchestrés pour vos lancements stratégiques
+          </h1>
+          <p className="max-w-3xl text-base text-slate-300">
+            Chaque projet conjugue direction artistique, IA générative et diffusion multicanale. Explorez nos études
+            de cas pour visualiser ce que notre studio peut activer pour votre marque.
+          </p>
+        </header>
 
-    --radius: 0.5rem;
+        <section className="space-y-8">
+          <div className="portfolio-filter-scroll-wrapper overflow-x-auto">
+            <div className="flex w-max gap-3 py-1">
+              {categories.map((category) => {
+                const isActive = category === activeCategory;
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setActiveCategory(category)}
+                    className={cn(
+                      "portfolio-filter-trigger shrink-0",
+                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
+                    )}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+          <div className="portfolio-gallery grid gap-10 lg:gap-14">
+            {filteredItems.map((item) => (
+              <article key={item.id} className="portfolio-card group">
+                <div className="portfolio-card-media">
+                  {item.thumbnail ? (
+                    <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className={cn("h-full w-full", item.gradient, "bg-gradient-to-br")} aria-hidden />
+                  )}
+                  <div className="portfolio-card-overlay" />
+                  <div className="portfolio-card-copy">
+                    <div className="flex flex-wrap items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/70">
+                      <span>{item.category}</span>
+                      <span className="opacity-70">•</span>
+                      <span>{item.year}</span>
+                    </div>
+                    <h3 className="text-2xl font-semibold leading-tight sm:text-3xl">{item.title}</h3>
+                    <p className="max-w-xl text-sm text-white/75 sm:text-base">{item.tagline}</p>
+                  </div>
+                  <div className="portfolio-card-cta">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 font-semibold tracking-[0.35em] text-white/90 backdrop-blur">
+                      <Play className="h-4 w-4" />
+                      Visionner
+                    </span>
+                  </div>
+                </div>
 
-    --visual-accent: 188 86% 64%;
-    --visual-accent-soft: 196 90% 78%;
-    --visual-secondary: 315 86% 66%;
-    --visual-tertiary: 251 96% 72%;
-    --visual-accent-foreground: 190 100% 92%;
-    --visual-border: 188 86% 64%;
-  }
+                <div className="portfolio-card-meta">
+                  <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.35em] text-white/60">
+                    <span>{item.duration}</span>
+                    <span className="hidden h-1 w-1 rounded-full bg-white/30 sm:inline-flex" aria-hidden />
+                    <span>{item.aiTools.length} outils IA</span>
+                    <span className="hidden h-1 w-1 rounded-full bg-white/30 sm:inline-flex" aria-hidden />
+                    <span>Diffusion : {item.socialStack.join(" · ")}</span>
+                  </div>
+                  <p className="text-sm text-white/75 sm:text-base">{item.description}</p>
+                  {item.aiTools.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {item.aiTools.map((tool) => (
+                        <span
+                          key={tool}
+                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80"
+                        >
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {item.deliverables.length > 0 && (
+                    <div className="flex flex-wrap gap-3 text-[0.65rem] uppercase tracking-[0.35em] text-white/55">
+                      {item.deliverables.map((deliverable) => (
+                        <span key={deliverable}>{deliverable}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-.hero-ribbon {
-  position: sticky;
-  top: 0.75rem;
-  z-index: 40;
-  display: flex;
-  justify-content: center;
-  padding: 0 1.5rem;
-  transition: transform 0.45s ease, opacity 0.45s ease;
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: none;
-}
-
-.hero-ribbon.hidden {
-  transform: translateY(-120%);
-  opacity: 0;
-}
-
-.hero-ribbon__content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: min(68rem, 100%);
-  border-radius: 999px;
-  border: 1px solid hsla(var(--visual-border) / 0.25);
-  background: linear-gradient(
-    120deg,
-    hsla(var(--visual-accent) / 0.22),
-    hsla(var(--visual-secondary) / 0.2)
+            {filteredItems.length === 0 && (
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-sm text-white/70">
+                Aucun projet ne correspond encore à ce filtre. Revenez bientôt, nous produisons en continu.
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
   );
-  box-shadow: 0 20px 60px hsla(var(--visual-accent) / 0.18);
-  padding: 0.85rem 1.5rem;
-  backdrop-filter: blur(20px);
-  pointer-events: auto;
-}
+};
 
-.hero-ribbon__pulse {
-  width: 0.95rem;
-  height: 0.95rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, hsl(var(--visual-accent)), hsl(var(--visual-secondary)));
-  box-shadow: 0 0 0 0 hsla(var(--visual-accent) / 0.6);
-  animation: heroRibbonPulse 1.6s ease-in-out infinite;
-  flex-shrink: 0;
-}
-
-.hero-ribbon__text {
-  display: grid;
-  gap: 0.15rem;
-  flex: 1;
-}
-
-.hero-ribbon__headline {
-  font-size: clamp(0.95rem, 2vw, 1.125rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: hsl(var(--visual-accent-foreground));
-}
-
-.hero-ribbon__subheadline {
-  font-size: clamp(0.75rem, 1.6vw, 0.9rem);
-  color: hsla(var(--visual-accent-foreground) / 0.75);
-}
-
-.hero-ribbon__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.65rem 1.35rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  font-weight: 700;
-  background: hsla(var(--visual-accent) / 0.3);
-  color: hsl(var(--visual-accent-foreground));
-  border: 1px solid hsla(var(--visual-border) / 0.35);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-  white-space: nowrap;
-}
-
-.hero-ribbon__cta:hover {
-  transform: translateY(-1px);
-  background: hsla(var(--visual-secondary) / 0.4);
-  box-shadow: 0 15px 35px hsla(var(--visual-secondary) / 0.28);
-}
-
-@keyframes heroRibbonPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 hsla(var(--visual-accent) / 0.6);
-    opacity: 1;
-  }
-  50% {
-    box-shadow: 0 0 0 12px hsla(var(--visual-accent) / 0);
-    opacity: 0.5;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-ribbon {
-    top: 0.5rem;
-    padding: 0 1rem;
-  }
-
-  .hero-ribbon__content {
-    flex-direction: column;
-    border-radius: 2rem;
-    text-align: center;
-    padding: 1rem 1.25rem;
-  }
-
-  .hero-ribbon__cta {
-    width: 100%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
-
-  body.visual-nebula {
-    --visual-accent: 188 86% 64%;
-    --visual-accent-soft: 196 90% 78%;
-    --visual-secondary: 315 86% 66%;
-    --visual-tertiary: 251 96% 72%;
-    --visual-accent-foreground: 190 100% 92%;
-    --visual-border: 188 86% 64%;
-  }
-
-  body.visual-solstice {
-    --visual-accent: 34 97% 62%;
-    --visual-accent-soft: 17 94% 64%;
-    --visual-secondary: 296 76% 72%;
-    --visual-tertiary: 208 88% 70%;
-    --visual-accent-foreground: 35 100% 92%;
-    --visual-border: 34 97% 62%;
-  }
-}
-
-.visual-accent-text {
-  color: hsl(var(--visual-accent-foreground) / 0.8) !important;
-}
-
-.visual-accent-text-strong {
-  color: hsl(var(--visual-accent-foreground) / 0.95) !important;
-}
-
-.visual-accent-border {
-  border-color: hsla(var(--visual-border) / 0.45) !important;
-}
-
-.visual-accent-bg {
-  background-color: hsla(var(--visual-accent) / 0.18) !important;
-}
-
-.visual-accent-chip {
-  background-color: hsla(var(--visual-accent) / 0.12) !important;
-  color: hsl(var(--visual-accent-foreground) / 0.85) !important;
-}
-
-.visual-accent-dot {
-  background-color: hsl(var(--visual-accent) / 0.9) !important;
-  box-shadow: 0 0 12px hsla(var(--visual-accent) / 0.75) !important;
-}
-
-.visual-accent-gradient {
-  background-image: linear-gradient(
-      120deg,
-      hsla(var(--visual-accent) / 0.85),
-      hsla(var(--visual-secondary) / 0.75),
-      hsla(var(--visual-tertiary) / 0.8)
-    ) !important;
-}
-
-.visual-accent-underline {
-  text-decoration-color: hsla(var(--visual-accent) / 0.7) !important;
-}
-
-.visual-accent-shadow {
-  box-shadow: 0 10px 40px hsla(var(--visual-accent) / 0.32) !important;
-}
-
-.visual-accent-halo {
-  box-shadow: 0 25px 120px hsla(var(--visual-accent) / 0.2) !important;
-}
-
-.visual-accent-veil {
-  box-shadow: 0 20px 120px hsla(var(--visual-accent) / 0.18) !important;
-}
-
-.visual-accent-glow {
-  box-shadow: 0 15px 80px hsla(var(--visual-accent) / 0.22) !important;
-}
-
-.visual-accent-hover-shadow {
-  box-shadow: 0 35px 120px hsla(var(--visual-accent) / 0.24) !important;
-}
-
-.visual-secondary-veil {
-  box-shadow: 0 20px 100px hsla(var(--visual-secondary) / 0.18) !important;
-}
-
-.visual-secondary-glow {
-  box-shadow: 0 15px 50px hsla(var(--visual-secondary) / 0.28) !important;
-}
-
-@keyframes auroraDrift {
-  0% {
-    transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.02);
-    opacity: 0.65;
-  }
-  40% {
-    transform: translate3d(4%, 6%, 0) rotate(5deg) scale(1.08);
-    opacity: 0.85;
-  }
-  70% {
-    transform: translate3d(-2%, 8%, 0) rotate(-3deg) scale(1.04);
-    opacity: 0.75;
-  }
-  100% {
-    transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.02);
-    opacity: 0.65;
-  }
-}
-
-@keyframes holoSweep {
-  0% {
-    transform: translateX(-160%) skewX(-12deg);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateX(160%) skewX(-12deg);
-    opacity: 0;
-  }
-}
-
-@keyframes orbitGlow {
-  0% {
-    transform: rotate(0deg) scale(1);
-    filter: blur(28px);
-    opacity: 0.55;
-  }
-  50% {
-    transform: rotate(180deg) scale(1.08);
-    filter: blur(35px);
-    opacity: 0.8;
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-    filter: blur(28px);
-    opacity: 0.55;
-  }
-}
-
-@keyframes floatPulse {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, -6px, 0) scale(1.01);
-  }
-}
-
-@keyframes bandAurora {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes bandShimmer {
-  0% {
-    transform: translateX(-130%) skewX(-12deg);
-    opacity: 0;
-  }
-  35% {
-    opacity: 0.45;
-  }
-  60% {
-    transform: translateX(20%) skewX(-12deg);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateX(130%) skewX(-12deg);
-    opacity: 0;
-  }
-}
-
-@layer utilities {
-  .portfolio-aurora-cloud {
-    position: absolute;
-    inset: -45%;
-    background:
-      radial-gradient(circle at 15% 20%, hsla(var(--visual-accent) / 0.35), transparent 55%),
-      radial-gradient(circle at 85% 30%, hsla(var(--visual-secondary) / 0.28), transparent 60%),
-      radial-gradient(circle at 55% 80%, hsla(var(--visual-tertiary) / 0.24), transparent 65%);
-    filter: blur(60px);
-    opacity: 0.75;
-    animation: auroraDrift 26s ease-in-out infinite;
-  }
-
-  .portfolio-orbit {
-    position: absolute;
-    border-radius: 9999px;
-    background: radial-gradient(circle, hsla(var(--visual-accent) / 0.7), transparent 60%);
-    mix-blend-mode: screen;
-    animation: orbitGlow 18s linear infinite;
-    pointer-events: none;
-  }
-
-  .portfolio-orbit.planet-one {
-    top: -12%;
-    right: 14%;
-    width: 12rem;
-    height: 12rem;
-  }
-
-  .portfolio-orbit.planet-two {
-    bottom: -8%;
-    left: -12%;
-    width: 16rem;
-    height: 16rem;
-    animation-duration: 22s;
-  }
-
-  .portfolio-hero-card {
-    position: relative;
-    min-height: 30rem;
-    overflow: hidden;
-    border-radius: 3rem;
-    border: 1px solid hsla(var(--visual-border) / 0.35);
-    background: linear-gradient(150deg, hsla(var(--visual-accent) / 0.16), hsla(var(--visual-secondary) / 0.1));
-    box-shadow: 0 45px 140px hsla(var(--visual-accent) / 0.28);
-    isolation: isolate;
-  }
-
-  .portfolio-hero-card::after {
-    content: "";
-    position: absolute;
-    inset: -35%;
-    background: radial-gradient(circle at 30% 30%, hsla(var(--visual-tertiary) / 0.32), transparent 55%);
-    mix-blend-mode: screen;
-    opacity: 0.35;
-    animation: auroraDrift 22s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  .portfolio-episode {
-    position: relative;
-    padding: 1.75rem;
-    border-radius: 2.5rem;
-    border: 1px solid hsla(var(--visual-border) / 0.25);
-    background: linear-gradient(145deg, hsla(var(--visual-accent) / 0.2), hsla(var(--visual-secondary) / 0.18) 55%, hsla(var(--visual-tertiary) / 0.14));
-    box-shadow: 0 30px 90px hsla(var(--visual-accent) / 0.16);
-    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    overflow: hidden;
-  }
-
-  .portfolio-episode::before {
-    content: "";
-    position: absolute;
-    inset: -30%;
-    background: radial-gradient(circle at 20% 20%, hsla(var(--visual-tertiary) / 0.25), transparent 65%);
-    opacity: 0;
-    transition: opacity 0.7s ease;
-  }
-
-  .portfolio-episode::after {
-    content: "";
-    position: absolute;
-    inset: -15%;
-    background: linear-gradient(120deg, transparent 0%, hsla(var(--visual-accent) / 0.5) 45%, transparent 75%);
-    mix-blend-mode: screen;
-    opacity: 0;
-    animation: holoSweep 4.6s linear infinite;
-    animation-play-state: paused;
-  }
-
-  .portfolio-episode:hover {
-    transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 40px 120px hsla(var(--visual-accent) / 0.28);
-  }
-
-  .portfolio-episode:hover::before {
-    opacity: 0.6;
-  }
-
-  .portfolio-episode:hover::after {
-    opacity: 0.7;
-    animation-play-state: running;
-  }
-
-  /* Filters: scroll wrapper + triggers + states (version unifiée) */
-  .portfolio-filter-scroll-wrapper {
-    position: relative;
-    -webkit-overflow-scrolling: touch;
-    --portfolio-filter-fade: clamp(12px, 4vw, 52px);
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 var(--portfolio-filter-fade),
-      #000 calc(100% - var(--portfolio-filter-fade)),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 var(--portfolio-filter-fade),
-      #000 calc(100% - var(--portfolio-filter-fade)),
-      transparent 100%
-    );
-  }
-
-  .portfolio-filter-trigger {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 0.85rem;
-    border: none;
-    border-radius: 9999px;
-    background: transparent;
-    color: hsla(0, 0%, 100%, 0.55);
-    transition: color 0.4s ease, transform 0.4s ease;
-    cursor: pointer;
-    box-shadow: inset 0 0 0 1px hsla(var(--visual-border) / 0.12);
-  }
-
-  .portfolio-filter-trigger::after {
-    content: "";
-    position: absolute;
-    left: 20%;
-    right: 20%;
-    bottom: -0.3rem;
-    height: 2px;
-    border-radius: 9999px;
-    background: linear-gradient(90deg, hsla(var(--visual-accent) / 0.5), hsla(var(--visual-secondary) / 0.35));
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.4s ease, opacity 0.4s ease;
-    opacity: 0;
-  }
-
-  .portfolio-filter-trigger:hover {
-    color: hsla(0, 0%, 100%, 0.85);
-  }
-
-  .portfolio-filter-trigger:hover::after {
-    transform: scaleX(1);
-    opacity: 0.55;
-  }
-
-  .portfolio-filter-idle {
-    color: hsla(0, 0%, 100%, 0.65);
-  }
-
-  .portfolio-filter-idle:focus-visible {
-    outline: 2px solid hsla(var(--visual-border) / 0.45);
-    outline-offset: 4px;
-  }
-
-  .portfolio-filter-active {
-    padding: 0.6rem 1.2rem;
-    background: linear-gradient(
-      120deg,
-      hsla(var(--visual-accent) / 0.45),
-      hsla(var(--visual-secondary) / 0.35),
-      hsla(var(--visual-tertiary) / 0.4)
-    );
-    color: white;
-    box-shadow: 0 20px 48px hsla(var(--visual-accent) / 0.24);
-    border: 1px solid hsla(var(--visual-border) / 0.32);
-    transform: translateY(-2px);
-  }
-
-  .portfolio-filter-active::after {
-    display: none;
-  }
-
-  .portfolio-filter-active:focus-visible {
-    outline: 2px solid hsla(var(--visual-border) / 0.6);
-    outline-offset: 4px;
-  }
-
-  .portfolio-gallery {
-    position: relative;
-  }
-
-  .portfolio-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: 3rem;
-    border: 1px solid hsla(var(--visual-border) / 0.25);
-    background: linear-gradient(
-      150deg,
-      hsla(var(--visual-accent) / 0.12),
-      hsla(var(--visual-secondary) / 0.12) 45%,
-      hsla(var(--visual-tertiary) / 0.15)
-    );
-    box-shadow: 0 35px 120px hsla(var(--visual-accent) / 0.2);
-    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
-    cursor: pointer;
-    isolation: isolate;
-  }
-
-  .portfolio-card::before {
-    content: "";
-    position: absolute;
-    inset: -40%;
-    background:
-      radial-gradient(circle at 20% 20%, hsla(var(--visual-accent) / 0.3), transparent 55%),
-      radial-gradient(circle at 80% 40%, hsla(var(--visual-secondary) / 0.25), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.6s ease;
-    filter: blur(30px);
-    pointer-events: none;
-  }
-
-  .portfolio-card::after {
-    content: "";
-    position: absolute;
-    inset: -20%;
-    background: linear-gradient(120deg, transparent 0%, hsla(var(--visual-accent) / 0.5) 50%, transparent 70%);
-    mix-blend-mode: screen;
-    opacity: 0;
-    animation: holoSweep 6s linear infinite;
-    animation-play-state: paused;
-    pointer-events: none;
-  }
-
-  .portfolio-card:hover {
-    transform: translateY(-12px) scale(1.015) rotate(-0.4deg);
-    box-shadow: 0 55px 160px hsla(var(--visual-accent) / 0.32);
-  }
-
-  .portfolio-card:hover::before {
-    opacity: 0.85;
-  }
-
-  .portfolio-card:hover::after {
-    opacity: 0.8;
-    animation-play-state: running;
-  }
-
-  .portfolio-card-media {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-  }
-
-  .portfolio-card-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent, hsla(224 71% 4% / 0.35) 35%, hsla(224 71% 4% / 0.88));
-    transition: opacity 0.6s ease;
-  }
-
-  .portfolio-card-copy {
-    position: absolute;
-    left: 1.75rem;
-    right: 1.75rem;
-    bottom: 1.75rem;
-    display: grid;
-    gap: 0.45rem;
-  }
-
-  .portfolio-card-meta {
-    padding: 1.75rem;
-    padding-bottom: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .portfolio-card-cta {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    background: hsla(229 84% 5% / 0.72);
-    color: white;
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    pointer-events: none;
-  }
-
-  .portfolio-card:hover .portfolio-card-overlay {
-    opacity: 0.92;
-  }
-
-  .portfolio-card:hover .portfolio-card-cta {
-    opacity: 1;
-  }
-
-  .portfolio-dialog {
-    background: linear-gradient(160deg, hsla(229 84% 5% / 0.95), hsla(222 47% 11% / 0.92));
-    box-shadow: 0 45px 140px hsla(var(--visual-accent) / 0.32);
-    border-radius: 2.5rem;
-  }
-}
+export default Portfolio;
