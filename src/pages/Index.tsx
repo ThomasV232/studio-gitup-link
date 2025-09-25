@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import HeroRibbon from "@/components/HeroRibbon";
 import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ const Index = () => {
   const [contactSent, setContactSent] = useState(false);
   const [heroImageLoaded, setHeroImageLoaded] = useState(false);
   const [heroImageError, setHeroImageError] = useState(false);
+  const [isRibbonVisible, setIsRibbonVisible] = useState(true);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -37,12 +39,44 @@ const Index = () => {
   const heroProject = portfolioItems[0];
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    let ticking = false;
+
+    const updateVisibility = () => {
+      setIsRibbonVisible(window.scrollY <= 40);
+    };
+
+    const handleScroll = () => {
+      if (ticking) {
+        return;
+      }
+
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        updateVisibility();
+        ticking = false;
+      });
+    };
+
+    updateVisibility();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
     setHeroImageLoaded(false);
     setHeroImageError(false);
   }, [heroProject?.thumbnail]);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
+      <HeroRibbon visible={isRibbonVisible} />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
