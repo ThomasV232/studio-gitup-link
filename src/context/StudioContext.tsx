@@ -87,6 +87,7 @@ export type ClientAccount = {
 };
 
 type StoredClientAccount = ClientAccount & { password?: string };
+type StoredCredential = { email: string; password: string; updatedAt: string };
 
 export type RegistrationPayload = {
   name: string;
@@ -175,7 +176,14 @@ const storageKeys = {
   contacts: "studio.vbg.contacts",
   chats: "studio.vbg.chats",
   visualMode: "studio.vbg.visual-mode",
+  credentials: "studio.vbg.credentials",
 } as const;
+
+const normaliseEmail = (email: string) => email.trim().toLowerCase();
+const encodePassword = (value: string) =>
+  Array.from(value)
+    .map((char) => char.charCodeAt(0).toString(16).padStart(2, "0"))
+    .join("");
 
 const readStorage = <T,>(key: string, fallback: T): T => {
   if (!isBrowser) return fallback;
@@ -292,6 +300,16 @@ const initialPortfolio: PortfolioItem[] = [
     year: 2025,
     duration: "00:36",
     description:
+      "Création de logo animé via Midjourney V7 puis animatic Kling 2.5. Sound design Suno AI et packaging template pour diffusion OTT et dispositifs immersifs.",
+    thumbnail: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200",
+    videoUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+    gradient: gradientPool[0],
+    aiTools: ["Midjourney V7", "Kling 2.5", "After Effects"],
+    deliverables: ["Logo animé 4 formats", "Banque transitions", "Kit son identité"],
+    socialStack: ["Behance", "Vimeo", "TikTok"],
+  },
+];
+
 /* ---------- Données initiales ---------- */
 const initialPortfolio: PortfolioItem[] = [
   {
@@ -374,22 +392,6 @@ const initialPortfolio: PortfolioItem[] = [
     deliverables: ["Live multi-cam", "Highlight 3min", "Stories pour les invités"],
     socialStack: ["YouTube privé", "Instagram", "Galerie partagée"],
   },
-  {
-    id: uuid(),
-    title: "LogoVerse · Identité motion générée",
-    tagline: "Création d'identité motion design propulsée par l'IA",
-    category: SERVICE_CATEGORIES[5],
-    year: 2025,
-    duration: "00:36",
-    description:
-      "Création de logo animé via Midjourney V7 puis animatic Kling 2.5. Sound design Suno AI et packaging template pour diffusion OTT et dispositifs immersifs.",
-    thumbnail: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
-    gradient: gradientPool[0],
-    aiTools: ["Midjourney V7", "Kling 2.5", "After Effects"],
-    deliverables: ["Logo animé 4 formats", "Banque transitions", "Kit son identité"],
-    socialStack: ["Behance", "Vimeo", "TikTok"],
-  },
 ];
 
 const initialPricing: PricingTier[] = [
@@ -439,6 +441,19 @@ const initialClients: ClientAccount[] = [
     membership: "Hyperdrive",
     avatarHue: 182,
     lastProject: "Sillage Quantique",
+  },
+];
+
+const initialCredentials: StoredCredential[] = [
+  {
+    email: normaliseEmail("volberg.thomas@gmail.com"),
+    password: encodePassword("StudioVBG2025!"),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    email: normaliseEmail("lena@quantumwear.ai"),
+    password: encodePassword("Hyperdrive2025!"),
+    updatedAt: new Date().toISOString(),
   },
 ];
 
@@ -510,8 +525,10 @@ const loadInitialUser = () => {
   const candidates = loadInitialClients();
   return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
 };
+const loadInitialCredentials = () =>
+  readStorage<StoredCredential[]>(storageKeys.credentials, initialCredentials);
 
-const initialQuotes: QuoteRequest[] = [
+const initialQuotes2: QuoteRequest[] = [
   {
     id: uuid(),
     clientId: initialClients[1].id,
@@ -527,11 +544,11 @@ const initialQuotes: QuoteRequest[] = [
   },
 ];
 
-const initialChats: ChatThread[] = [
+const initialChats2: ChatThread[] = [
   {
-    quoteId: initialQuotes[0].id,
+    quoteId: initialQuotes2[0].id,
     clientName: initialClients[1].name,
-    projectName: initialQuotes[0].projectName,
+    projectName: initialQuotes2[0].projectName,
     messages: [
       {
         id: uuid(),
@@ -553,6 +570,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const supabase = getSupabaseClient();
   const [user, setUser] = useState<ClientAccount | null>(loadInitialUser);
   const [clients, setClients] = useState<ClientAccount[]>(loadInitialClients);
+  const [credentials, setCredentials] = useState<StoredCredential[]>(loadInitialCredentials);
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(loadInitialPortfolio);
   const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(loadInitialPricing);
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>(loadInitialQuotes);
@@ -594,6 +612,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
+    if (!supabase) {
     if (!isSupabaseConfigured) {
       return;
     }
@@ -653,6 +672,10 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   }, [clients]);
 
   useEffect(() => {
+    writeStorage(storageKeys.credentials, credentials);
+  }, [credentials]);
+
+  useEffect(() => {
     if (user) {
       writeStorage(storageKeys.user, user);
     } else {
@@ -687,6 +710,44 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const register: StudioContextValue["register"] = async (payload) => {
     const { password, ...profile } = payload;
     const avatarHue = Math.floor(Math.random() * 360);
+    const normalizedEmail = normaliseEmail(profile.email);
+
+    if (!supabase || !isSupabaseConfigured) {
+      if (credentials.some((credential) => credential.email === normalizedEmail)) {
+        return {
+          success: false,
+          message: "Un compte existe déjà avec cette adresse email. Essayez de vous connecter.",
+        };
+      }
+
+      const newClient: ClientAccount = {
+        id: uuid(),
+        name: profile.name,
+        email: profile.email.trim(),
+        company: profile.company,
+        industry: profile.industry,
+        membership: profile.membership,
+        avatarHue,
+        lastProject: "Premier projet à venir",
+      };
+
+      setClients((prev) => ensureAdminClient([...prev, newClient]));
+      setCredentials((prev) => [
+        ...prev,
+        {
+          email: normalizedEmail,
+          password: encodePassword(password),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
+      setUser(newClient);
+
+      return {
+        success: true,
+        message:
+          "Compte créé en mode démo. Vous êtes connecté·e et pouvez accéder immédiatement au tableau de bord.",
+      };
+    }
 
     if (!isSupabaseConfigured) {
       return {
@@ -737,6 +798,34 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login: StudioContextValue["login"] = async (email, password) => {
+    if (!supabase || !isSupabaseConfigured) {
+      const normalizedEmail = normaliseEmail(email);
+      const storedCredential = credentials.find((credential) => credential.email === normalizedEmail);
+
+      if (!storedCredential) {
+        return {
+          success: false,
+          message: "Aucun compte n'est associé à cette adresse. Créez votre espace client.",
+        };
+      }
+
+      if (storedCredential.password !== encodePassword(password)) {
+        return { success: false, message: "Mot de passe incorrect." };
+      }
+
+      const matchingClient = clients.find((client) => normaliseEmail(client.email) === normalizedEmail);
+
+      if (!matchingClient) {
+        return {
+          success: false,
+          message: "Impossible de retrouver votre profil client. Réalisez une nouvelle inscription.",
+        };
+      }
+
+      setUser(matchingClient);
+      return { success: true, message: "Connexion réussie." };
+    }
+
     if (!isSupabaseConfigured) {
       return {
         success: false,
@@ -766,6 +855,24 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const requestPasswordReset: StudioContextValue["requestPasswordReset"] = async (email) => {
+    if (!supabase || !isSupabaseConfigured) {
+      const normalizedEmail = normaliseEmail(email);
+      const storedCredential = credentials.find((credential) => credential.email === normalizedEmail);
+
+      if (!storedCredential) {
+        return {
+          success: false,
+          message: "Adresse inconnue. Vérifiez l'orthographe ou créez un nouveau compte.",
+        };
+      }
+
+      return {
+        success: true,
+        message:
+          "Mode démo : contactez support@studiovbg.fr pour réinitialiser votre mot de passe, ou inscrivez-vous de nouveau.",
+      };
+    }
+
     if (!isSupabaseConfigured) {
       return {
         success: false,
@@ -796,6 +903,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    if (supabase) {
     if (isSupabaseConfigured) {
       supabase.auth.signOut().catch((error) => {
         console.error("Erreur lors de la déconnexion Supabase", error);
