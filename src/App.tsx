@@ -38,11 +38,11 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/dashboard"
-              element={(
-                <ProtectedRoute requireAdmin>
+              element={
+                <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
-              )}
+              }
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
