@@ -1,3 +1,4 @@
+/* src/pages/Services.tsx */
 import { Link } from "react-router-dom";
 import { servicesData } from "@/lib/services";
 
@@ -20,21 +21,22 @@ const Services = () => {
                 Services Studio VBG · 2025
               </span>
               <h1 className="text-5xl font-black leading-tight">
-                Trois modules interstellaires pour propulser vos contenus vidéo
+                Des offres structurées pour sécuriser vos productions vidéo
               </h1>
               <p className="text-lg text-slate-200/80">
-                Chaque service est pensé comme un épisode de série premium : intro explosive, développement punchy, final qui fait cliquer.
-                On combine plateau réel, IA générative et humour bien dosé.
+                Chaque module associe stratégie de contenu, innovation IA et savoir-faire de plateau afin de délivrer des
+                expériences cohérentes et mesurables.
               </p>
             </div>
+
             <div className="grid gap-4 text-sm text-slate-200/70">
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Synergie stack</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Écosystème technologique</p>
                 <p className="mt-2">Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Petit plus</p>
-                <p className="mt-2">Chaque module inclut un icebreaker comique avec votre équipe.</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Engagement projet</p>
+                <p className="mt-2">Chaque collaboration inclut un cadrage initial détaillé et des points d&apos;étape documentés.</p>
               </div>
             </div>
           </div>
@@ -53,8 +55,10 @@ const Services = () => {
                     <span>Module 0{index + 1}</span>
                     <span>{service.signatureMove}</span>
                   </div>
+
                   <h2 className="text-4xl font-extrabold">{service.title}</h2>
                   <p className="text-lg text-slate-200/80">{service.subtitle}</p>
+
                   <div className="grid gap-4 text-sm text-slate-200/80 lg:grid-cols-2">
                     <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Problème</p>
@@ -65,20 +69,26 @@ const Services = () => {
                       <p className="mt-2 leading-relaxed">{service.promise}</p>
                     </div>
                   </div>
+
                   <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.3em] text-cyan-100/80 visual-accent-text-strong">
                     {service.stack.map((tool) => (
-                      <span key={tool} className="rounded-full border border-cyan-200/30 visual-accent-border bg-cyan-500/10 visual-accent-chip px-4 py-2">
+                      <span
+                        key={tool}
+                        className="rounded-full border border-cyan-200/30 visual-accent-border bg-cyan-500/10 visual-accent-chip px-4 py-2"
+                      >
                         {tool}
                       </span>
                     ))}
                   </div>
+
                   <Link
                     to={`/services/${service.slug}`}
                     className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-white/20"
                   >
-                    Découvrir les coulisses
+                    Consulter le détail du service
                   </Link>
                 </div>
+
                 <div className="space-y-6">
                   <div className="rounded-3xl border border-white/10 bg-white/10 p-6">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables</p>
@@ -90,11 +100,15 @@ const Services = () => {
                       ))}
                     </ul>
                   </div>
+
                   <div className="rounded-3xl border border-white/10 bg-white/10 p-6">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Chiffres clés</p>
                     <ul className="mt-4 space-y-3 text-sm text-slate-200/80">
                       {service.metrics.map((metric) => (
-                        <li key={metric.label} className="flex items-center justify-between rounded-2xl bg-slate-900/60 px-4 py-3">
+                        <li
+                          key={metric.label}
+                          className="flex items-center justify-between rounded-2xl bg-slate-900/60 px-4 py-3"
+                        >
                           <span>{metric.label}</span>
                           <span className="text-cyan-200 visual-accent-text">{metric.value}</span>
                         </li>
@@ -108,22 +122,24 @@ const Services = () => {
         </section>
 
         <section className="rounded-[3rem] border border-white/10 bg-white/5 p-12 text-center text-sm text-slate-200/70">
-          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Envie d'un mix personnalisé ?</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
+            Besoin d&apos;un accompagnement hybride ?
+          </p>
           <p className="mt-6 text-3xl font-semibold text-white">
-            On assemble un module sur-mesure en mixant nos services, on y ajoute une pincée d'IA et une blague bien placée.
+            Nous composons une offre sur-mesure en combinant nos expertises de captation, d&apos;IA et de diffusion.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               to="/quote"
               className="rounded-full border border-cyan-200/30 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
             >
-              Je veux un devis futuriste
+              Demander un devis personnalisé
             </Link>
             <Link
               to="/auth"
               className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
             >
-              Me connecter avant de briefer
+              Me connecter pour préparer le brief
             </Link>
           </div>
         </section>

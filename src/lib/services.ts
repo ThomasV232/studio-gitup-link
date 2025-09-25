@@ -19,10 +19,11 @@ export const servicesData: ServiceDetail[] = [
   {
     slug: "captation-spectrale",
     title: "Captation Spectrale",
-    subtitle: "Multi-cam, drone neurone et plateau XR synchronisé",
-    problem: "Vous avez un événement, un lancement, un live. Mais vous refusez que cela ressemble à un livestream Zoom 2020.",
+    subtitle: "Multi-cam, drone et plateau XR entièrement synchronisés",
+    problem:
+      "Vous préparez un lancement stratégique ou un événement majeur qui exige une captation irréprochable sur chaque angle.",
     promise:
-      "Nous transformons chaque captation en matière noire cinématographique : caméra robotisée, suivi volumétrique Seedance Pro et compositing temps réel.",
+      "Nous orchestrons une réalisation premium avec régie automatisée, robotique Seedance Pro et compositing temps réel pour délivrer un rendu broadcast immédiatement exploitable.",
     stack: ["Seedance Pro", "DaVinci Resolve", "Blackmagic Atem Scripting", "Audio Suno AI"],
     deliverables: [
       "Réalisations live multi-cam 12K",
@@ -31,72 +32,88 @@ export const servicesData: ServiceDetail[] = [
     ],
     phases: [
       {
-        title: "Pré-show quantique",
-        description: "Scouting via LiDAR, mapping lumière IA et écriture dramaturgique avec GPT Cinematic.",
-        aiUpgrade: "Modélisation 3D Midjourney V7 + previs animée Kling 2.5.",
+        title: "Pré-production",
+        description:
+          "Repérages LiDAR, plan lumière anticipé par IA et trame éditoriale validée avec votre équipe.",
+        aiUpgrade:
+          "Modélisation 3D Midjourney V7 et prévisualisation Kling 2.5 pour sécuriser les angles.",
       },
       {
-        title: "Jour J orchestré",
-        description: "Pilotage robotique, switcher automatisé par gestes, overlay data en direct.",
-        aiUpgrade: "Seedance Pro prédit les mouvements clés pour anticiper les changements d'angle.",
+        title: "Captation",
+        description:
+          "Pilotage robotisé, switcher automatisé et overlay data en direct pour garantir la continuité de service.",
+        aiUpgrade:
+          "Seedance Pro anticipe les mouvements clés et optimise les transitions caméra.",
       },
       {
-        title: "Afterglow instantané",
-        description: "Montage express, VFX Veo 3 et publication orchestrée via nos automations.",
-        aiUpgrade: "IA narrative qui génère punchlines et CTA adaptés par réseau.",
+        title: "Post-événement",
+        description:
+          "Montage express, corrections colorimétriques et exports multi-formats prêts à diffuser.",
+        aiUpgrade:
+          "Scripts IA pour générer les accroches et CTA adaptés à chaque réseau.",
       },
     ],
-    signatureMove: "Nous livrons une version 9:16 optimisée dans les 47 minutes post-show.",
+    signatureMove:
+      "Livraison d'une déclinaison 9:16 optimisée dans les 47 minutes suivant la fin de l'événement.",
     metrics: [
-      { label: "Switchs caméra", value: "480", note: "gérés par prédiction gestuelle" },
-      { label: "Équipe plateau", value: "6", note: "dont 2 IA operators" },
-      { label: "Taux de rétention", value: "+63%", note: "vs livestream standard" },
+      { label: "Transitions caméra", value: "480", note: "pilotées par anticipation Seedance" },
+      { label: "Équipe plateau", value: "6", note: "réalisateurs, cadreurs et spécialistes IA" },
+      { label: "Taux de rétention", value: "+63%", note: "comparé à un livestream standard" },
     ],
   },
   {
     slug: "campagne-holo-sociale",
     title: "Campagne Holo-Sociale",
-    subtitle: "Brand content orbitant sur tous les réseaux en 6 formats",
-    problem: "Vos audiences scrollent à 200 km/h. Il faut un crochet, un running gag, un plan que personne n'a vu.",
+    subtitle: "Brand content orchestré pour chaque réseau et chaque format",
+    problem:
+      "Vos audiences sont dispersées sur plusieurs plateformes et attendent des contenus différenciés mais cohérents.",
     promise:
-      "Nous fusionnons humour, motion design et IA générative pour créer un storytelling modulable qui respire 2025.",
+      "Nous combinons narration, motion design et IA générative pour produire des campagnes multi-format parfaitement alignées avec votre image de marque.",
     stack: ["Midjourney V7", "Veo 3", "Adobe After Effects", "Premiere Pro Sensei"],
     deliverables: [
-      "Film héro + 12 snack content",
-      "Memes corporate prêts à poster",
+      "Film héro + 12 contenus snack",
+      "Visuels corporate prêts à publier",
       "Banque de visuels IA brandés",
     ],
     phases: [
       {
-        title: "Narrative Lab",
-        description: "Atelier de hooks, persona memetics, copywriting borderline mais on gère.",
-        aiUpgrade: "Prompt engineering Midjourney V7 & GPT-Voix pour script multi-tonalité.",
+        title: "Atelier stratégique",
+        description:
+          "Analyse des personas, cadrage des messages clés et définition de la grille éditoriale.",
+        aiUpgrade:
+          "Prompt engineering Midjourney V7 et génération de scripts multi-tonalité par GPT-Voix.",
       },
       {
-        title: "Tournage & capture humour",
-        description: "Plan-séquence, drones indoor, comédiens, avatars lip-sync.",
-        aiUpgrade: "LypSync V2 synchronise dialogues et improvisations générées.",
+        title: "Production",
+        description:
+          "Tournages live, captations drone, motion design et avatars lip-sync selon les besoins.",
+        aiUpgrade:
+          "LypSync V2 synchronise dialogues et voix générées en temps réel.",
       },
       {
-        title: "Déclinaisons fulgurantes",
-        description: "Montage modulaire, VFX data-driven, automation de publication.",
-        aiUpgrade: "Veille tendance en temps réel pour booster chaque format.",
+        title: "Déclinaisons",
+        description:
+          "Montage modulaire, VFX data-driven et automatisation des exports selon les plateformes.",
+        aiUpgrade:
+          "Veille tendance en temps réel pour ajuster les variations et recommandations de diffusion.",
       },
     ],
-    signatureMove: "Un gag métaverse caché dans chaque version 9:16. Les fans en redemandent.",
+    signatureMove:
+      "Chaque déclinaison 9:16 intègre les optimisations IA nécessaires pour maximiser la rétention.",
     metrics: [
-      { label: "Temps de prod", value: "12 jours", note: "du brief au drop" },
-      { label: "Variations IA", value: "128", note: "prompts optimisés en live" },
-      { label: "UGC généré", value: "x4", note: "vs campagne classique" },
+      { label: "Temps de production", value: "12 jours", note: "du brief à la mise en ligne" },
+      { label: "Variations IA", value: "128", note: "prompts ajustés en continu" },
+      { label: "UGC généré", value: "x4", note: "par rapport à une campagne standard" },
     ],
   },
   {
     slug: "programme-continuum",
     title: "Programme Continuum",
-    subtitle: "Studio vidéo externe pour votre marque sur 12 mois",
-    problem: "Vous voulez une présence vidéo constante sans monter une équipe interne de 12 personnes.",
+    subtitle: "Studio vidéo externalisé pour votre marque sur 12 mois",
+    problem:
+      "Vous recherchez une production récurrente sans internaliser l'ensemble des compétences vidéo.",
     promise:
-      "Studio VBG devient votre cellule de création : plan editorial, tournages mensuels, lives trimestriels et veille tendances.",
+      "Studio VBG agit comme votre cellule vidéo intégrée : plan éditorial, tournages mensuels, lives trimestriels et analyses de performance.",
     stack: ["DaVinci Resolve", "Notion Automations", "Adobe Premiere Pro", "Veo 3", "Kling 2.5"],
     deliverables: [
       "Roadmap éditoriale évolutive",
@@ -105,26 +122,33 @@ export const servicesData: ServiceDetail[] = [
     ],
     phases: [
       {
-        title: "Onboarding orbite",
-        description: "Audit contenus, modélisation audience, définition KPIs.",
-        aiUpgrade: "Analyse sémantique GPT+ pour détecter les angles différenciants.",
+        title: "Onboarding",
+        description:
+          "Audit des contenus existants, modélisation des audiences et définition des KPIs cibles.",
+        aiUpgrade:
+          "Analyse sémantique GPT+ pour identifier les angles différenciants et opportunités éditoriales.",
       },
       {
-        title: "Production vivante",
-        description: "Captations mensuelles, micros contenus, live event trimestriel.",
-        aiUpgrade: "Planification automatisée et scripts IA personnalisés.",
+        title: "Production continue",
+        description:
+          "Captations mensuelles, micro-formats récurrents et événements live trimestriels.",
+        aiUpgrade:
+          "Planification automatisée et scripts IA personnalisés selon les actualités de votre marque.",
       },
       {
-        title: "Optimisation continue",
-        description: "Analyse de performance, suggestions IA, refonte créative.",
-        aiUpgrade: "Dashboard React + IA pour recommandations en 1 clic.",
+        title: "Optimisation",
+        description:
+          "Analyse de performance, recommandations éditoriales et ajustements créatifs en continu.",
+        aiUpgrade:
+          "Dashboard IA pour générer des recommandations exploitables en un clic.",
       },
     ],
-    signatureMove: "Une rétro mensuelle stand-up pour célébrer les fails qui marchent.",
+    signatureMove:
+      "Revue mensuelle structurée avec partage des indicateurs clés et arbitrages éditoriaux.",
     metrics: [
-      { label: "Période", value: "12 mois", note: "renouvelable" },
-      { label: "ROI moyen", value: "x5.6", note: "sur les leads inbound" },
-      { label: "Taux de stress", value: "-73%", note: "mesuré chez vos équipes marketing" },
+      { label: "Période", value: "12 mois", note: "offre renouvelable" },
+      { label: "ROI moyen", value: "x5.6", note: "sur les leads entrants" },
+      { label: "Charge opérationnelle", value: "-73%", note: "mesurée auprès de vos équipes marketing" },
     ],
   },
 ];

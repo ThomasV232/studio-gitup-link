@@ -3,6 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { StudioProvider } from "@/context/StudioContext";
+import { WaveMenu } from "@/components/WaveMenu";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+
 import Index from "@/pages/Index";
 import Services from "@/pages/Services";
 import ServiceDetail from "@/pages/ServiceDetail";
@@ -13,7 +16,6 @@ import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
 import Playground from "@/pages/Playground";
 import NotFound from "@/pages/NotFound";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,7 @@ const App = () => {
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <StudioProvider>
           <Router>
+            <WaveMenu />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
@@ -34,7 +37,7 @@ const App = () => {
               <Route
                 path="/dashboard"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAdmin>
                     <Dashboard />
                   </ProtectedRoute>
                 }
