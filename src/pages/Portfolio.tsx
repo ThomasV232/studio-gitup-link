@@ -1,4 +1,3 @@
-/* src/pages/Portfolio.tsx */
 import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useStudio, type PortfolioItem } from "@/context/StudioContext";
@@ -12,24 +11,9 @@ import {
 
 const Portfolio = () => {
   const { portfolioItems, serviceCategories } = useStudio();
-
   const categories = useMemo(() => ["Tous", ...serviceCategories], [serviceCategories]);
   const [filter, setFilter] = useState("Tous");
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
-
-  // Liste filtrée unique (évite les divergences entre branches)
-  const filtered = useMemo(
-    () => (filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter)),
-    [filter, portfolioItems],
-  );
-
-  // Les 3 projets "épisodes" en hero (selon filtre)
-  const heroEpisodes = useMemo(() => filtered.slice(0, 3), [filtered]);
-
-  // Projet à mettre en avant (1er des épisodes, sinon 1er filtré, sinon 1er global)
-  const highlightProject = useMemo<PortfolioItem | null>(() => {
-    return heroEpisodes[0] ?? filtered[0] ?? portfolioItems[0] ?? null;
-  }, [heroEpisodes, filtered, portfolioItems]);
 
   const getEmbedUrl = useCallback((url: string) => {
     const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
@@ -39,165 +23,69 @@ const Portfolio = () => {
     return url;
   }, []);
 
+  const filtered = useMemo(
+    () =>
+      filter === "Tous"
+        ? portfolioItems
+        : portfolioItems.filter((item) => item.category === filter),
+    [filter, portfolioItems],
+  );
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      {/* Fond visuel en HSL */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 12% 18%, hsl(var(--visual-accent) / 0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsl(var(--visual-secondary) / 0.25), transparent 50%)",
-        }}
+        style={{ background: "radial-gradient(circle at 10% 10%, hsla(var(--visual-accent)/0.25), transparent 60%)" }}
       />
-      <div className="pointer-events-none absolute inset-0 mix-blend-screen">
-        <div className="portfolio-aurora-cloud" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-28">
-        {/* HERO */}
-        <section className="overflow-hidden rounded-[3.75rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-950/60 to-slate-950/90 p-12 shadow-[0_60px_160px_rgba(56,189,248,0.22)] visual-accent-halo">
-          <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div className="space-y-8">
-              <span className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
-                Studio VBG — Saison 2025
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(circle at 90% 90%, hsla(var(--visual-secondary)/0.2), transparent 60%)" }}
+      />
+      <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-28">
+        <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_25px_120px_rgba(14,165,233,0.2)] visual-accent-halo">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-3xl space-y-6">
+              <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
+                Portfolio futuriste
               </span>
-              <h1 className="text-4xl font-black leading-tight sm:text-5xl">
-                Ressentez l&apos;immersion d&apos;une production IA &amp; terrain parfaitement synchronisée
-              </h1>
-              <p className="max-w-xl text-base text-slate-200/85 sm:text-lg">
-                Notre portfolio mélange captations haute fidélité, direction artistique générative et workflows Midjourney, Kling,
-                Seedance et Veo orchestrés dans DaVinci &amp; Adobe. Chaque capsule est contrôlable depuis le tableau de bord — ajoutez,
-                modifiez, publiez, recommencez.
+              <h1 className="text-5xl font-black leading-tight">Nos histoires préférées (pour l'instant)</h1>
+              <p className="text-lg text-slate-200/80">
+                Chaque projet est une mini-série : humour, rythme, pipelines IA, data. Ajoutez, modifiez, supprimez vos cases depuis le dashboard.
               </p>
-
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/quote"
-                  className="inline-flex items-center gap-3 rounded-full border border-transparent bg-gradient-to-r from-cyan-400/80 via-fuchsia-500/80 to-amber-400/80 px-6 py-3 text-xs font-bold uppercase tracking-[0.4em] text-slate-950 shadow-lg shadow-cyan-400/40 transition duration-500 hover:scale-[1.03]"
-                >
-                  Demander un devis
-                </Link>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition duration-500 hover:bg-white/15"
-                >
-                  Contact rapide
-                </Link>
-              </div>
-
-              <p className="text-[11px] uppercase tracking-[0.4em] text-cyan-200/70 visual-accent-text">
-                Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2
-              </p>
-
-              {heroEpisodes.length > 0 ? (
-                <div className="mt-10 grid gap-5 lg:grid-cols-3">
-                  {heroEpisodes.map((project, index) => (
-                    <button
-                      key={project.id}
-                      type="button"
-                      onClick={() => setActiveProject(project)}
-                      className="portfolio-episode group text-left"
-                    >
-                      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.35em] text-slate-100/70">
-                        <span>Épisode {String(index + 1).padStart(2, "0")}</span>
-                        <span>{project.year}</span>
-                      </div>
-                      <h2 className="mt-4 text-xl font-semibold text-white">{project.title}</h2>
-                      <p className="mt-3 text-xs text-slate-200/75">{project.tagline}</p>
-                      <div className="mt-5 flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                        {project.aiTools.slice(0, 3).map((tool) => (
-                          <span key={tool} className="rounded-full bg-white/10 px-3 py-1">
-                            {tool}
-                          </span>
-                        ))}
-                        {project.aiTools.length > 3 && (
-                          <span className="rounded-full border border-white/20 px-3 py-1">+{project.aiTools.length - 3}</span>
-                        )}
-                      </div>
-                      <div className="mt-6 flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">
-                        <span>{project.duration}</span>
-                        <span>{project.category}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="mt-10 rounded-[2.75rem] border border-dashed border-white/20 bg-white/5 p-6 text-xs text-slate-200/65">
-                  Ajoutez vos premiers projets depuis le tableau de bord pour activer l&apos;aperçu cinématique.
-                </div>
-              )}
             </div>
-
-            <div className="relative">
-              <span className="portfolio-orbit planet-one" />
-              <span className="portfolio-orbit planet-two" />
-              <div className="portfolio-hero-card">
-                {highlightProject ? (
-                  <>
-                    <img
-                      src={highlightProject.thumbnail}
-                      alt={highlightProject.title}
-                      className="h-full w-full object-cover object-center"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-transparent" />
-                    <div className="absolute bottom-8 left-8 right-8 space-y-3">
-                      <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-200/70 visual-accent-text">
-                        {highlightProject.category}
-                      </p>
-                      <h2 className="text-3xl font-semibold text-white">{highlightProject.title}</h2>
-                      <p className="text-sm text-slate-200/80">{highlightProject.tagline}</p>
-                      <div className="flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                        {highlightProject.aiTools.slice(0, 4).map((tool) => (
-                          <span key={tool} className="rounded-full bg-white/10 px-3 py-1">
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-slate-300/70">
-                    Déposez votre première capsule vidéo pour activer la vitrine immersive.
-                  </div>
-                )}
-              </div>
+            <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Gestion autonome</p>
+              <p className="mt-3">Rendez-vous dans le dashboard pour éditer le portfolio en 3 clics.</p>
+              <Link
+                to="/dashboard"
+                className="mt-4 inline-flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white"
+              >
+                Ouvrir le tableau de bord
+              </Link>
             </div>
           </div>
-        </section>
+        </header>
 
-        {/* FILTRES + GRILLE */}
-        <section className="mt-24 space-y-10">
-          <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 className="text-3xl font-bold sm:text-4xl">Réacteur de productions Studio VBG</h2>
-              <p className="mt-3 max-w-2xl text-sm text-slate-200/75">
-                Explorez nos capsules classées par univers. Chaque vignette déclenche une fiche immersive avec la vidéo YouTube, les
-                livrables et la stratégie IA correspondante.
-              </p>
-            </div>
-            <nav className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.35em]">
-              {categories.map((category) => {
-                const isActive = filter === category;
-                return (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setFilter(category)}
-                    className={`portfolio-filter ${
-                      isActive
-                        ? "portfolio-filter-active"
-                        : "border border-white/15 bg-white/5 text-slate-200/70 hover:bg-white/10"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                );
-              })}
-            </nav>
-          </header>
+        <section className="mt-16">
+          <div className="flex flex-wrap items-center gap-3">
+            {categories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setFilter(category)}
+                className={`rounded-full border px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition ${
+                  filter === category
+                    ? "border-cyan-200/60 visual-accent-border bg-cyan-500/20 visual-accent-bg text-white"
+                    : "border-white/20 bg-white/10 text-slate-200/80 hover:bg-white/15"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
 
-          <div className="portfolio-gallery grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {filtered.map((project) => (
+          <div className="mt-10 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((project, index) => (
               <article
                 key={project.id}
                 role="button"
@@ -209,56 +97,57 @@ const Portfolio = () => {
                     setActiveProject(project);
                   }
                 }}
-                className="portfolio-card group"
+                className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/10 via-slate-900/40 to-slate-900/60 p-6 shadow-[0_20px_110px_rgba(56,189,248,0.15)] visual-accent-veil transition-transform duration-500 hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-cyan-300/60"
               >
-                <div className="portfolio-card-media">
-                  <img src={project.thumbnail} alt={project.title} className="h-full w-full object-cover object-center" />
-                  <div className="portfolio-card-overlay" />
-                  <div className="portfolio-card-copy">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">
-                      {project.category}
-                    </p>
-                    <h2 className="text-xl font-semibold text-white">{project.title}</h2>
-                    <p className="text-xs text-slate-200/75">{project.tagline}</p>
+                <span
+                  className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                  style={{
+                    background:
+                      "linear-gradient(120deg, hsla(var(--visual-secondary)/0.25), hsla(var(--visual-accent)/0.2))",
+                  }}
+                />
+                <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-slate-200/70">
+                  <span>Episode 0{index + 1}</span>
+                  <span>{project.category}</span>
+                </div>
+                <h2 className="mt-4 text-2xl font-bold text-white">{project.title}</h2>
+                <p className="mt-2 text-sm text-slate-200/80">{project.tagline}</p>
+                <div className="mt-4 flex flex-wrap gap-2 text-xs text-cyan-100/70 visual-accent-text-strong">
+                  {project.aiTools.map((tool) => (
+                    <span key={tool} className="rounded-full bg-cyan-500/10 visual-accent-chip px-3 py-1">
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-6 grid gap-3 text-xs text-slate-200/70 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-white/5 p-3 text-center">{project.year}</div>
+                  <div className="rounded-2xl bg-white/5 p-3 text-center">{project.duration}</div>
+                  <div className="rounded-2xl bg-white/5 p-3 text-center">{project.socialStack.join(" · ")}</div>
+                </div>
+                <div className="relative mt-6 overflow-hidden rounded-[2rem] border border-white/10">
+                  <img src={project.thumbnail} alt={project.title} className="h-56 w-full object-cover object-center" />
+                  <div className="absolute inset-x-6 bottom-10 hidden items-center justify-center rounded-full border border-white/20 bg-black/60 py-2 text-xs uppercase tracking-[0.3em] text-white backdrop-blur group-hover:flex">
+                    Ouvrir la fiche
                   </div>
                 </div>
-
-                <div className="portfolio-card-meta text-xs text-slate-200/80">
-                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-slate-200/60">
-                    <span>{project.year}</span>
-                    <span>{project.duration}</span>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                    {project.aiTools.slice(0, 3).map((tool) => (
-                      <span key={tool} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-                        {tool}
-                      </span>
+                <div className="mt-6 space-y-3 text-sm text-slate-200/80">
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Deliverables</p>
+                  <ul className="space-y-1">
+                    {project.deliverables.map((item) => (
+                      <li key={item} className="flex items-center gap-3">
+                        <span className="h-2 w-2 rounded-full bg-cyan-300 visual-accent-dot" /> {item}
+                      </li>
                     ))}
-                    {project.aiTools.length > 3 && (
-                      <span className="rounded-full border border-white/20 px-3 py-1">+{project.aiTools.length - 3}</span>
-                    )}
-                  </div>
-                  <div className="mt-4 text-[11px] uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</div>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
-                    {project.socialStack.map((channel) => (
-                      <span key={channel} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-                        {channel}
-                      </span>
-                    ))}
-                  </div>
+                  </ul>
                 </div>
-
-                <div className="portfolio-card-cta">Ouvrir la capsule</div>
               </article>
             ))}
           </div>
 
           {filtered.length === 0 && (
-            <div className="mt-16 rounded-[3.25rem] border border-white/10 bg-white/10 p-12 text-center text-sm text-slate-200/70">
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Aucun projet pour l&apos;instant</p>
-              <p className="mt-4 text-2xl text-white">
-                Ajoutez une nouvelle réalisation depuis le tableau de bord pour alimenter cette catégorie.
-              </p>
+            <div className="mt-16 rounded-[3rem] border border-white/10 bg-white/10 p-12 text-center text-sm text-slate-200/70">
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Filtre un peu trop spécifique</p>
+              <p className="mt-4 text-2xl text-white">Ajoutez un nouveau projet depuis le dashboard pour remplir cette catégorie.</p>
               <Link
                 to="/dashboard"
                 className="mt-6 inline-flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
@@ -269,9 +158,8 @@ const Portfolio = () => {
           )}
         </section>
 
-        {/* DIALOG */}
         <Dialog open={Boolean(activeProject)} onOpenChange={(open) => !open && setActiveProject(null)}>
-          <DialogContent className="portfolio-dialog max-w-4xl border border-white/10 bg-slate-950/95 text-white backdrop-blur">
+          <DialogContent className="max-w-4xl border border-white/10 bg-slate-950/95 text-white backdrop-blur">
             {activeProject && (
               <div className="space-y-8">
                 <DialogHeader className="space-y-3 text-left">
@@ -281,7 +169,6 @@ const Portfolio = () => {
                   </DialogDescription>
                   <p className="text-base text-slate-200/80">{activeProject.tagline}</p>
                 </DialogHeader>
-
                 <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
                   <div className="space-y-4">
                     <div className="aspect-video overflow-hidden rounded-[2.5rem] border border-white/10 bg-black">
@@ -297,7 +184,6 @@ const Portfolio = () => {
                       {activeProject.description}
                     </p>
                   </div>
-
                   <aside className="space-y-5 rounded-[2.5rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
@@ -309,7 +195,6 @@ const Portfolio = () => {
                         ))}
                       </div>
                     </div>
-
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables</p>
                       <ul className="mt-2 space-y-2">
@@ -320,7 +205,6 @@ const Portfolio = () => {
                         ))}
                       </ul>
                     </div>
-
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Diffusions</p>
                       <div className="mt-2 flex flex-wrap gap-2 text-xs">

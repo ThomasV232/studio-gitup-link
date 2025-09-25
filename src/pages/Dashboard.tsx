@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { FormEvent, useMemo, useState, useCallback } from "react";
 import { useStudio } from "@/context/StudioContext";
 
@@ -18,7 +17,7 @@ type PortfolioDraft = {
   socialStack: string;
 };
 
-const getDefaultProject = (categories: readonly string[]): PortfolioDraft => ({
+const getDefaultProject = (categories: string[]): PortfolioDraft => ({
   title: "",
   tagline: "",
   category: categories[0] ?? "Entreprise",
@@ -50,25 +49,15 @@ const Dashboard = () => {
     appendChatMessage,
   } = useStudio();
 
-  const [newProject, setNewProject] = useState<PortfolioDraft>(() =>
-    getDefaultProject(serviceCategories)
-  );
-  const [chatInput, setChatInput] = useState("");
-  const [selectedChatId, setSelectedChatId] = useState(
-    () => chats[0]?.quoteId ?? ""
-  );
-  const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [isImportingMetadata, setIsImportingMetadata] = useState(false);
-  const [metadataError, setMetadataError] = useState<string | null>(null);
-  const [editDraft, setEditDraft] = useState<
-    (PortfolioDraft & { id: string }) | null
-  >(null);
+    const [newProject, setNewProject] = useState<PortfolioDraft>(() => getDefaultProject(serviceCategories));
+    const [chatInput, setChatInput] = useState("");
+    const [selectedChatId, setSelectedChatId] = useState(() => chats[0]?.quoteId ?? "");
+    const [youtubeUrl, setYoutubeUrl] = useState("");
+    const [isImportingMetadata, setIsImportingMetadata] = useState(false);
+    const [metadataError, setMetadataError] = useState<string | null>(null);
+    const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
 
-  const activeChat = useMemo(
-    () => chats.find((chat) => chat.quoteId === selectedChatId),
-    [chats, selectedChatId]
-  );
-
+  const activeChat = useMemo(() => chats.find((chat) => chat.quoteId === selectedChatId), [chats, selectedChatId]);
   const isAdmin = user?.email === ADMIN_EMAIL;
 
   const resetNewProject = () => {
@@ -90,23 +79,17 @@ const Dashboard = () => {
 
     const id = extractYoutubeId(youtubeUrl.trim());
     if (!id) {
-      setMetadataError(
-        "Le lien YouTube n'est pas reconnu. Essayez avec l'URL complète."
-      );
+      setMetadataError("Le lien YouTube n'est pas reconnu. Essayez avec l'URL complète.");
       return;
     }
 
     setIsImportingMetadata(true);
     setMetadataError(null);
 
-    const canonicalUrl = youtubeUrl.includes("http")
-      ? youtubeUrl.trim()
-      : `https://www.youtube.com/watch?v=${id}`;
+    const canonicalUrl = youtubeUrl.includes("http") ? youtubeUrl.trim() : `https://www.youtube.com/watch?v=${id}`;
 
     try {
-      const oEmbedResponse = await fetch(
-        `https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`
-      );
+      const oEmbedResponse = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`);
       if (!oEmbedResponse.ok) {
         throw new Error("Impossible de récupérer les informations depuis YouTube.");
       }
@@ -114,9 +97,7 @@ const Dashboard = () => {
 
       let description = "";
       try {
-        const pageResponse = await fetch(
-          `https://r.jina.ai/https://www.youtube.com/watch?v=${id}`
-        );
+        const pageResponse = await fetch(`https://r.jina.ai/https://www.youtube.com/watch?v=${id}`);
         if (pageResponse.ok) {
           const raw = await pageResponse.text();
           const match = raw.match(/"shortDescription":"(.*?)"/);
@@ -128,7 +109,7 @@ const Dashboard = () => {
           }
         }
       } catch {
-        // fallback ignoré si non dispo
+        // Ignore description fallback when the YouTube page can't be fetched
       }
 
       const taglineCandidate = description
@@ -145,11 +126,7 @@ const Dashboard = () => {
         videoUrl: canonicalUrl,
       }));
     } catch (error) {
-      setMetadataError(
-        error instanceof Error
-          ? error.message
-          : "Import impossible. Essayez manuellement."
-      );
+      setMetadataError(error instanceof Error ? error.message : "Import impossible. Essayez manuellement.");
     } finally {
       setIsImportingMetadata(false);
     }
@@ -163,15 +140,10 @@ const Dashboard = () => {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 px-6 text-center text-white">
         <div className="max-w-lg space-y-6 rounded-[3rem] border border-white/10 bg-white/5 p-12">
-          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-            Accès restreint
-          </p>
-          <h1 className="text-4xl font-black leading-tight">
-            Ce tableau de bord est réservé à l'équipe Studio VBG.
-          </h1>
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Accès restreint</p>
+          <h1 className="text-4xl font-black leading-tight">Ce tableau de bord est réservé à l'équipe Studio VBG.</h1>
           <p className="text-lg text-slate-200/80">
-            Connectez-vous avec le compte administrateur pour gérer le
-            portfolio, les devis et les échanges clients.
+            Connectez-vous avec le compte administrateur pour gérer le portfolio, les devis et les échanges clients.
           </p>
         </div>
       </div>
@@ -194,21 +166,11 @@ const Dashboard = () => {
       duration: newProject.duration,
       description: newProject.description,
       thumbnail:
-        newProject.thumbnail ||
-        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
+        newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
       videoUrl: newProject.videoUrl,
-      aiTools: newProject.aiTools
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      deliverables: newProject.deliverables
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      socialStack: newProject.socialStack
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      aiTools: newProject.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
+      deliverables: newProject.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
+      socialStack: newProject.socialStack.split(",").map((item) => item.trim()).filter(Boolean),
     });
 
     resetNewProject();
@@ -247,18 +209,9 @@ const Dashboard = () => {
       description: editDraft.description,
       thumbnail: editDraft.thumbnail,
       videoUrl: editDraft.videoUrl,
-      aiTools: editDraft.aiTools
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      deliverables: editDraft.deliverables
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      socialStack: editDraft.socialStack
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      aiTools: editDraft.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
+      deliverables: editDraft.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
+      socialStack: editDraft.socialStack.split(",").map((item) => item.trim()).filter(Boolean),
     });
 
     setEditDraft(null);
@@ -268,10 +221,7 @@ const Dashboard = () => {
 
   const handleSendMessage = () => {
     if (!activeChat || !chatInput.trim()) return;
-    appendChatMessage(activeChat.quoteId, {
-      from: "studio",
-      content: chatInput.trim(),
-    });
+    appendChatMessage(activeChat.quoteId, { from: "studio", content: chatInput.trim() });
     setChatInput("");
   };
 
@@ -279,17 +229,11 @@ const Dashboard = () => {
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 15% 15%, hsla(var(--visual-accent)/0.25), transparent 60%)",
-        }}
+        style={{ background: "radial-gradient(circle at 15% 15%, hsla(var(--visual-accent)/0.25), transparent 60%)" }}
       />
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 85% 80%, hsla(var(--visual-secondary)/0.2), transparent 60%)",
-        }}
+        style={{ background: "radial-gradient(circle at 85% 80%, hsla(var(--visual-secondary)/0.2), transparent 60%)" }}
       />
       <div className="relative mx-auto max-w-7xl px-6 pb-32 pt-24">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.2)] visual-accent-veil">
@@ -298,23 +242,14 @@ const Dashboard = () => {
               <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
                 Dashboard Studio VBG
               </span>
-              <h1 className="text-5xl font-black leading-tight">
-                Bienvenue {user.name.split(" ")[0]}
-              </h1>
+              <h1 className="text-5xl font-black leading-tight">Bienvenue {user.name.split(" ")[0]}</h1>
               <p className="text-lg text-slate-200/80">
-                Gérez vos projets, suivez vos devis, ajustez vos tarifs et
-                discutez avec nos équipes. Tout est synchronisé avec notre
-                pipeline IA.
+                Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est synchronisé avec notre pipeline IA.
               </p>
             </div>
             <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                Stat instantané
-              </p>
-              <p className="mt-3 text-white">
-                {portfolioItems.length} projets en cours · {quoteRequests.length}{" "}
-                devis · {contactRequests.length} demandes rapides
-              </p>
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Stat instantané</p>
+              <p className="mt-3 text-white">{portfolioItems.length} projets en cours · {quoteRequests.length} devis · {contactRequests.length} demandes rapides</p>
             </div>
           </div>
         </header>
@@ -323,33 +258,20 @@ const Dashboard = () => {
           <div className="space-y-10">
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Ajouter un projet au portfolio</h2>
-              <p className="mt-2 text-sm text-slate-200/70">
-                Ajoutez, modifiez, supprimez librement les projets visibles côté
-                vitrine.
-              </p>
+              <p className="mt-2 text-sm text-slate-200/70">Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.</p>
               <form className="mt-6 grid gap-4" onSubmit={handleAddProject}>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <input
                     required
                     value={newProject.title}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        title: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, title: event.target.value }))}
                     placeholder="Titre"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     required
                     value={newProject.tagline}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        tagline: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, tagline: event.target.value }))}
                     placeholder="Tagline"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -370,26 +292,15 @@ const Dashboard = () => {
                     {isImportingMetadata ? "Import..." : "Importer"}
                   </button>
                 </div>
-                {metadataError && (
-                  <p className="text-xs text-rose-300">{metadataError}</p>
-                )}
+                {metadataError && <p className="text-xs text-rose-300">{metadataError}</p>}
                 <div className="grid gap-4 sm:grid-cols-4">
                   <select
                     value={newProject.category}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        category: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, category: event.target.value }))}
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   >
                     {serviceCategories.map((category) => (
-                      <option
-                        key={category}
-                        value={category}
-                        className="bg-slate-900 text-white"
-                      >
+                      <option key={category} value={category} className="bg-slate-900 text-white">
                         {category}
                       </option>
                     ))}
@@ -397,57 +308,32 @@ const Dashboard = () => {
                   <input
                     value={newProject.year}
                     type="number"
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        year: Number(event.target.value),
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, year: Number(event.target.value) }))}
                     placeholder="Année"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.duration}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        duration: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, duration: event.target.value }))}
                     placeholder="Durée"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.videoUrl}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        videoUrl: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, videoUrl: event.target.value }))}
                     placeholder="Lien vidéo final"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                 </div>
                 <input
                   value={newProject.thumbnail}
-                  onChange={(event) =>
-                    setNewProject((prev) => ({
-                      ...prev,
-                      thumbnail: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setNewProject((prev) => ({ ...prev, thumbnail: event.target.value }))}
                   placeholder="URL vignette (optionnel si import)"
                   className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                 />
                 <textarea
                   value={newProject.description}
-                  onChange={(event) =>
-                    setNewProject((prev) => ({
-                      ...prev,
-                      description: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setNewProject((prev) => ({ ...prev, description: event.target.value }))}
                   rows={4}
                   placeholder="Description punchy"
                   className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
@@ -455,34 +341,19 @@ const Dashboard = () => {
                 <div className="grid gap-4 sm:grid-cols-3">
                   <input
                     value={newProject.aiTools}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        aiTools: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, aiTools: event.target.value }))}
                     placeholder="IA tools (séparés par virgule)"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.deliverables}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        deliverables: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, deliverables: event.target.value }))}
                     placeholder="Livrables"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.socialStack}
-                    onChange={(event) =>
-                      setNewProject((prev) => ({
-                        ...prev,
-                        socialStack: event.target.value,
-                      }))
-                    }
+                    onChange={(event) => setNewProject((prev) => ({ ...prev, socialStack: event.target.value }))}
                     placeholder="Stack social"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -503,21 +374,11 @@ const Dashboard = () => {
                   </button>
                 </div>
               </form>
-
               {editDraft && (
-                <form
-                  className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6"
-                  onSubmit={handleUpdateProject}
-                >
+                <form className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6" onSubmit={handleUpdateProject}>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-white">
-                      Modifier : {editDraft.title}
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={cancelEdit}
-                      className="text-xs uppercase tracking-[0.3em] text-rose-300 hover:text-rose-200"
-                    >
+                    <h3 className="text-lg font-semibold text-white">Modifier : {editDraft.title}</h3>
+                    <button type="button" onClick={cancelEdit} className="text-xs uppercase tracking-[0.3em] text-rose-300 hover:text-rose-200">
                       Annuler
                     </button>
                   </div>
@@ -525,22 +386,14 @@ const Dashboard = () => {
                     <input
                       required
                       value={editDraft.title}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, title: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, title: event.target.value } : prev))}
                       placeholder="Titre"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       required
                       value={editDraft.tagline}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, tagline: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, tagline: event.target.value } : prev))}
                       placeholder="Tagline"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
@@ -548,19 +401,11 @@ const Dashboard = () => {
                   <div className="grid gap-4 sm:grid-cols-4">
                     <select
                       value={editDraft.category}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, category: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, category: event.target.value } : prev))}
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     >
                       {serviceCategories.map((category) => (
-                        <option
-                          key={category}
-                          value={category}
-                          className="bg-slate-900 text-white"
-                        >
+                        <option key={category} value={category} className="bg-slate-900 text-white">
                           {category}
                         </option>
                       ))}
@@ -568,42 +413,26 @@ const Dashboard = () => {
                     <input
                       value={editDraft.year}
                       type="number"
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, year: Number(event.target.value) } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, year: Number(event.target.value) } : prev))}
                       placeholder="Année"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.duration}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, duration: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, duration: event.target.value } : prev))}
                       placeholder="Durée"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.videoUrl}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, videoUrl: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, videoUrl: event.target.value } : prev))}
                       placeholder="Lien vidéo"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                   </div>
                   <textarea
                     value={editDraft.description}
-                    onChange={(event) =>
-                      setEditDraft((prev) =>
-                        prev ? { ...prev, description: event.target.value } : prev
-                      )
-                    }
+                    onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, description: event.target.value } : prev))}
                     rows={4}
                     placeholder="Description"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
@@ -611,42 +440,26 @@ const Dashboard = () => {
                   <div className="grid gap-4 sm:grid-cols-3">
                     <input
                       value={editDraft.thumbnail}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, thumbnail: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, thumbnail: event.target.value } : prev))}
                       placeholder="Vignette"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.aiTools}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, aiTools: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, aiTools: event.target.value } : prev))}
                       placeholder="IA Tools"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.deliverables}
-                      onChange={(event) =>
-                        setEditDraft((prev) =>
-                          prev ? { ...prev, deliverables: event.target.value } : prev
-                        )
-                      }
+                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, deliverables: event.target.value } : prev))}
                       placeholder="Livrables"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                   </div>
                   <input
                     value={editDraft.socialStack}
-                    onChange={(event) =>
-                      setEditDraft((prev) =>
-                        prev ? { ...prev, socialStack: event.target.value } : prev
-                      )
-                    }
+                    onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, socialStack: event.target.value } : prev))}
                     placeholder="Stack social"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -672,13 +485,9 @@ const Dashboard = () => {
                   </div>
                 </form>
               )}
-
               <div className="mt-6 grid gap-4 text-sm text-slate-200/70 sm:grid-cols-2">
                 {portfolioItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
-                  >
+                  <div key={item.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em]">
                       <span>{item.category}</span>
                       <div className="flex items-center gap-3">
@@ -709,26 +518,15 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold">Gestion des tarifs</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {pricingTiers.map((tier) => (
-                  <div
-                    key={tier.id}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
-                  >
-                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                      {tier.name}
-                    </p>
+                  <div key={tier.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">{tier.name}</p>
                     <input
                       type="number"
                       className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={tier.price}
-                      onChange={(event) =>
-                        updatePricingTier(tier.id, {
-                          price: Number(event.target.value),
-                        })
-                      }
+                      onChange={(event) => updatePricingTier(tier.id, { price: Number(event.target.value) })}
                     />
-                    <p className="mt-2 text-xs text-slate-200/60">
-                      {tier.description}
-                    </p>
+                    <p className="mt-2 text-xs text-slate-200/60">{tier.description}</p>
                     <p className="mt-2 text-xs text-slate-200/60">{tier.sla}</p>
                   </div>
                 ))}
@@ -741,10 +539,7 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold">Comptes clients</h2>
               <div className="mt-4 space-y-4 text-sm text-slate-200/70">
                 {clients.map((client) => (
-                  <div
-                    key={client.id}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
-                  >
+                  <div key={client.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-white">{client.name}</p>
@@ -754,9 +549,7 @@ const Dashboard = () => {
                         {client.membership}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-200/60">
-                      {client.company} · {client.industry}
-                    </p>
+                    <p className="mt-2 text-xs text-slate-200/60">{client.company} · {client.industry}</p>
                   </div>
                 ))}
               </div>
@@ -766,27 +559,15 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold">Demandes de devis</h2>
               <div className="mt-4 space-y-4 text-sm text-slate-200/70">
                 {quoteRequests.map((quote) => (
-                  <div
-                    key={quote.id}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
-                  >
+                  <div key={quote.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-white">
-                          {quote.projectName}
-                        </p>
-                        <p className="text-xs text-slate-200/60">
-                          {quote.clientName} · {quote.budgetRange}
-                        </p>
+                        <p className="font-semibold text-white">{quote.projectName}</p>
+                        <p className="text-xs text-slate-200/60">{quote.clientName} · {quote.budgetRange}</p>
                       </div>
                       <select
                         value={quote.status}
-                        onChange={(event) =>
-                          advanceQuoteStatus(
-                            quote.id,
-                            event.target.value as typeof quote.status
-                          )
-                        }
+                        onChange={(event) => advanceQuoteStatus(quote.id, event.target.value as typeof quote.status)}
                         className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.3em] text-white"
                       >
                         <option value="nouveau">Nouveau</option>
@@ -795,12 +576,8 @@ const Dashboard = () => {
                         <option value="refusé">Refusé</option>
                       </select>
                     </div>
-                    <p className="mt-2 text-xs text-slate-200/60">
-                      Deadline : {quote.deadline}
-                    </p>
-                    <p className="mt-2 text-xs text-slate-200/60">
-                      Services : {quote.services.join(", ")}
-                    </p>
+                    <p className="mt-2 text-xs text-slate-200/60">Deadline : {quote.deadline}</p>
+                    <p className="mt-2 text-xs text-slate-200/60">Services : {quote.services.join(", ")}</p>
                     <button
                       type="button"
                       onClick={() => setSelectedChatId(quote.id)}
@@ -823,17 +600,11 @@ const Dashboard = () => {
                       type="button"
                       onClick={() => setSelectedChatId(thread.quoteId)}
                       className={`w-full rounded-2xl border px-3 py-2 text-left ${
-                        thread.quoteId === selectedChatId
-                          ? "border-cyan-300 bg-white/20"
-                          : "border-white/10 bg-white/5"
+                        thread.quoteId === selectedChatId ? "border-cyan-300 bg-white/20" : "border-white/10 bg-white/5"
                       }`}
                     >
-                      <p className="font-semibold text-white">
-                        {thread.clientName}
-                      </p>
-                      <p className="text-[0.65rem] text-slate-200/60">
-                        {thread.projectName}
-                      </p>
+                      <p className="font-semibold text-white">{thread.clientName}</p>
+                      <p className="text-[0.65rem] text-slate-200/60">{thread.projectName}</p>
                     </button>
                   ))}
                 </div>
@@ -874,9 +645,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-slate-200/70">
-                      Aucun chat sélectionné.
-                    </p>
+                    <p className="text-sm text-slate-200/70">Aucun chat sélectionné.</p>
                   )}
                 </div>
               </div>

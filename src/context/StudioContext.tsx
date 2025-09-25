@@ -150,33 +150,32 @@ const visualPalettes: Record<VisualMode, VisualPalette> = {
   },
 };
 
-// --- Données initiales ---
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
     title: "Pulse HoloBoard · Lancement corporate QuantumLoop",
-    tagline: "Accompagnement de 12 000 collaborateurs avec un dispositif immersif",
+    tagline: "Onboarder 12 000 collaborateurs en riant (et en 9:16)",
     category: SERVICE_CATEGORIES[0],
     year: 2025,
     duration: "01:32",
     description:
-      "Film d'entreprise réalisé sur plateau robotisé avec incrustations temps réel Kling 2.5. Script co-écrit avec notre IA rédactionnelle pour rendre accessible la transformation digitale et déclinaisons dédiées aux équipes internes.",
+      "Film d'entreprise tourné en plateau robotisé avec incrustations temps réel Kling 2.5. Script co-écrit avec GPT Humorist pour humaniser l'IA interne et déclinaisons snackables pour la QVCT.",
     thumbnail: "https://images.unsplash.com/photo-1522199992901-41860af3a7f3?q=80&w=1200",
     videoUrl: "https://www.youtube.com/watch?v=s6zR2T9vn2c",
     gradient: gradientPool[0],
     aiTools: ["Midjourney V7", "Kling 2.5", "DaVinci Resolve"],
-    deliverables: ["Film principal 16:9", "Version onboarding 9:16", "Kit de présentation interne"],
+    deliverables: ["Film HQ 16:9", "Version onboarding 9:16", "Pack slides & memes internes"],
     socialStack: ["Intranet", "LinkedIn", "YouTube"],
   },
   {
     id: uuid(),
     title: "Aftermovie NeoSolar · Festival IA & lumière",
-    tagline: "Aftermovie immersif pour un festival dédié à l'innovation lumineuse",
+    tagline: "Teasing événementiel qui pulse comme un drop techno",
     category: SERVICE_CATEGORIES[1],
     year: 2024,
     duration: "02:08",
     description:
-      "Captation événementielle associant drones FPV, Seedance Pro pour anticiper les mouvements de foule et montage synchronisé Suno AI. Objectif : donner envie de s'inscrire dès l'ouverture de la prochaine édition.",
+      "Captation événementielle mêlant drones FPV, Seedance Pro pour prédire les mouvements de foule et montage syncro Suno AI. Résultat : un aftermovie qui donne envie de s'inscrire avant la fin du générique.",
     thumbnail: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200",
     videoUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
     gradient: gradientPool[1],
@@ -187,12 +186,12 @@ const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
     title: "Skyline Loop · Visite immobilière narrée par IA",
-    tagline: "Visite premium d'un penthouse avec narration IA",
+    tagline: "Un penthouse raconté comme une mini-série sci-fi",
     category: SERVICE_CATEGORIES[2],
     year: 2025,
     duration: "01:05",
     description:
-      "Visite immersive en drone FPV avec overlays data générés par Kling 2.5 et voix off Suno IA. Chaque pièce est présentée comme un chapitre et l'appel à l'action est piloté via QR code interactif.",
+      "Visite immersive en drone FPV avec overlays data générés par Kling 2.5 et voix off Suno IA. Chaque pièce devient un chapitre et le call-to-action se déclenche via QR code interactif.",
     thumbnail: "https://images.unsplash.com/photo-1487956382158-bb926046304a?q=80&w=1200",
     videoUrl: "https://www.youtube.com/watch?v=0pdqf4P9MB8",
     gradient: gradientPool[2],
@@ -203,44 +202,44 @@ const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
     title: "Snackverse · Série sociale pour WaveBite",
-    tagline: "Série verticale de 12 épisodes conçue pour la conversion",
+    tagline: "12 épisodes 9:16 avec punchline à la seconde",
     category: SERVICE_CATEGORIES[3],
     year: 2025,
     duration: "00:45",
     description:
-      "Production sociale verticale pilotée par IA : scripts testés via GPT CopyLab, tournage en LED volume, montage automatisé Veo 3 et templates livrés aux équipes internes.",
+      "Production sociale verticale pilotée par IA : hooks testés via GPT CopyLab, tournage en LED volume, montage automatisé Veo 3 et packaging template pour l'équipe interne.",
     thumbnail: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200",
     videoUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
     gradient: gradientPool[3],
     aiTools: ["Veo 3", "Midjourney V7", "Adobe Premiere Pro"],
-    deliverables: ["Série 12x45s", "Capsules additionnelles", "Scripts automatisés"],
+    deliverables: ["Série 12x45s", "Mèmes bonus", "Scripts automatisés"],
     socialStack: ["TikTok", "Snap", "YouTube Shorts"],
   },
   {
     id: uuid(),
     title: "Orbit Lovers · Mariage futuriste en live",
-    tagline: "Cérémonie captée en direct avec diffusion privée",
+    tagline: "Un oui capté comme un concert interstellaire",
     category: SERVICE_CATEGORIES[4],
     year: 2024,
     duration: "03:20",
     description:
-      "Captation mariage premium : drones, steadycam, robot caméra et IA pour générer les vœux animés. Diffusion live privée et montage highlight livré avant la fin de la réception.",
+      "Captation mariage premium : drones, steady, robot caméra et IA pour générer vœux animés. Diffusion live privée + montage highlight livré avant l'after-party.",
     thumbnail: "https://images.unsplash.com/photo-1520854221050-0f4caff449fb?q=80&w=1200",
     videoUrl: "https://www.youtube.com/watch?v=oUFJJNQGwhk",
     gradient: gradientPool[4],
     aiTools: ["Seedance Pro", "DaVinci Resolve", "Suno AI"],
     deliverables: ["Live multi-cam", "Highlight 3min", "Stories pour les invités"],
-    socialStack: ["YouTube privé", "Instagram", "Galerie partagée"],
+    socialStack: ["YouTube privé", "Instagram", "AirDrop Gallery"],
   },
   {
     id: uuid(),
     title: "LogoVerse · Identité motion générée",
-    tagline: "Création d'identité motion design propulsée par l'IA",
+    tagline: "Motion design & IA qui se répondent en boucle",
     category: SERVICE_CATEGORIES[5],
     year: 2025,
     duration: "00:36",
     description:
-      "Création de logo animé via Midjourney V7 puis animatic Kling 2.5. Sound design Suno AI et packaging template pour diffusion OTT et dispositifs immersifs.",
+      "Création de logo animé via Midjourney V7 puis animatic Kling 2.5. Sound design Suno AI et packaging template pour diffusion OTT et hologrammes.",
     thumbnail: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200",
     videoUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
     gradient: gradientPool[0],
@@ -255,15 +254,15 @@ const initialPricing: PricingTier[] = [
     id: uuid(),
     name: "Impulse",
     price: 4200,
-    description: "Idéal pour un lancement ou un événement clé avec délais courts",
-    deliverables: ["Sprint créatif IA", "Tournage studio 4h", "Kit social 6 formats"],
-    sla: "Livraison 4K sous 72 heures",
+    description: "Pour les start-up qui veulent frapper fort en moins de 10 jours",
+    deliverables: ["Sprint créatif IA", "Shoot studio 4h", "Kit social 6 formats"],
+    sla: "Delivery express 4K en 72h",
   },
   {
     id: uuid(),
     name: "Hyperdrive",
     price: 9700,
-    description: "Campagne multi-canal pilotée par notre pipeline intelligent",
+    description: "Campagne multi-canal chorégraphiée par notre pipeline intelligent",
     deliverables: ["Storyboard Midjourney V7", "Tournage bi-cam", "Montage Davinci + VFX Veo 3"],
     sla: "Pilotage complet sur 21 jours",
   },
@@ -271,9 +270,9 @@ const initialPricing: PricingTier[] = [
     id: uuid(),
     name: "Continuum",
     price: 18200,
-    description: "Programme annuel incluant production continue, live et data storytelling",
-    deliverables: ["Retainer production mensuelle", "Lives trimestriels Seedance", "Veille tendances et optimisation"],
-    sla: "Équipe dédiée et dashboard 24/7",
+    description: "Programme annuel avec cellule contenue, live et data storytelling",
+    deliverables: ["Retainer production mensuelle", "Live trimestriels Seedance", "Veille trends + optimisation"],
+    sla: "Équipe dédiée & dashboard 24/7",
   },
 ];
 
@@ -310,7 +309,7 @@ const initialQuotes: QuoteRequest[] = [
     projectName: "Activation wearable SXSW",
     budgetRange: "12k€ - 18k€",
     deadline: "2025-03-11",
-    services: ["Captation multicam", "Scénarisation assistée par IA", "Pack réseaux sociaux"],
+    services: ["Captation multicam", "IA scénarisation", "Pack réseaux"],
     status: "en revue",
     moodboardPrompt:
       "Imagine a slow-motion capture of biometric data turning into aurora borealis patterns inside a dome stage.",
@@ -340,7 +339,6 @@ const initialChats: ChatThread[] = [
   },
 ];
 
-// --- Provider ---
 const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ClientAccount | null>(null);
   const [clients, setClients] = useState<ClientAccount[]>(initialClients);
@@ -371,17 +369,21 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register: StudioContextValue["register"] = (payload) => {
-    const exists = clients.some((client) => client.email === payload.email);
+    const { email } = payload;
+    const exists = clients.some((client) => client.email === email);
     if (exists) {
       return { success: false, message: "Un compte utilise déjà cet email." };
     }
+
     const newClient: ClientAccount = {
       ...payload,
       id: uuid(),
       avatarHue: Math.floor(Math.random() * 360),
     };
+
     setClients((prev) => [...prev, newClient]);
     setUser(newClient);
+
     return { success: true };
   };
 
@@ -390,6 +392,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     if (!found) {
       return { success: false, message: "Identifiants invalides ou compte inexistant." };
     }
+
     setUser(found);
     return { success: true };
   };
@@ -402,6 +405,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       gradient: gradient ?? gradientPool[Math.floor(Math.random() * gradientPool.length)],
     };
+
     setPortfolioItems((prev) => [newItem, ...prev]);
   };
 
@@ -419,6 +423,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
 
   const createQuoteRequest: StudioContextValue["createQuoteRequest"] = (payload) => {
     if (!user) return null;
+
     const newQuote: QuoteRequest = {
       ...payload,
       id: uuid(),
@@ -427,6 +432,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       status: "nouveau",
       createdAt: new Date().toISOString(),
     };
+
     setQuoteRequests((prev) => [newQuote, ...prev]);
     return newQuote;
   };
@@ -445,7 +451,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
             {
               id: uuid(),
               from: "studio",
-              content: "Bonjour, nous ouvrons ce canal pour préciser votre projet.",
+              content: "Hello ! On ouvre le canal pour affiner ton projet.",
               timestamp: new Date().toISOString(),
             },
           ],
@@ -494,6 +500,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       createdAt: new Date().toISOString(),
     };
+
     setContactRequests((prev) => [newRequest, ...prev]);
   };
 

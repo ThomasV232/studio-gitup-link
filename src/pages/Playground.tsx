@@ -1,16 +1,15 @@
-/* src/pages/Playground.tsx */
 import { useState } from "react";
 
 const labs = [
   {
     id: "midjourney",
     title: "Midjourney V7 - Prompt Lab",
-    punchline: "Des moodboards précis pour convaincre vos comités de direction.",
+    punchline: "On fait sourire vos board members avec des planches qui respirent la SF raffinée.",
     description:
-      "Moodboards générés, recolorisés et animés. Nous combinons prompts narratifs et contraintes de marque pour livrer des planches immédiatement exploitables en comité.",
+      "Moodboards générés, re-colorisés et animés. Nous mixons prompts narratifs et contraintes brand pour produire des planches qui donnent envie d'approuver le budget.",
     upgrades: [
-      "Variations dédiées par persona",
-      "Palette synchronisée à votre brandbook",
+      "Variations dynamiques par persona",
+      "Palette synchronisée avec votre brandbook",
       "Export storyboard animé en 45 secondes",
     ],
     gradient: "radial-gradient(circle at top, hsla(var(--visual-accent-soft)/0.3), transparent 70%)",
@@ -18,38 +17,38 @@ const labs = [
   {
     id: "kling",
     title: "Kling 2.5 - Volumetric Stage",
-    punchline: "Visualisez votre plateau avant la réservation des décors.",
+    punchline: "On simule le plateau avant même de le louer.",
     description:
-      "Prévisualisation 3D, trajectoires caméra automatisées et éclairage calculé par IA pour valider les choix techniques avant production.",
+      "Prévisualisation 3D, trajectoires de caméras automatisées, éclairage calculé par IA. Vous voyez votre shoot avant même qu'on appuie sur REC.",
     upgrades: [
       "Pathfinding caméra autonome",
       "Simulation lumière temps réel",
-      "Export plan de tournage détaillé",
+      "Export plan de tournage gamifié",
     ],
     gradient: "radial-gradient(circle at bottom left, hsla(var(--visual-secondary)/0.25), transparent 70%)",
   },
   {
     id: "seedance",
     title: "Seedance Pro - Choreo Engine",
-    punchline: "Synchronisez vos caméras avec un pilotage IA fiable.",
+    punchline: "La danse des caméras orchestrée par l'IA.",
     description:
-      "Seedance anticipe les mouvements, règle le tempo et propose des trajectoires caméra optimisées pour ne manquer aucune séquence clé.",
+      "Seedance anticipe les mouvements, cale le rythme, propose des riffs caméra improbables. On ne perd plus un moment fort.",
     upgrades: [
       "Pré-visualisation motion capture",
       "Macro Atem scriptée en live",
-      "Export plan chorégraphique PDF + audio guide",
+      "Export plan chorégraphique pdf + audio guide",
     ],
     gradient: "radial-gradient(circle at 80% 30%, hsla(var(--visual-tertiary)/0.22), transparent 70%)",
   },
   {
     id: "veo",
     title: "Veo 3 - Post-production AI",
-    punchline: "Un pipeline postproduction unifié pour accélérer vos livrables.",
+    punchline: "Montage, colorimétrie et VFX : tout parle le même langage.",
     description:
-      "L'IA synchronise les points de montage, génère les transitions, ajuste vos LUTs et prépare les exports multi-format en parallèle.",
+      "L'IA nous aide à synchroniser les points de montage, générer des transitions, calibrer vos LUTs et sortir 9 formats en parallèle.",
     upgrades: [
       "Timeline multivers en un clic",
-      "Détection automatique des moments clés",
+      "Détection gag & punchline automatique",
       "Livraison 9:16 optimisée en 30 min",
     ],
     gradient: "radial-gradient(circle at 20% 80%, hsla(var(--visual-secondary)/0.24), transparent 70%)",
@@ -75,14 +74,14 @@ const Playground = () => {
               <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
                 Playground IA & R&D
               </span>
-              <h1 className="text-5xl font-black leading-tight">Nos laboratoires pour hybrider réel et IA</h1>
+              <h1 className="text-5xl font-black leading-tight">Nos laboratoires privés pour hybrider réel & IA</h1>
               <p className="text-lg text-slate-200/80">
-                Nous testons en continu de nouveaux workflows : prompts avancés, lip-sync automatisé et caméras autonomes. Objectif : des tournages fluides et des livrables fiables.
+                On expérimente chaque semaine : prompts absurdes, lip-sync robotique, caméras autonomes. Résultat : des tournages ultra fluides et des idées fraîches.
               </p>
             </div>
             <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
               <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Mise à jour</p>
-              <p className="mt-3 text-white">Version septembre 2025 : compatibilité Suno AI 2.0 et workflow Kling 2.5 en direct.</p>
+              <p className="mt-3 text-white">Version septembre 2025 : compatibilité Suno AI 2.0 et workflow Kling 2.5 live.</p>
             </div>
           </div>
         </header>
@@ -113,8 +112,8 @@ const Playground = () => {
               ))}
             </div>
             <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-200/70">
-              <p className="uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Suivi</p>
-              <p className="mt-2">Chaque expérimentation documentée est partagée avec nos clients afin d'alimenter leurs futures productions.</p>
+              <p className="uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Bonus</p>
+              <p className="mt-2">Chaque expérimentation donne lieu à une mini capsule making-of envoyée à nos clients fidèles.</p>
             </div>
           </div>
           <div
@@ -136,8 +135,8 @@ const Playground = () => {
                 ))}
               </div>
               <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-200/70">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Support continu</p>
-                <p className="mt-2">Une équipe dédiée accompagne chaque expérimentation pour assurer la transition vers vos projets clients.</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Humour garanti</p>
+                <p className="mt-2">On a même un bot qui fait des blagues sur Davinci Resolve pour détendre le plateau.</p>
               </div>
             </div>
           </div>

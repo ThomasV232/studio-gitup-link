@@ -1,4 +1,3 @@
-/* src/pages/NotFound.tsx */
 import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -21,15 +20,15 @@ const NotFound = () => {
       />
       <div className="relative max-w-xl space-y-6 rounded-[3rem] border border-white/10 bg-white/5 p-12 text-center shadow-[0_20px_120px_rgba(56,189,248,0.2)] visual-accent-veil">
         <span className="text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">Erreur 404</span>
-        <h1 className="text-5xl font-black">Page non disponible</h1>
+        <h1 className="text-5xl font-black">Cette page tourne encore en post-prod</h1>
         <p className="text-lg text-slate-200/80">
-          L’adresse demandée n’existe pas ou plus. Retournez à l’accueil pour poursuivre votre navigation.
+          On dirait que vous avez trouvé un espace vide dans notre storyboard. Revenez à l'accueil et lançons une nouvelle scène.
         </p>
         <Link
           to="/"
           className="inline-flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
         >
-          Retour à l’accueil
+          Retour au vaisseau
         </Link>
       </div>
     </div>

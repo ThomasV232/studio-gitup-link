@@ -1,15 +1,14 @@
-/* src/pages/QuoteBuilder.tsx */
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
 
 const availableServices = [
   "Captation multicam",
-  "Scénarisation assistée par IA",
+  "IA scénarisation",
   "Plateau XR",
-  "Pack réseaux sociaux",
-  "Diffusion live",
-  "Contenus verticaux 9:16",
+  "Pack réseaux",
+  "Live event",
+  "Memes corporate",
 ];
 
 const QuoteBuilder = () => {
@@ -31,19 +30,13 @@ const QuoteBuilder = () => {
           <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Étape obligatoire</p>
           <h1 className="text-4xl font-black leading-tight">Connectez-vous avant de demander un devis</h1>
           <p className="text-lg text-slate-200/80">
-            Une fois votre compte actif, vous accédez au tableau de bord et au suivi en temps réel de votre dossier.
+            Le devis débloque ensuite un chat temps réel avec nos équipes. Créons votre cockpit.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/auth"
-              className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-            >
+            <Link to="/auth" className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
               Me connecter
             </Link>
-            <Link
-              to="/"
-              className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-            >
+            <Link to="/" className="rounded-full border border-white/30 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white">
               Explorer avant
             </Link>
           </div>
@@ -76,17 +69,14 @@ const QuoteBuilder = () => {
             <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
               Demande de devis · Studio VBG
             </span>
-            <h1 className="text-5xl font-black leading-tight">Construisons votre projet vidéo</h1>
+            <h1 className="text-5xl font-black leading-tight">Construisons votre mission vidéo</h1>
             <p className="text-lg text-slate-200/80">
-              Trois étapes guidées : notre IA synthétise votre brief pour préparer le travail des équipes de production.
+              3 étapes fluides, un brin d'humour et notre IA qui synthétise tout pour l'équipe de prod.
             </p>
           </div>
         </header>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-16 space-y-8 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
-        >
+        <form onSubmit={handleSubmit} className="mt-16 space-y-8 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil">
           <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-slate-200/70">
             <span>Étape {step + 1} / 3</span>
             <div className="flex gap-2">
@@ -102,12 +92,12 @@ const QuoteBuilder = () => {
           {step === 0 && (
             <div className="space-y-4">
               <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom du projet</label>
+                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom de mission</label>
                 <input
                   className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   value={form.projectName}
                   onChange={(event) => setForm((prev) => ({ ...prev, projectName: event.target.value }))}
-                  placeholder="Nom du projet"
+                  placeholder="Lancement casque quantique"
                   required
                 />
               </div>
@@ -118,7 +108,7 @@ const QuoteBuilder = () => {
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     value={form.budgetRange}
                     onChange={(event) => setForm((prev) => ({ ...prev, budgetRange: event.target.value }))}
-                    placeholder="15 000 € - 25 000 €"
+                    placeholder="15k€ - 25k€"
                     required
                   />
                 </div>
@@ -175,12 +165,12 @@ const QuoteBuilder = () => {
                   rows={6}
                   value={form.moodboardPrompt}
                   onChange={(event) => setForm((prev) => ({ ...prev, moodboardPrompt: event.target.value }))}
-                  placeholder="Décrivez les enjeux, les messages prioritaires et les livrables attendus."
+                  placeholder="Imagine un plan-séquence dans une serre néon, le CEO se téléporte, un bot Suno chante."
                   required
                 />
               </div>
               <p className="text-xs text-slate-200/60">
-                Notre IA transforme ce brief en storyboard, sélection d&apos;actifs et planning prévisionnel.
+                Notre IA transforme ce prompt en storyboard, playlist audio et planning.
               </p>
             </div>
           )}
@@ -194,7 +184,6 @@ const QuoteBuilder = () => {
             >
               Retour
             </button>
-
             {step < 2 ? (
               <button
                 type="button"
@@ -216,8 +205,7 @@ const QuoteBuilder = () => {
 
           {successId && (
             <div className="rounded-3xl border border-emerald-200/40 bg-emerald-500/10 p-6 text-sm text-emerald-100">
-              Votre demande est enregistrée. Un espace de discussion dédié s&apos;ouvrira dès validation du devis. ID:{" "}
-              {successId.slice(0, 8)}...
+              Votre demande est bien arrivée ! On ouvre un chat dédié dès validation du devis. ID : {successId.slice(0, 8)}...
             </div>
           )}
         </form>

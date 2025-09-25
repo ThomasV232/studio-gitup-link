@@ -3,19 +3,19 @@ export const navigationItems = [
     label: "Accueil",
     to: "/",
     emoji: "🚀",
-    tooltip: "Page d'accueil",
+    tooltip: "Landing synthwave",
   },
   {
     label: "Services",
     to: "/services",
     emoji: "🎬",
-    tooltip: "Offres et méthodologie",
+    tooltip: "Pipeline 2025",
   },
   {
     label: "Playground IA",
     to: "/playground",
     emoji: "🤖",
-    tooltip: "Laboratoires IA",
+    tooltip: "R&D Midjourney + Kling",
   },
   {
     label: "Portfolio",
@@ -27,7 +27,7 @@ export const navigationItems = [
     label: "Process",
     to: "/process",
     emoji: "🛰️",
-    tooltip: "Processus de production",
+    tooltip: "Méthode orbitale",
   },
   {
     label: "Dashboard",
