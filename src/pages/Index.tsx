@@ -27,8 +27,27 @@ const Index = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    projectSpark:
+    projectSpark: "",
+    urgency: "hier" as const,
+  });
 
+  const heroProject = portfolioItems[0];
+
+  return (
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 10% 10%, hsl(var(--visual-accent) / 0.22), transparent 60%), radial-gradient(circle at 90% 90%, hsl(var(--visual-secondary) / 0.22), transparent 60%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 animate-[spin_20s_linear_infinite]"
+        style={{
+          background:
+            "conic-gradient(from 45deg at 30% 30%, hsl(var(--visual-accent-soft) / 0.22), hsl(var(--visual-secondary) / 0.2), transparent 70%)",
+        }}
       />
       <div className="relative">
         <header className="mx-auto flex max-w-7xl flex-col gap-12 px-6 pt-20 pb-28 lg:flex-row lg:items-center">
@@ -83,11 +102,12 @@ const Index = () => {
               </div>
             </div>
           </div>
+
           <div className="flex flex-1 flex-col gap-6">
             <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 p-6 shadow-[0_30px_120px_rgba(236,72,153,0.2)] visual-accent-halo">
               <div
                 className="absolute inset-0"
-                style={{ background: "radial-gradient(circle at 20% 20%, hsla(var(--visual-secondary)/0.3), transparent 65%)" }}
+                style={{ background: "radial-gradient(circle at 20% 20%, hsl(var(--visual-secondary) / 0.3), transparent 65%)" }}
               />
               <div className="relative space-y-6">
                 <p className="text-xs uppercase tracking-[0.4em] text-fuchsia-200/70">Cas phare</p>
@@ -105,11 +125,14 @@ const Index = () => {
                 />
                 <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
                   {heroProject?.aiTools.map((tool) => (
-                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">{tool}</span>
+                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
+                      {tool}
+                    </span>
                   ))}
                 </div>
               </div>
             </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               {techStack.slice(0, 4).map((tool) => (
                 <div key={tool} className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-4">
@@ -125,7 +148,7 @@ const Index = () => {
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div
             className="absolute inset-0 -z-10 blur-3xl"
-            style={{ background: "radial-gradient(circle at 20% 20%, hsla(var(--visual-accent)/0.18), transparent 60%)" }}
+            style={{ background: "radial-gradient(circle at 20% 20%, hsl(var(--visual-accent) / 0.18), transparent 60%)" }}
           />
           <div className="rounded-[3rem] border border-white/10 bg-white/5 p-10 shadow-[0_0_80px_rgba(59,130,246,0.15)] visual-accent-veil">
             <div className="flex flex-col items-start gap-6 pb-10 lg:flex-row lg:items-center lg:justify-between">
@@ -146,6 +169,7 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
             <div className="grid gap-6 lg:grid-cols-3">
               {servicesData.map((service, index) => (
                 <Link
@@ -167,9 +191,7 @@ const Index = () => {
                         </span>
                       ))}
                     </div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">
-                      Consulter la méthodologie →
-                    </p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">Consulter la méthodologie →</p>
                   </div>
                 </Link>
               ))}
@@ -204,17 +226,18 @@ const Index = () => {
                 Explorer la galerie complète
               </Link>
             </div>
+
             <div className="flex-1 space-y-6">
               {portfolioItems.slice(0, 3).map((project, index) => (
                 <article
                   key={project.id}
-                  className={`group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)] visual-accent-hover-shadow`}
+                  className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)]"
                 >
                   <span
                     className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
                     style={{
                       background:
-                        "linear-gradient(120deg, hsla(var(--visual-accent)/0.25), hsla(var(--visual-secondary)/0.2))",
+                        "linear-gradient(120deg, hsl(var(--visual-accent) / 0.25), hsl(var(--visual-secondary) / 0.2))",
                     }}
                   />
                   <div className="relative flex flex-col gap-4">
@@ -256,6 +279,7 @@ const Index = () => {
                   </div>
                 </div>
               </div>
+
               <form
                 className="space-y-4"
                 onSubmit={(event) => {
