@@ -900,7 +900,7 @@ All colors MUST be HSL.
   .portfolio-card-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent, hsla(224 71% 4% / 0.35) 35%, hsla(224 71% 4% / 0.88));
+    background: linear-gradient(180deg, transparent 0%, hsla(224 71% 4% / 0.35) 30%, hsla(224 71% 4% / 0.88));
     transition: opacity 0.6s ease;
   }
 
@@ -908,9 +908,9 @@ All colors MUST be HSL.
     position: absolute;
     left: clamp(1rem, 2.5vw, 1.75rem);
     right: clamp(1rem, 2.5vw, 1.75rem);
-    bottom: clamp(1rem, 2.5vw, 1.75rem);
+    bottom: clamp(0.85rem, 2.2vw, 1.5rem);
     display: grid;
-    gap: clamp(0.35rem, 1.1vw, 0.55rem);
+    gap: clamp(0.3rem, 1vw, 0.5rem);
   }
 
   .portfolio-card-meta {
