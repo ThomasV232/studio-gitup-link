@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
 import type { QuoteRequest } from "@/context/StudioContext";
 
+/* ----------------------------- NAV / STATUS UI ---------------------------- */
+
 const quickNavigation = [
   { label: "Accueil", description: "Page d'accueil", icon: "🏠", to: "/" },
   { label: "Services", description: "Offres & méthodologies", icon: "🛰️", to: "/services" },
@@ -13,46 +15,20 @@ const quickNavigation = [
 ];
 
 const quoteStatusCopy: Record<QuoteRequest["status"], { label: string; tone: string; border: string }> = {
-  nouveau: {
-    label: "Nouveau",
-    tone: "bg-cyan-500/15 text-cyan-100",
-    border: "border-cyan-400/40",
-  },
-  "en revue": {
-    label: "En revue",
-    tone: "bg-sky-500/15 text-sky-100",
-    border: "border-sky-400/40",
-  },
-  validé: {
-    label: "Validé",
-    tone: "bg-emerald-500/15 text-emerald-100",
-    border: "border-emerald-400/40",
-  },
-  refusé: {
-    label: "Réorienté",
-    tone: "bg-rose-500/15 text-rose-100",
-    border: "border-rose-400/40",
-  },
+  nouveau: { label: "Nouveau", tone: "bg-cyan-500/15 text-cyan-100", border: "border-cyan-400/40" },
+  "en revue": { label: "En revue", tone: "bg-sky-500/15 text-sky-100", border: "border-sky-400/40" },
+  validé: { label: "Validé", tone: "bg-emerald-500/15 text-emerald-100", border: "border-emerald-400/40" },
+  refusé: { label: "Réorienté", tone: "bg-rose-500/15 text-rose-100", border: "border-rose-400/40" },
 };
+
+/* -------------------------- ADMIN / ACCOUNT HELPERS ----------------------- */
 
 const ADMIN_EMAIL = "volberg.thomas@gmail.com";
 
 const membershipOptions = [
-  {
-    value: "Hyperdrive",
-    label: "Hyperdrive",
-    description: "Production intensive pour contenus à cadence élevée.",
-  },
-  {
-    value: "Continuum",
-    label: "Continuum",
-    description: "Accompagnement annuel avec équipe dédiée.",
-  },
-  {
-    value: "Impulse",
-    label: "Impulse",
-    description: "Starter agile pour lancer votre présence vidéo.",
-  },
+  { value: "Hyperdrive", label: "Hyperdrive", description: "Production intensive pour contenus à cadence élevée." },
+  { value: "Continuum", label: "Continuum", description: "Accompagnement annuel avec équipe dédiée." },
+  { value: "Impulse", label: "Impulse", description: "Starter agile pour lancer votre présence vidéo." },
 ] as const;
 
 type MembershipValue = (typeof membershipOptions)[number]["value"];
@@ -64,6 +40,63 @@ type AccountDraft = {
   membership: MembershipValue;
   lastProject: string;
 };
+
+/* ------------------------- QUOTES TIMELINE HELPERS ------------------------ */
+
+type QuoteStatus = QuoteRequest["status"];
+type QuoteStep = Extract<QuoteStatus, "nouveau" | "en revue" | "validé">;
+
+const STATUS_STEPS: Array<{ key: QuoteStep; title: string; description: string }> = [
+  { key: "nouveau", title: "Brief reçu", description: "Votre demande est horodatée, l'équipe la priorise dans la file Studio VBG." },
+  { key: "en revue", title: "Analyse créative", description: "Nous alignons budget, équipe et pipeline IA avant de vous soumettre la proposition." },
+  { key: "validé", title: "Kick-off", description: "Le devis est signé, la salle de chat projet et la préproduction s'activent." },
+];
+
+const STATUS_BADGES: Record<QuoteStatus, string> = {
+  nouveau: "border-cyan-200/40 bg-cyan-500/10 text-cyan-100",
+  "en revue": "border-sky-200/40 bg-sky-500/10 text-sky-100",
+  validé: "border-emerald-200/40 bg-emerald-500/10 text-emerald-100",
+  refusé: "border-rose-300/50 bg-rose-500/10 text-rose-100",
+};
+
+const STATUS_LABELS: Record<QuoteStatus, string> = {
+  nouveau: "Nouveau",
+  "en revue": "En revue",
+  validé: "Validé",
+  refusé: "Réorienté",
+};
+
+/* ---------------------------- PORTFOLIO HELPERS --------------------------- */
+
+type PortfolioDraft = {
+  title: string;
+  tagline: string;
+  category: string;
+  year: number;
+  duration: string;
+  description: string;
+  thumbnail: string;
+  videoUrl: string;
+  aiTools: string;
+  deliverables: string;
+  socialStack: string;
+};
+
+const getDefaultProject = (categories: string[]): PortfolioDraft => ({
+  title: "",
+  tagline: "",
+  category: categories[0] ?? "Entreprise",
+  year: new Date().getFullYear(),
+  duration: "00:45",
+  description: "",
+  thumbnail: "",
+  videoUrl: "",
+  aiTools: "",
+  deliverables: "",
+  socialStack: "",
+});
+
+/* -------------------------------- COMPONENT ------------------------------- */
 
 const Dashboard = () => {
   const {
@@ -82,13 +115,9 @@ const Dashboard = () => {
     advanceQuoteStatus,
     appendChatMessage,
     updateAccount,
-    visualMode,
-    cycleVisualMode,
-    palette,
   } = useStudio();
 
   const isAdmin = user?.email === ADMIN_EMAIL;
-
   const userId = user?.id ?? null;
 
   const myQuotes = useMemo(() => {
@@ -124,9 +153,7 @@ const Dashboard = () => {
     lastProject: user?.lastProject ?? "",
   }));
   const [isSavingAccount, setIsSavingAccount] = useState(false);
-  const [accountFeedback, setAccountFeedback] = useState<
-    { type: "success" | "error"; message: string }
-  | null>(null);
+  const [accountFeedback, setAccountFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const activeChat = useMemo(() => chats.find((chat) => chat.quoteId === selectedChatId), [chats, selectedChatId]);
 
@@ -136,19 +163,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     setClientSelectedQuoteId((current) => {
-      if (myQuotes.length === 0) {
-        return "";
-      }
-      return myQuotes.some((quote) => quote.id === current) ? current : myQuotes[0].id;
+      if (myQuotes.length === 0) return "";
+      return myQuotes.some((q) => q.id === current) ? current : myQuotes[0].id;
     });
   }, [myQuotes]);
 
   useEffect(() => {
     setClientSelectedChatId((current) => {
-      if (myChats.length === 0) {
-        return "";
-      }
-      return myChats.some((thread) => thread.quoteId === current) ? current : myChats[0].quoteId;
+      if (myChats.length === 0) return "";
+      return myChats.some((t) => t.quoteId === current) ? current : myChats[0].quoteId;
     });
   }, [myChats]);
 
@@ -186,18 +209,13 @@ const Dashboard = () => {
       company: accountDraft.company.trim(),
       industry: accountDraft.industry.trim(),
       membership: accountDraft.membership,
-      lastProject:
-        accountDraft.lastProject.trim().length > 0 ? accountDraft.lastProject.trim() : null,
+      lastProject: accountDraft.lastProject.trim().length > 0 ? accountDraft.lastProject.trim() : null,
     });
 
     setIsSavingAccount(false);
     setAccountFeedback({
       type: response.success ? "success" : "error",
-      message:
-        response.message ??
-        (response.success
-          ? "Profil mis à jour."
-          : "La mise à jour du profil a échoué. Réessayez dans un instant."),
+      message: response.message ?? (response.success ? "Profil mis à jour." : "La mise à jour du profil a échoué. Réessayez."),
     });
   };
 
@@ -236,7 +254,6 @@ const Dashboard = () => {
       setMetadataError("Ajoutez un lien YouTube pour importer un projet.");
       return;
     }
-
     const id = extractYoutubeId(youtubeUrl.trim());
     if (!id) {
       setMetadataError("Le lien YouTube n'est pas reconnu. Essayez avec l'URL complète.");
@@ -250,9 +267,7 @@ const Dashboard = () => {
 
     try {
       const oEmbedResponse = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`);
-      if (!oEmbedResponse.ok) {
-        throw new Error("Impossible de récupérer les informations depuis YouTube.");
-      }
+      if (!oEmbedResponse.ok) throw new Error("Impossible de récupérer les informations depuis YouTube.");
       const oEmbedData = await oEmbedResponse.json();
 
       let description = "";
@@ -260,22 +275,19 @@ const Dashboard = () => {
         const pageResponse = await fetch(`https://r.jina.ai/https://www.youtube.com/watch?v=${id}`);
         if (pageResponse.ok) {
           const raw = await pageResponse.text();
-          const match = raw.match(/"shortDescription":"(.*?)"/);
-          if (match?.[1]) {
-            description = match[1]
-              .replace(/\\n/g, "\n")
-              .replace(/\\"/g, '"')
-              .replace(/\\'/g, "'");
+          const m = raw.match(/"shortDescription":"(.*?)"/);
+          if (m?.[1]) {
+            description = m[1].replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\'/g, "'");
           }
         }
       } catch {
-        // Ignore description fallback when the YouTube page can't be fetched
+        /* ignore */
       }
 
       const taglineCandidate = description
         .split(/\n|\./)
-        .map((line) => line.trim())
-        .find((line) => line.length > 0);
+        .map((l) => l.trim())
+        .find((l) => l.length > 0);
 
       setNewProject((prev) => ({
         ...prev,
@@ -292,9 +304,9 @@ const Dashboard = () => {
     }
   }, [extractYoutubeId, youtubeUrl]);
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
+
+  /* --------------------------- CLIENT VIEW (non-admin) --------------------------- */
 
   if (!isAdmin) {
     const hasQuotes = myQuotes.length > 0;
@@ -326,18 +338,6 @@ const Dashboard = () => {
                 Suivez vos demandes de devis, consultez les étapes clés et échangez avec le producteur dédié.
               </p>
               <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={cycleVisualMode}
-                  className="group relative flex items-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-white/10 px-5 py-3 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-cyan-100 visual-accent-text shadow-[0_10px_30px_rgba(8,145,178,0.25)] visual-accent-shadow transition hover:scale-105"
-                >
-                  <span
-                    className="h-2.5 w-2.5 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.35)]"
-                    style={{ background: `hsl(${palette.accent})` }}
-                  />
-                  {visualMode === "nebula" ? "Palette Solstice" : "Palette Nébula"}
-                  <span className="pointer-events-none absolute inset-0 -z-10 translate-x-[-120%] rounded-full bg-gradient-to-r from-cyan-400/40 via-transparent to-fuchsia-400/40 transition-transform duration-700 group-hover:translate-x-0" />
-                </button>
                 <Link
                   to="/quote"
                   className="rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
@@ -361,21 +361,20 @@ const Dashboard = () => {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">En cours</p>
                 <p className="mt-2 text-2xl font-semibold text-white">
-                  {myQuotes.filter((quote) => quote.status === "nouveau" || quote.status === "en revue").length}
+                  {myQuotes.filter((q) => q.status === "nouveau" || q.status === "en revue").length}
                 </p>
                 <p className="text-xs text-slate-200/60">Briefs en analyse créative ou en cadrage budgétaire.</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Validés</p>
-                <p className="mt-2 text-2xl font-semibold text-white">
-                  {myQuotes.filter((quote) => quote.status === "validé").length}
-                </p>
+                <p className="mt-2 text-2xl font-semibold text-white">{myQuotes.filter((q) => q.status === "validé").length}</p>
                 <p className="text-xs text-slate-200/60">Projets prêts à démarrer avec chat ouvert.</p>
               </div>
             </div>
           </header>
 
           <section className="mt-16 space-y-12">
+            {/* Profil client */}
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_90px_rgba(56,189,248,0.12)] visual-accent-veil">
               <form className="space-y-8" onSubmit={handleAccountSubmit}>
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -426,9 +425,8 @@ const Dashboard = () => {
                     <input
                       className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={accountDraft.name}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        setAccountDraft((prev) => ({ ...prev, name: value }));
+                      onChange={(e) => {
+                        setAccountDraft((p) => ({ ...p, name: e.target.value }));
                         setAccountFeedback(null);
                       }}
                       placeholder="Nom et prénom"
@@ -440,9 +438,8 @@ const Dashboard = () => {
                     <input
                       className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={accountDraft.company}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        setAccountDraft((prev) => ({ ...prev, company: value }));
+                      onChange={(e) => {
+                        setAccountDraft((p) => ({ ...p, company: e.target.value }));
                         setAccountFeedback(null);
                       }}
                       placeholder="Votre structure ou collectif"
@@ -453,9 +450,8 @@ const Dashboard = () => {
                     <input
                       className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={accountDraft.industry}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        setAccountDraft((prev) => ({ ...prev, industry: value }));
+                      onChange={(e) => {
+                        setAccountDraft((p) => ({ ...p, industry: e.target.value }));
                         setAccountFeedback(null);
                       }}
                       placeholder="Ex. Tech, Luxe, Événementiel..."
@@ -475,7 +471,7 @@ const Dashboard = () => {
                             key={option.value}
                             type="button"
                             onClick={() => {
-                              setAccountDraft((prev) => ({ ...prev, membership: option.value }));
+                              setAccountDraft((p) => ({ ...p, membership: option.value }));
                               setAccountFeedback(null);
                             }}
                             className={`rounded-2xl border px-4 py-3 text-left transition ${
@@ -503,9 +499,8 @@ const Dashboard = () => {
                       rows={4}
                       className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={accountDraft.lastProject}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        setAccountDraft((prev) => ({ ...prev, lastProject: value }));
+                      onChange={(e) => {
+                        setAccountDraft((p) => ({ ...p, lastProject: e.target.value }));
                         setAccountFeedback(null);
                       }}
                       placeholder="Partagez un tournage, un lancement ou un succès que vous souhaitez prolonger."
@@ -518,6 +513,7 @@ const Dashboard = () => {
               </form>
             </div>
 
+            {/* Suivi des devis */}
             {hasQuotes ? (
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
                 <div className="flex flex-col gap-6">
@@ -526,7 +522,8 @@ const Dashboard = () => {
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Suivi de dossier</p>
                       <h2 className="mt-2 text-3xl font-bold text-white">{selectedClientQuote?.projectName}</h2>
                       <p className="mt-2 text-sm text-slate-200/70">
-                        Créé le {selectedClientQuote ? formatDate(selectedClientQuote.createdAt) : "-"} · Budget {selectedClientQuote?.budgetRange}
+                        Créé le {selectedClientQuote ? formatDate(selectedClientQuote.createdAt) : "-"} · Budget{" "}
+                        {selectedClientQuote?.budgetRange}
                       </p>
                     </div>
                     {selectedClientQuote && (
@@ -559,7 +556,9 @@ const Dashboard = () => {
 
                   {selectedClientQuote && (
                     <>
-                      <p className="text-sm text-slate-200/80">{STATUS_MESSAGES[selectedClientQuote.status]}</p>
+                      <p className="text-sm text-slate-200/80">
+                        {STATUS_MESSAGES[selectedClientQuote.status]}
+                      </p>
                       <div className="mt-6 grid gap-6 md:grid-cols-3">
                         {STATUS_STEPS.map((step, index) => {
                           const reached = timelineIndex >= index && timelineIndex !== -1;
@@ -583,6 +582,7 @@ const Dashboard = () => {
                           );
                         })}
                       </div>
+
                       <div className="mt-6 grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                           <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Services inclus</p>
@@ -604,11 +604,16 @@ const Dashboard = () => {
                           </p>
                         </div>
                       </div>
+
                       <div className="mt-6 flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-slate-200/60">
-                        <span>Deadline {selectedClientQuote.deadline ? formatDate(selectedClientQuote.deadline) : "À définir"}</span>
+                        <span>
+                          Deadline{" "}
+                          {selectedClientQuote.deadline ? formatDate(selectedClientQuote.deadline) : "À définir"}
+                        </span>
                         <span>Créé le {formatDate(selectedClientQuote.createdAt)}</span>
                         <span>ID {selectedClientQuote.id.slice(0, 8)}...</span>
                       </div>
+
                       {selectedClientQuote.status === "refusé" && (
                         <div className="mt-6 rounded-2xl border border-rose-300/40 bg-rose-500/10 p-5 text-sm text-rose-100">
                           Nous revenons vers vous avec une proposition alternative ou un ajustement budgétaire.
@@ -622,7 +627,8 @@ const Dashboard = () => {
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-12 text-center text-slate-200/80">
                 <h2 className="text-3xl font-semibold text-white">Aucune demande enregistrée pour l'instant</h2>
                 <p className="mt-4 text-sm">
-                  Lancez votre première demande en décrivant votre projet et laissez notre IA orchestrer la mise en production.
+                  Lancez votre première demande en décrivant votre projet et laissez notre IA orchestrer la mise en
+                  production.
                 </p>
                 <div className="mt-8 flex justify-center">
                   <Link
@@ -635,6 +641,7 @@ const Dashboard = () => {
               </div>
             )}
 
+            {/* Historique + Chat */}
             <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
               <div className="rounded-[3rem] border border-white/10 bg-white/10 p-8 shadow-[0_20px_80px_rgba(236,72,153,0.15)] visual-secondary-veil">
                 <h2 className="text-2xl font-bold text-white">Historique des demandes</h2>
@@ -648,7 +655,9 @@ const Dashboard = () => {
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">{formatDate(quote.createdAt)}</p>
+                          <p className="text-xs uppercase tracking-[0.3em] text-slate-200/60">
+                            {formatDate(quote.createdAt)}
+                          </p>
                           <p className="text-base font-semibold text-white">{quote.projectName}</p>
                           <p className="text-xs text-slate-200/60">{quote.services.join(" • ")}</p>
                         </div>
@@ -725,7 +734,7 @@ const Dashboard = () => {
                         <form onSubmit={handleClientSendMessage} className="flex gap-3">
                           <input
                             value={clientChatInput}
-                            onChange={(event) => setClientChatInput(event.target.value)}
+                            onChange={(e) => setClientChatInput(e.target.value)}
                             placeholder="Votre message"
                             className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-emerald-300/60 focus:outline-none"
                           />
@@ -756,14 +765,14 @@ const Dashboard = () => {
     );
   }
 
+  /* ------------------------------- ADMIN VIEW ------------------------------ */
+
   const handleAddProject = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!newProject.videoUrl) {
       setMetadataError("Ajoutez ou importez un lien YouTube pour ce projet.");
       return;
     }
-
     addPortfolioItem({
       title: newProject.title,
       tagline: newProject.tagline,
@@ -774,18 +783,25 @@ const Dashboard = () => {
       thumbnail:
         newProject.thumbnail || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200",
       videoUrl: newProject.videoUrl,
-      aiTools: newProject.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
-      deliverables: newProject.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
-      socialStack: newProject.socialStack.split(",").map((item) => item.trim()).filter(Boolean),
+      aiTools: newProject.aiTools
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
+      deliverables: newProject.deliverables
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
+      socialStack: newProject.socialStack
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
     });
-
     resetNewProject();
   };
 
   const startEditingProject = (projectId: string) => {
     const project = portfolioItems.find((item) => item.id === projectId);
     if (!project) return;
-
     setEditDraft({
       id: project.id,
       title: project.title,
@@ -805,7 +821,6 @@ const Dashboard = () => {
   const handleUpdateProject = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!editDraft) return;
-
     updatePortfolioItem(editDraft.id, {
       title: editDraft.title,
       tagline: editDraft.tagline,
@@ -815,19 +830,28 @@ const Dashboard = () => {
       description: editDraft.description,
       thumbnail: editDraft.thumbnail,
       videoUrl: editDraft.videoUrl,
-      aiTools: editDraft.aiTools.split(",").map((item) => item.trim()).filter(Boolean),
-      deliverables: editDraft.deliverables.split(",").map((item) => item.trim()).filter(Boolean),
-      socialStack: editDraft.socialStack.split(",").map((item) => item.trim()).filter(Boolean),
+      aiTools: editDraft.aiTools
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
+      deliverables: editDraft.deliverables
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
+      socialStack: editDraft.socialStack
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
     });
-
     setEditDraft(null);
   };
 
   const cancelEdit = () => setEditDraft(null);
 
   const handleSendMessage = () => {
-    if (!activeChat || !chatInput.trim()) return;
-    appendChatMessage(activeChat.quoteId, { from: "studio", content: chatInput.trim() });
+    const chat = activeChat;
+    if (!chat || !chatInput.trim()) return;
+    appendChatMessage(chat.quoteId, { from: "studio", content: chatInput.trim() });
     setChatInput("");
   };
 
@@ -850,48 +874,40 @@ const Dashboard = () => {
               </span>
               <h1 className="text-5xl font-black leading-tight">Bienvenue {user.name.split(" ")[0]}</h1>
               <p className="text-lg text-slate-200/80">
-                Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est synchronisé avec notre pipeline IA.
+                Gérez vos projets, suivez vos devis, ajustez vos tarifs et discutez avec nos équipes. Tout est
+                synchronisé avec notre pipeline IA.
               </p>
             </div>
-            <div className="flex flex-col items-stretch gap-4 lg:items-end">
-              <button
-                type="button"
-                onClick={cycleVisualMode}
-                className="group relative flex items-center gap-3 self-end rounded-full border border-cyan-200/40 visual-accent-border bg-white/10 px-5 py-3 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-cyan-100 visual-accent-text shadow-[0_10px_30px_rgba(8,145,178,0.25)] visual-accent-shadow transition hover:scale-105"
-              >
-                <span
-                  className="h-2.5 w-2.5 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.35)]"
-                  style={{ background: `hsl(${palette.accent})` }}
-                />
-                {visualMode === "nebula" ? "Palette Solstice" : "Palette Nébula"}
-                <span className="pointer-events-none absolute inset-0 -z-10 translate-x-[-120%] rounded-full bg-gradient-to-r from-cyan-400/40 via-transparent to-fuchsia-400/40 transition-transform duration-700 group-hover:translate-x-0" />
-              </button>
-              <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Stat instantané</p>
-                <p className="mt-3 text-white">{portfolioItems.length} projets en cours · {quoteRequests.length} devis · {contactRequests.length} demandes rapides</p>
-              </div>
+            <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-8 text-sm text-slate-200/80">
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Stat instantané</p>
+              <p className="mt-3 text-white">
+                {portfolioItems.length} projets en cours · {quoteRequests.length} devis · {contactRequests.length} demandes rapides
+              </p>
             </div>
           </div>
         </header>
 
         <section className="mt-16 grid gap-10 xl:grid-cols-[1.1fr_0.9fr]">
+          {/* Portfolio Admin */}
           <div className="space-y-10">
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Ajouter un projet au portfolio</h2>
-              <p className="mt-2 text-sm text-slate-200/70">Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.</p>
+              <p className="mt-2 text-sm text-slate-200/70">
+                Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.
+              </p>
               <form className="mt-6 grid gap-4" onSubmit={handleAddProject}>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <input
                     required
                     value={newProject.title}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, title: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, title: e.target.value }))}
                     placeholder="Titre"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     required
                     value={newProject.tagline}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, tagline: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, tagline: e.target.value }))}
                     placeholder="Tagline"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -899,7 +915,7 @@ const Dashboard = () => {
                 <div className="grid gap-4 sm:grid-cols-[1.5fr_auto]">
                   <input
                     value={youtubeUrl}
-                    onChange={(event) => setYoutubeUrl(event.target.value)}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
                     placeholder="Lien YouTube (youtu.be ou youtube.com)"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -916,7 +932,7 @@ const Dashboard = () => {
                 <div className="grid gap-4 sm:grid-cols-4">
                   <select
                     value={newProject.category}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, category: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, category: e.target.value }))}
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   >
                     {serviceCategories.map((category) => (
@@ -928,32 +944,32 @@ const Dashboard = () => {
                   <input
                     value={newProject.year}
                     type="number"
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, year: Number(event.target.value) }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, year: Number(e.target.value) }))}
                     placeholder="Année"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.duration}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, duration: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, duration: e.target.value }))}
                     placeholder="Durée"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.videoUrl}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, videoUrl: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, videoUrl: e.target.value }))}
                     placeholder="Lien vidéo final"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                 </div>
                 <input
                   value={newProject.thumbnail}
-                  onChange={(event) => setNewProject((prev) => ({ ...prev, thumbnail: event.target.value }))}
+                  onChange={(e) => setNewProject((p) => ({ ...p, thumbnail: e.target.value }))}
                   placeholder="URL vignette (optionnel si import)"
                   className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                 />
                 <textarea
                   value={newProject.description}
-                  onChange={(event) => setNewProject((prev) => ({ ...prev, description: event.target.value }))}
+                  onChange={(e) => setNewProject((p) => ({ ...p, description: e.target.value }))}
                   rows={4}
                   placeholder="Description punchy"
                   className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
@@ -961,19 +977,19 @@ const Dashboard = () => {
                 <div className="grid gap-4 sm:grid-cols-3">
                   <input
                     value={newProject.aiTools}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, aiTools: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, aiTools: e.target.value }))}
                     placeholder="IA tools (séparés par virgule)"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.deliverables}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, deliverables: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, deliverables: e.target.value }))}
                     placeholder="Livrables"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
                   <input
                     value={newProject.socialStack}
-                    onChange={(event) => setNewProject((prev) => ({ ...prev, socialStack: event.target.value }))}
+                    onChange={(e) => setNewProject((p) => ({ ...p, socialStack: e.target.value }))}
                     placeholder="Stack social"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -994,11 +1010,19 @@ const Dashboard = () => {
                   </button>
                 </div>
               </form>
+
               {editDraft && (
-                <form className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6" onSubmit={handleUpdateProject}>
+                <form
+                  className="mt-10 grid gap-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-6"
+                  onSubmit={handleUpdateProject}
+                >
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-white">Modifier : {editDraft.title}</h3>
-                    <button type="button" onClick={cancelEdit} className="text-xs uppercase tracking-[0.3em] text-rose-300 hover:text-rose-200">
+                    <button
+                      type="button"
+                      onClick={cancelEdit}
+                      className="text-xs uppercase tracking-[0.3em] text-rose-300 hover:text-rose-200"
+                    >
                       Annuler
                     </button>
                   </div>
@@ -1006,14 +1030,14 @@ const Dashboard = () => {
                     <input
                       required
                       value={editDraft.title}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, title: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, title: e.target.value } : p))}
                       placeholder="Titre"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       required
                       value={editDraft.tagline}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, tagline: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, tagline: e.target.value } : p))}
                       placeholder="Tagline"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
@@ -1021,7 +1045,7 @@ const Dashboard = () => {
                   <div className="grid gap-4 sm:grid-cols-4">
                     <select
                       value={editDraft.category}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, category: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, category: e.target.value } : p))}
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     >
                       {serviceCategories.map((category) => (
@@ -1033,26 +1057,26 @@ const Dashboard = () => {
                     <input
                       value={editDraft.year}
                       type="number"
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, year: Number(event.target.value) } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, year: Number(e.target.value) } : p))}
                       placeholder="Année"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.duration}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, duration: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, duration: e.target.value } : p))}
                       placeholder="Durée"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.videoUrl}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, videoUrl: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, videoUrl: e.target.value } : p))}
                       placeholder="Lien vidéo"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                   </div>
                   <textarea
                     value={editDraft.description}
-                    onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, description: event.target.value } : prev))}
+                    onChange={(e) => setEditDraft((p) => (p ? { ...p, description: e.target.value } : p))}
                     rows={4}
                     placeholder="Description"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
@@ -1060,26 +1084,26 @@ const Dashboard = () => {
                   <div className="grid gap-4 sm:grid-cols-3">
                     <input
                       value={editDraft.thumbnail}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, thumbnail: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, thumbnail: e.target.value } : p))}
                       placeholder="Vignette"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.aiTools}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, aiTools: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, aiTools: e.target.value } : p))}
                       placeholder="IA Tools"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                     <input
                       value={editDraft.deliverables}
-                      onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, deliverables: event.target.value } : prev))}
+                      onChange={(e) => setEditDraft((p) => (p ? { ...p, deliverables: e.target.value } : p))}
                       placeholder="Livrables"
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     />
                   </div>
                   <input
                     value={editDraft.socialStack}
-                    onChange={(event) => setEditDraft((prev) => (prev ? { ...prev, socialStack: event.target.value } : prev))}
+                    onChange={(e) => setEditDraft((p) => (p ? { ...p, socialStack: e.target.value } : p))}
                     placeholder="Stack social"
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   />
@@ -1134,6 +1158,7 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* Tarifs */}
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.18)] visual-secondary-veil">
               <h2 className="text-2xl font-bold">Gestion des tarifs</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -1144,7 +1169,7 @@ const Dashboard = () => {
                       type="number"
                       className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={tier.price}
-                      onChange={(event) => updatePricingTier(tier.id, { price: Number(event.target.value) })}
+                      onChange={(e) => updatePricingTier(tier.id, { price: Number(e.target.value) })}
                     />
                     <p className="mt-2 text-xs text-slate-200/60">{tier.description}</p>
                     <p className="mt-2 text-xs text-slate-200/60">{tier.sla}</p>
@@ -1154,6 +1179,7 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* Sidebar admin */}
           <aside className="space-y-10">
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-8 shadow-[0_20px_80px_rgba(56,189,248,0.15)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Comptes clients</h2>
@@ -1169,7 +1195,9 @@ const Dashboard = () => {
                         {client.membership}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-200/60">{client.company} · {client.industry}</p>
+                    <p className="mt-2 text-xs text-slate-200/60">
+                      {client.company} · {client.industry}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -1183,11 +1211,13 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-white">{quote.projectName}</p>
-                        <p className="text-xs text-slate-200/60">{quote.clientName} · {quote.budgetRange}</p>
+                        <p className="text-xs text-slate-200/60">
+                          {quote.clientName} · {quote.budgetRange}
+                        </p>
                       </div>
                       <select
                         value={quote.status}
-                        onChange={(event) => advanceQuoteStatus(quote.id, event.target.value as typeof quote.status)}
+                        onChange={(e) => advanceQuoteStatus(quote.id, e.target.value as typeof quote.status)}
                         className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.3em] text-white"
                       >
                         <option value="nouveau">Nouveau</option>
@@ -1251,7 +1281,7 @@ const Dashboard = () => {
                       <div className="mt-4 flex items-center gap-2">
                         <input
                           value={chatInput}
-                          onChange={(event) => setChatInput(event.target.value)}
+                          onChange={(e) => setChatInput(e.target.value)}
                           placeholder="Répondre avec panache"
                           className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                         />
@@ -1278,3 +1308,22 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+/* --------------- utilitaires locaux supposés présents ailleurs ------------- */
+/* Si ces helpers ne sont pas déjà définis dans ton projet, ajoute-les ici. */
+function getTimeValue(iso: string) {
+  return new Date(iso).getTime();
+}
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString();
+}
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString();
+}
+/* Map de messages de statut — adapte selon ton besoin */
+const STATUS_MESSAGES: Record<QuoteStatus, string> = {
+  nouveau: "Votre brief est bien reçu. L'équipe le place en file et prépare l'analyse.",
+  "en revue": "Notre équipe aligne la proposition : cadrage créatif, budget, équipe et pipeline IA.",
+  validé: "Top ! Le devis est validé. On active le chat projet et la préprod.",
+  refusé: "Le devis est réorienté. Nous revenons vers vous avec un plan alternatif.",
+};
