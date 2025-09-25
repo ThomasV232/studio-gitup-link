@@ -1,7 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useStudio, type PortfolioItem } from "@/context/StudioContext";
-import { AuroraBackdrop } from "@/components/AuroraBackdrop";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +16,7 @@ const Portfolio = () => {
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
 
   const filtered = useMemo(
-    () =>
-      filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter),
+    () => (filter === "Tous" ? portfolioItems : portfolioItems.filter((item) => item.category === filter)),
     [filter, portfolioItems],
   );
 
@@ -39,7 +37,13 @@ const Portfolio = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <AuroraBackdrop className="opacity-80" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 12% 18%, hsl(var(--visual-accent) / 0.35), transparent 55%), radial-gradient(circle at 82% 82%, hsl(var(--visual-secondary) / 0.25), transparent 50%)",
+        }}
+      />
       <div className="pointer-events-none absolute inset-0 mix-blend-screen">
         <div className="portfolio-aurora-cloud" />
       </div>

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useStudio } from "@/context/StudioContext";
-import { AuroraBackdrop } from "@/components/AuroraBackdrop";
 import { servicesData } from "@/lib/services";
 
 const heroHooks = [
@@ -22,7 +21,7 @@ const techStack = [
 ];
 
 const Index = () => {
-  const { portfolioItems, recordContactRequest } = useStudio();
+  const { portfolioItems, recordContactRequest, user } = useStudio();
   const [hookIndex, setHookIndex] = useState(0);
   const [contactSent, setContactSent] = useState(false);
   const [form, setForm] = useState({
@@ -36,12 +35,18 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
-      <AuroraBackdrop className="opacity-70" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 10% 10%, hsl(var(--visual-accent) / 0.22), transparent 60%), radial-gradient(circle at 90% 90%, hsl(var(--visual-secondary) / 0.22), transparent 60%)",
+        }}
+      />
       <div
         className="pointer-events-none absolute inset-0 animate-[spin_20s_linear_infinite]"
         style={{
           background:
-            "conic-gradient(from 45deg at 30% 30%, hsla(var(--visual-accent-soft)/0.22), hsla(var(--visual-secondary)/0.2), transparent 70%)",
+            "conic-gradient(from 45deg at 30% 30%, hsl(var(--visual-accent-soft) / 0.22), hsl(var(--visual-secondary) / 0.2), transparent 70%)",
         }}
       />
       <div className="relative">
@@ -85,6 +90,16 @@ const Index = () => {
                 </span>
                 <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
               </a>
+              <Link
+                to={user ? "/dashboard" : "/auth"}
+                className="group relative overflow-hidden rounded-full border border-white/20 bg-white/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-white transition hover:scale-105"
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  <span className="text-xl">{user ? "📊" : "✨"}</span>
+                  {user ? "Tableau de bord" : "S'inscrire / Connexion"}
+                </span>
+                <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
+              </Link>
             </div>
             <div className="grid gap-4 text-sm text-slate-300/80 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
@@ -97,11 +112,12 @@ const Index = () => {
               </div>
             </div>
           </div>
+
           <div className="flex flex-1 flex-col gap-6">
             <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 p-6 shadow-[0_30px_120px_rgba(236,72,153,0.2)] visual-accent-halo">
               <div
                 className="absolute inset-0"
-                style={{ background: "radial-gradient(circle at 20% 20%, hsla(var(--visual-secondary)/0.3), transparent 65%)" }}
+                style={{ background: "radial-gradient(circle at 20% 20%, hsl(var(--visual-secondary) / 0.3), transparent 65%)" }}
               />
               <div className="relative space-y-6">
                 <p className="text-xs uppercase tracking-[0.4em] text-fuchsia-200/70">Cas phare</p>
@@ -119,11 +135,14 @@ const Index = () => {
                 />
                 <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
                   {heroProject?.aiTools.map((tool) => (
-                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">{tool}</span>
+                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
+                      {tool}
+                    </span>
                   ))}
                 </div>
               </div>
             </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               {techStack.slice(0, 4).map((tool) => (
                 <div key={tool} className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-4">
@@ -139,7 +158,7 @@ const Index = () => {
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div
             className="absolute inset-0 -z-10 blur-3xl"
-            style={{ background: "radial-gradient(circle at 20% 20%, hsla(var(--visual-accent)/0.18), transparent 60%)" }}
+            style={{ background: "radial-gradient(circle at 20% 20%, hsl(var(--visual-accent) / 0.18), transparent 60%)" }}
           />
           <div className="rounded-[3rem] border border-white/10 bg-white/5 p-10 shadow-[0_0_80px_rgba(59,130,246,0.15)] visual-accent-veil">
             <div className="flex flex-col items-start gap-6 pb-10 lg:flex-row lg:items-center lg:justify-between">
@@ -160,6 +179,7 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
             <div className="grid gap-6 lg:grid-cols-3">
               {servicesData.map((service, index) => (
                 <Link
@@ -181,9 +201,7 @@ const Index = () => {
                         </span>
                       ))}
                     </div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">
-                      Consulter la méthodologie →
-                    </p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">Consulter la méthodologie →</p>
                   </div>
                 </Link>
               ))}
@@ -218,17 +236,18 @@ const Index = () => {
                 Explorer la galerie complète
               </Link>
             </div>
+
             <div className="flex-1 space-y-6">
               {portfolioItems.slice(0, 3).map((project, index) => (
                 <article
                   key={project.id}
-                  className={`group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)] visual-accent-hover-shadow`}
+                  className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)]"
                 >
                   <span
                     className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
                     style={{
                       background:
-                        "linear-gradient(120deg, hsla(var(--visual-accent)/0.25), hsla(var(--visual-secondary)/0.2))",
+                        "linear-gradient(120deg, hsl(var(--visual-accent) / 0.25), hsl(var(--visual-secondary) / 0.2))",
                     }}
                   />
                   <div className="relative flex flex-col gap-4">
@@ -270,6 +289,7 @@ const Index = () => {
                   </div>
                 </div>
               </div>
+
               <form
                 className="space-y-4"
                 onSubmit={(event) => {

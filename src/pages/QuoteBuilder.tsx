@@ -209,7 +209,11 @@ const QuoteBuilder = () => {
                 Votre demande est enregistrée. Un espace de discussion dédié s'ouvrira dès validation du devis. ID : {successId.slice(0, 8)}...
               </p>
               <p className="mt-3 text-emerald-50/90">
-                Suivez l'avancement dans <Link to="/dashboard" className="font-semibold underline decoration-emerald-200/60 decoration-dashed underline-offset-4">
+                Suivez l'avancement dans{" "}
+                <Link
+                  to="/dashboard"
+                  className="font-semibold underline decoration-emerald-200/60 decoration-dashed underline-offset-4"
+                >
                   votre tableau de bord client
                 </Link>
                 .

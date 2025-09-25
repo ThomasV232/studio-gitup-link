@@ -30,7 +30,7 @@ export const navigationItems = [
     tooltip: "Processus de production",
   },
   {
-    label: "Espace",
+    label: "Dashboard",
     to: "/dashboard",
     emoji: "🛠️",
     tooltip: "Tableau de bord",
