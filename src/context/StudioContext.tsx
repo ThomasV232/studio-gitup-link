@@ -383,7 +383,8 @@ const initialChats: ChatThread[] = [
       {
         id: uuid(),
         from: "studio",
-        content: "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
+        content:
+          "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
         timestamp: new Date().toISOString(),
       },
     ],
@@ -593,8 +594,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       if (!data.session) {
         return {
           success: true,
-          message:
-            "Compte créé. Confirmez votre adresse email pour accéder au tableau de bord.",
+          message: "Compte créé. Confirmez votre adresse email pour accéder au tableau de bord.",
         };
       }
 
