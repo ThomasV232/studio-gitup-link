@@ -528,7 +528,7 @@ const loadInitialUser = () => {
 const loadInitialCredentials = () =>
   readStorage<StoredCredential[]>(storageKeys.credentials, initialCredentials);
 
-const initialQuotes2: QuoteRequest[] = [
+const initialQuotes: QuoteRequest[] = [
   {
     id: uuid(),
     clientId: initialClients[1].id,
@@ -544,11 +544,11 @@ const initialQuotes2: QuoteRequest[] = [
   },
 ];
 
-const initialChats2: ChatThread[] = [
+const initialChats: ChatThread[] = [
   {
-    quoteId: initialQuotes2[0].id,
+    quoteId: initialQuotes[0].id,
     clientName: initialClients[1].name,
-    projectName: initialQuotes2[0].projectName,
+    projectName: initialQuotes[0].projectName,
     messages: [
       {
         id: uuid(),
@@ -908,6 +908,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       supabase.auth.signOut().catch((error) => {
         console.error("Erreur lors de la déconnexion Supabase", error);
       });
+    }
     }
     setUser(null);
   };

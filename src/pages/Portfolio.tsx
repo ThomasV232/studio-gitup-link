@@ -185,7 +185,7 @@ const Portfolio = () => {
             </nav>
           </header>
 
-          <div className="portfolio-gallery grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="portfolio-gallery grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {filtered.map((project) => (
               <article
                 key={project.id}
@@ -203,39 +203,17 @@ const Portfolio = () => {
                 <div className="portfolio-card-media">
                   <img src={project.thumbnail} alt={project.title} className="h-full w-full object-cover object-center" />
                   <div className="portfolio-card-overlay" />
-                  <div className="portfolio-card-copy">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">{project.category}</p>
-                    <h2 className="text-xl font-semibold text-white">{project.title}</h2>
-                    <p className="text-xs text-slate-200/75">{project.tagline}</p>
-                  </div>
-                </div>
-                <div className="portfolio-card-meta text-xs text-slate-200/80">
-                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-slate-200/60">
+                  <div className="portfolio-card-top">
                     <span>{project.year}</span>
                     <span>{project.duration}</span>
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-cyan-100/75 visual-accent-text-strong">
-                    {project.aiTools.slice(0, 3).map((tool) => (
-                      <span key={tool} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-                        {tool}
-                      </span>
-                    ))}
-                    {project.aiTools.length > 3 && (
-                      <span className="rounded-full border border-white/20 px-3 py-1">+{project.aiTools.length - 3}</span>
-                    )}
+                  <div className="portfolio-card-copy">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-100/70 visual-accent-text">{project.category}</p>
+                    <h2 className="text-lg font-semibold text-white">{project.title}</h2>
+                    <p className="text-xs text-slate-200/80">{project.tagline}</p>
                   </div>
-                  <div className="mt-4 text-[11px] uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                    Diffusions
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
-                    {project.socialStack.map((channel) => (
-                      <span key={channel} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-                        {channel}
-                      </span>
-                    ))}
-                  </div>
+                  <div className="portfolio-card-cta">Ouvrir la capsule</div>
                 </div>
-                <div className="portfolio-card-cta">Ouvrir la capsule</div>
               </article>
             ))}
           </div>
