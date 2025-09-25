@@ -42,9 +42,7 @@ const Auth = () => {
 
         const response = await registerUser(form);
         if (response.success) {
-          setSuccess(
-            response.message ?? "Compte créé avec succès. Vous êtes désormais connecté·e.",
-          );
+          setSuccess(response.message ?? "Compte créé avec succès. Vous êtes désormais connecté·e.");
         } else {
           setError(response.message ?? "Impossible de créer le compte.");
         }
@@ -143,70 +141,3 @@ const Auth = () => {
                     onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
                     placeholder="Secteur d'activité"
                     required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Programme</label>
-                <select
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  value={form.membership}
-                  onChange={(event) => setForm((prev) => ({ ...prev, membership: event.target.value as typeof prev.membership }))}
-                >
-                  <option value="Impulse">Impulse (starter)</option>
-                  <option value="Hyperdrive">Hyperdrive (campagne multi-format)</option>
-                  <option value="Continuum">Continuum (retainer annuel)</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Email</label>
-              <input
-                type="email"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                value={form.email}
-                onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-                placeholder="vous@studio2025.com"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
-              <input
-                type="password"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                value={form.password}
-                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-                placeholder="Au moins 8 caractères"
-                required
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <span className="relative z-10">
-              {isSubmitting
-                ? "Traitement..."
-                : mode === "register"
-                  ? "Créer mon compte"
-                  : "Connexion"}
-            </span>
-            <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
-          </button>
-
-          {error && <p className="rounded-2xl border border-rose-200/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">{error}</p>}
-          {success && <p className="rounded-2xl border border-emerald-200/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">{success}</p>}
-        </form>
-      </div>
-    </div>
-  );
-};
-
-export default Auth;
