@@ -46,7 +46,6 @@ const Index = () => {
             "conic-gradient(from 45deg at 30% 30%, hsla(var(--visual-accent-soft)/0.22), hsla(var(--visual-secondary)/0.2), transparent 70%)",
         }}
       />
-
       <div className="relative">
         <header className="mx-auto flex max-w-7xl flex-col gap-12 px-6 pt-20 pb-28 lg:flex-row lg:items-center">
           <div className="flex-1 space-y-10">
@@ -57,10 +56,9 @@ const Index = () => {
               <span className="bg-gradient-to-r from-cyan-400 via-sky-200 to-fuchsia-400 bg-clip-text text-transparent visual-accent-gradient">
                 Studio VBG
               </span>{" "}
-              orchestre vos contenus vidéo comme un{" "}
+              orchestre vos contenus vidéo comme un{' '}
               <span className="underline decoration-wavy decoration-cyan-300 visual-accent-underline">thriller orbital</span>.
             </h1>
-
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-lg leading-relaxed shadow-[0_0_60px_rgba(56,189,248,0.25)] visual-accent-shadow">
               <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
               <p className="font-semibold uppercase tracking-[0.2em] text-cyan-200/80 visual-accent-text">Hook du moment</p>
@@ -71,7 +69,6 @@ const Index = () => {
                 Nous mixons humour calibré, pipeline IA et équipes plateau pour que vos stories deviennent des franchises.
               </p>
             </div>
-
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/quote"
@@ -80,9 +77,8 @@ const Index = () => {
                 <span className="relative z-10 flex items-center gap-3">
                   <span className="text-xl">⚡</span> Demande de devis quantique
                 </span>
-                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-500 visual-accent-gradient transition-all duration-500 group-hover:translate-y-0" />
+                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-500 visual-accent-gradient transition-all duration-500 group-hover:translate-y-0 visual-accent-gradient" />
               </Link>
-
               <a
                 href="#contact"
                 className="group relative overflow-hidden rounded-full border border-white/20 px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-white transition hover:scale-105"
@@ -93,23 +89,17 @@ const Index = () => {
                 <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
               </a>
             </div>
-
             <div className="grid gap-4 text-sm text-slate-300/80 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
-                <p className="mt-2 font-semibold text-white">
-                  Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2
-                </p>
+                <p className="mt-2 font-semibold text-white">Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <p className="text-xs uppercase tracking-[0.3em] text-fuchsia-200/70">Résultats 2024</p>
-                <p className="mt-2 font-semibold text-white">
-                  +320% d'engagement moyen · 48h pour produire un bundle complet
-                </p>
+                <p className="mt-2 font-semibold text-white">+320% d'engagement moyen · 48h pour produire un bundle complet</p>
               </div>
             </div>
           </div>
-
           <div className="flex flex-1 flex-col gap-6">
             <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 p-6 shadow-[0_30px_120px_rgba(236,72,153,0.2)] visual-accent-halo">
               <div
@@ -132,14 +122,11 @@ const Index = () => {
                 />
                 <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
                   {heroProject?.aiTools.map((tool) => (
-                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
-                      {tool}
-                    </span>
+                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">{tool}</span>
                   ))}
                 </div>
               </div>
             </div>
-
             <div className="grid gap-4 sm:grid-cols-2">
               {techStack.slice(0, 4).map((tool) => (
                 <div key={tool} className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-4">
@@ -152,7 +139,6 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Services */}
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div
             className="absolute inset-0 -z-10 blur-3xl"
@@ -177,7 +163,6 @@ const Index = () => {
                 ))}
               </div>
             </div>
-
             <div className="grid gap-6 lg:grid-cols-3">
               {servicesData.map((service, index) => (
                 <Link
@@ -185,7 +170,7 @@ const Index = () => {
                   to={`/services/${service.slug}`}
                   className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8 shadow-[0_30px_100px_rgba(56,189,248,0.12)] visual-accent-hover-shadow transition-transform duration-500 hover:-translate-y-2"
                 >
-                  <span className="absolute inset-0 translate-y-full bg-gradient-to-t from-cyan-500/30 via-transparent to-transparent visual-accent-gradient transition-transform duration-700 group-hover:translate-y-0" />
+                  <span className="absolute inset-0 translate-y-full bg-gradient-to-t from-cyan-500/30 via-transparent to-transparent visual-accent-gradient transition-transform duration-700 group-hover:translate-y-0 visual-accent-gradient" />
                   <div className="relative space-y-4">
                     <span className="inline-flex items-center gap-3 text-sm font-semibold text-cyan-200/80 visual-accent-text">
                       <span className="text-2xl">0{index + 1}</span> {service.title}
@@ -199,7 +184,9 @@ const Index = () => {
                         </span>
                       ))}
                     </div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">Lire la méthode →</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">
+                      Lire la méthode →
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -207,7 +194,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Portfolio teaser */}
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div className="flex flex-col gap-10 lg:flex-row">
             <div className="flex-1 space-y-6">
@@ -221,15 +207,11 @@ const Index = () => {
               <div className="grid gap-4 text-sm text-slate-200/80">
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Humour & brise-glace</p>
-                  <p className="mt-2">
-                    Avant chaque tournage on joue à deviner le prompt Midjourney du client. Spoiler : on gagne souvent.
-                  </p>
+                  <p className="mt-2">Avant chaque tournage on joue à deviner le prompt Midjourney du client. Spoiler : on gagne souvent.</p>
                 </div>
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Organisation atypique</p>
-                  <p className="mt-2">
-                    Clusters thématiques, scoring IA, et playlist Suno AI pour caler le rythme des séquences.
-                  </p>
+                  <p className="mt-2">Clusters thématiques, scoring IA, et playlist Suno AI pour caler le rythme des séquences.</p>
                 </div>
               </div>
               <Link
@@ -239,12 +221,11 @@ const Index = () => {
                 Explorer la galerie complète
               </Link>
             </div>
-
             <div className="flex-1 space-y-6">
               {portfolioItems.slice(0, 3).map((project, index) => (
                 <article
                   key={project.id}
-                  className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)] visual-accent-hover-shadow"
+                  className={`group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)] visual-accent-hover-shadow`}
                 >
                   <span
                     className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
@@ -273,7 +254,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Contact */}
         <section className="relative mx-auto max-w-6xl px-6 pb-24" id="contact">
           <div className="rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-10 shadow-[0_25px_100px_rgba(8,145,178,0.18)]">
             <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
@@ -285,19 +265,14 @@ const Index = () => {
                 <div className="grid gap-4 text-sm text-slate-200/80">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Break the ice</p>
-                    <p className="mt-2">
-                      On veut tout savoir : votre running gag préféré, vos pires tournages, vos deadlines absurdes.
-                    </p>
+                    <p className="mt-2">On veut tout savoir : votre running gag préféré, vos pires tournages, vos deadlines absurdes.</p>
                   </div>
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Synergie intelligente</p>
-                    <p className="mt-2">
-                      Votre brief est injecté dans notre cockpit : IA, plateau, copywriters. Tout le monde est alerté.
-                    </p>
+                    <p className="mt-2">Votre brief est injecté dans notre cockpit : IA, plateau, copywriters. Tout le monde est alerté.</p>
                   </div>
                 </div>
               </div>
-
               <form
                 className="space-y-4"
                 onSubmit={(event) => {
@@ -312,7 +287,7 @@ const Index = () => {
                   <input
                     required
                     value={form.name}
-                    onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                    onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white placeholder:text-slate-300/60 focus:border-cyan-400 visual-accent-border focus:outline-none"
                     placeholder="Jane Photon ou CEO qui n'a pas dormi"
                   />
@@ -323,7 +298,7 @@ const Index = () => {
                     type="email"
                     required
                     value={form.email}
-                    onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                    onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white placeholder:text-slate-300/60 focus:border-cyan-400 visual-accent-border focus:outline-none"
                     placeholder="vous@futurebrand.com"
                   />
@@ -333,7 +308,7 @@ const Index = () => {
                   <textarea
                     required
                     value={form.projectSpark}
-                    onChange={(e) => setForm((p) => ({ ...p, projectSpark: e.target.value }))}
+                    onChange={(event) => setForm((prev) => ({ ...prev, projectSpark: event.target.value }))}
                     rows={4}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white placeholder:text-slate-300/60 focus:border-cyan-400 visual-accent-border focus:outline-none"
                     placeholder="On veut un plan séquence avec un chatbot sarcastique qui fait des saltos"
@@ -343,7 +318,7 @@ const Index = () => {
                   <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Urgence</label>
                   <select
                     value={form.urgency}
-                    onChange={(e) => setForm((p) => ({ ...p, urgency: e.target.value as typeof p.urgency }))}
+                    onChange={(event) => setForm((prev) => ({ ...prev, urgency: event.target.value as typeof form.urgency }))}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   >
                     <option value="hier">Il fallait hier</option>
@@ -356,9 +331,8 @@ const Index = () => {
                   className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white"
                 >
                   <span className="relative z-10">Envoyer ma demande fulgurante</span>
-                  <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0" />
+                  <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
                 </button>
-
                 {contactSent && (
                   <p className="rounded-2xl border border-cyan-200/30 visual-accent-border bg-cyan-500/10 visual-accent-chip px-4 py-3 text-sm text-cyan-100 visual-accent-text-strong">
                     Merci ! Notre équipe vous répond avec un meme personnalisé sous 2 heures.
@@ -374,20 +348,12 @@ const Index = () => {
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Studio VBG</p>
-                <p className="mt-2 text-lg text-white">
-                  Agence de production, captation vidéo, création de contenus réseaux sociaux.
-                </p>
+                <p className="mt-2 text-lg text-white">Agence de production, captation vidéo, création de contenus réseaux sociaux.</p>
               </div>
               <div className="flex gap-4 text-xs uppercase tracking-[0.3em] text-slate-300/80">
-                <Link to="/process" className="hover:text-white">
-                  Méthode
-                </Link>
-                <Link to="/services" className="hover:text-white">
-                  Services
-                </Link>
-                <Link to="/dashboard" className="hover:text-white">
-                  Dashboard
-                </Link>
+                <Link to="/process" className="hover:text-white">Méthode</Link>
+                <Link to="/services" className="hover:text-white">Services</Link>
+                <Link to="/dashboard" className="hover:text-white">Dashboard</Link>
               </div>
               <div className="text-xs text-slate-300/80">
                 © {new Date().getFullYear()} Studio VBG · Pipeline alimenté par IA et bon café.

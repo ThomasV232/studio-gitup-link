@@ -11,10 +11,8 @@ export const WaveMenu = () => {
 
   return (
     <>
-      {/* Desktop menu */}
       <div className="pointer-events-none fixed right-2 top-0 z-50 hidden h-screen lg:flex">
         <div className="pointer-events-auto flex h-full flex-col justify-center gap-4">
-          {/* Toggle expand */}
           <button
             type="button"
             onClick={() => setExpanded((prev) => !prev)}
@@ -26,8 +24,6 @@ export const WaveMenu = () => {
             </span>
             <span className="absolute inset-0 animate-[pulse_2s_infinite] bg-gradient-to-r from-emerald-400/40 via-transparent to-cyan-500/40 opacity-0 transition group-hover:opacity-100" />
           </button>
-
-          {/* Palette toggle */}
           <button
             type="button"
             onClick={cycleVisualMode}
@@ -42,8 +38,6 @@ export const WaveMenu = () => {
             </span>
             <span className="absolute inset-0 -z-10 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0" />
           </button>
-
-          {/* Nav */}
           <nav
             aria-label="Menu nébuleux"
             className={cn(
@@ -51,22 +45,14 @@ export const WaveMenu = () => {
               expanded ? "translate-x-0 opacity-100" : "translate-x-28 opacity-0"
             )}
           >
-            {/* Halo accent */}
             <div className="pointer-events-none absolute -right-[60px] top-0 h-full w-[120px] overflow-hidden">
               <div
                 className="absolute inset-0 blur-3xl"
-                style={{
-                  background:
-                    "radial-gradient(circle at 30% 50%, hsla(var(--visual-accent)/0.7), transparent 60%)",
-                }}
+                style={{ background: "radial-gradient(circle at 30% 50%, hsla(var(--visual-accent)/0.7), transparent 60%)" }}
               />
             </div>
-
             {navigationItems.map((item) => {
-              const active =
-                location.pathname === item.to ||
-                location.pathname.startsWith(`${item.to}/`);
-
+              const active = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
               return (
                 <Link
                   key={item.to}
@@ -74,33 +60,20 @@ export const WaveMenu = () => {
                   className={cn(
                     "group relative flex items-center justify-between overflow-hidden rounded-2xl border border-white/10 px-4 py-3 transition-all",
                     "hover:border-cyan-400/80 hover:bg-white/10 hover:text-white",
-                    active
-                      ? "border-cyan-300 bg-white/20 text-white shadow-[0_0_30px_rgba(34,211,238,0.45)]"
-                      : "text-slate-200"
+                    active ? "border-cyan-300 bg-white/20 text-white shadow-[0_0_30px_rgba(34,211,238,0.45)]" : "text-slate-200"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{item.emoji}</span>
                     <div>
-                      <p className="text-base font-semibold uppercase tracking-[0.2em]">
-                        {item.label}
-                      </p>
-                      <p className="text-[0.7rem] text-slate-300/80">
-                        {item.tooltip}
-                      </p>
+                      <p className="text-base font-semibold uppercase tracking-[0.2em]">{item.label}</p>
+                      <p className="text-[0.7rem] text-slate-300/80">{item.tooltip}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-mono text-cyan-300">
-                    {active ? "ON" : ".."}
-                  </span>
-
-                  {/* Glow sweep */}
+                  <span className="text-xs font-mono text-cyan-300">{active ? "ON" : ".."}</span>
                   <span
                     className="absolute inset-0 -z-10 translate-x-[-80%] transition-transform duration-700 group-hover:translate-x-0"
-                    style={{
-                      background:
-                        "radial-gradient(circle at right, hsla(var(--visual-accent)/0.45), transparent 60%)",
-                    }}
+                    style={{ background: "radial-gradient(circle at right, hsla(var(--visual-accent)/0.45), transparent 60%)" }}
                   />
                 </Link>
               );
@@ -108,8 +81,6 @@ export const WaveMenu = () => {
           </nav>
         </div>
       </div>
-
-      {/* Mobile palette button */}
       <div className="fixed bottom-4 right-4 z-50 pointer-events-none lg:hidden">
         <button
           type="button"

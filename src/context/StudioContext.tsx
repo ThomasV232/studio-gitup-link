@@ -83,7 +83,6 @@ export type ClientAccount = {
   lastProject?: string;
 };
 
-// ---- Visual system (nebula / solstice)
 type VisualMode = "nebula" | "solstice";
 
 type VisualPalette = {
@@ -94,6 +93,32 @@ type VisualPalette = {
   accentForeground: string;
   border: string;
 };
+
+type StudioContextValue = {
+  user: ClientAccount | null;
+  clients: ClientAccount[];
+  portfolioItems: PortfolioItem[];
+  pricingTiers: PricingTier[];
+  quoteRequests: QuoteRequest[];
+  contactRequests: ContactRequest[];
+  chats: ChatThread[];
+  visualMode: VisualMode;
+  palette: VisualPalette;
+  cycleVisualMode: () => void;
+  register: (payload: Omit<ClientAccount, "id" | "avatarHue">) => { success: boolean; message?: string };
+  login: (email: string, password: string) => { success: boolean; message?: string };
+  logout: () => void;
+  addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
+  updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
+  removePortfolioItem: (id: string) => void;
+  updatePricingTier: (id: string, updates: Partial<PricingTier>) => void;
+  createQuoteRequest: (payload: Omit<QuoteRequest, "id" | "status" | "createdAt" | "clientId" | "clientName">) => QuoteRequest | null;
+  advanceQuoteStatus: (id: string, status: QuoteRequest["status"]) => void;
+  appendChatMessage: (quoteId: string, message: Omit<ChatMessage, "id" | "timestamp">) => void;
+  recordContactRequest: (payload: Omit<ContactRequest, "id" | "createdAt">) => void;
+};
+
+const StudioContext = createContext<StudioContextValue | undefined>(undefined);
 
 const visualPalettes: Record<VisualMode, VisualPalette> = {
   nebula: {
@@ -114,36 +139,6 @@ const visualPalettes: Record<VisualMode, VisualPalette> = {
   },
 };
 
-// ---- Context
-type StudioContextValue = {
-  user: ClientAccount | null;
-  clients: ClientAccount[];
-  portfolioItems: PortfolioItem[];
-  pricingTiers: PricingTier[];
-  quoteRequests: QuoteRequest[];
-  contactRequests: ContactRequest[];
-  chats: ChatThread[];
-  visualMode: VisualMode;
-  palette: VisualPalette;
-  cycleVisualMode: () => void;
-  register: (payload: Omit<ClientAccount, "id" | "avatarHue">) => { success: boolean; message?: string };
-  login: (email: string, password: string) => { success: boolean; message?: string };
-  logout: () => void;
-  addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
-  updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
-  removePortfolioItem: (id: string) => void;
-  updatePricingTier: (id: string, updates: Partial<PricingTier>) => void;
-  createQuoteRequest: (
-    payload: Omit<QuoteRequest, "id" | "status" | "createdAt" | "clientId" | "clientName">
-  ) => QuoteRequest | null;
-  advanceQuoteStatus: (id: string, status: QuoteRequest["status"]) => void;
-  appendChatMessage: (quoteId: string, message: Omit<ChatMessage, "id" | "timestamp">) => void;
-  recordContactRequest: (payload: Omit<ContactRequest, "id" | "createdAt">) => void;
-};
-
-const StudioContext = createContext<StudioContextValue | undefined>(undefined);
-
-// ---- Mock data
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
@@ -282,7 +277,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>(initialQuotes);
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [chats, setChats] = useState<ChatThread[]>(initialChats);
-
   const [visualMode, setVisualMode] = useState<VisualMode>("nebula");
 
   useEffect(() => {
@@ -341,6 +335,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       gradient: gradient ?? gradientPool[Math.floor(Math.random() * gradientPool.length)],
     };
+
     setPortfolioItems((prev) => [newItem, ...prev]);
   };
 
@@ -417,7 +412,11 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
               ...thread,
               messages: [
                 ...thread.messages,
-                { ...message, id: uuid(), timestamp: new Date().toISOString() },
+                {
+                  ...message,
+                  id: uuid(),
+                  timestamp: new Date().toISOString(),
+                },
               ],
             }
           : thread,
@@ -431,6 +430,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       id: uuid(),
       createdAt: new Date().toISOString(),
     };
+
     setContactRequests((prev) => [newRequest, ...prev]);
   };
 

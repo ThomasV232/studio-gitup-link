@@ -39,7 +39,13 @@ const timeline = [
 const Process = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[conic-gradient(from_60deg_at_50%_50%,rgba(8,145,178,0.2),transparent_70%)]" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "conic-gradient(from 60deg at 50% 50%, hsla(var(--visual-accent)/0.22), transparent 70%)",
+        }}
+      />
       <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-28">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(14,165,233,0.2)] visual-accent-veil">
           <div className="space-y-6">
@@ -67,9 +73,7 @@ const Process = () => {
                   <p className="text-lg text-slate-200/80">{step.description}</p>
                 </div>
                 <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-6 text-sm text-slate-200/70">
-                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
-                    Ce qui se passe réellement
-                  </p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Ce qui se passe réellement</p>
                   <p className="mt-3">
                     {index === 0 && "Notre IA résume les 14 slides reçues, extrait les insights et propose 3 hooks."}
                     {index === 1 && "On produit des scripts comiques, des visuels 3D et un plan d'attaque social média."}
