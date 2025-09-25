@@ -7,9 +7,8 @@ export const WaveMenu = () => {
   const location = useLocation();
   const { user } = useStudio();
 
-  const items = user
-    ? navigationItems
-    : navigationItems.filter((item) => item.to !== "/dashboard");
+  // Si pas connecté·e, on masque l'entrée /dashboard
+  const items = user ? navigationItems : navigationItems.filter((item) => item.to !== "/dashboard");
 
   return (
     <>
@@ -36,7 +35,9 @@ export const WaveMenu = () => {
                 />
                 <div className="relative flex w-full items-center gap-2 overflow-x-auto whitespace-nowrap pb-2 pt-2">
                   {items.map((item) => {
-                    const active = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
+                    const active =
+                      location.pathname === item.to ||
+                      location.pathname.startsWith(`${item.to}/`);
                     return (
                       <Link
                         key={item.to}
@@ -51,9 +52,7 @@ export const WaveMenu = () => {
                       >
                         <span className="text-lg">{item.emoji}</span>
                         <span>{item.label}</span>
-                        <span
-                          className="pointer-events-none absolute inset-0 -z-10 translate-x-[-120%] rounded-full bg-gradient-to-r from-white/10 via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-0"
-                        />
+                        <span className="pointer-events-none absolute inset-0 -z-10 translate-x-[-120%] rounded-full bg-gradient-to-r from-white/10 via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-0" />
                       </Link>
                     );
                   })}
