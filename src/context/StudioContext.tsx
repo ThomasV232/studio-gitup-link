@@ -2,7 +2,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { v4 as uuid } from "uuid";
 import type { User } from "@supabase/supabase-js";
-
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 // Local helper to generate shimmering gradient placeholders
@@ -87,7 +86,6 @@ export type ClientAccount = {
 };
 
 type StoredClientAccount = ClientAccount & { password?: string };
-type StoredCredential = { email: string; password: string; updatedAt: string };
 
 export type RegistrationPayload = {
   name: string;
@@ -132,7 +130,6 @@ type StudioContextValue = {
   cycleVisualMode: () => void;
   register: (payload: RegistrationPayload) => Promise<{ success: boolean; message?: string }>;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  requestPasswordReset: (email: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
   updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
@@ -176,14 +173,7 @@ const storageKeys = {
   contacts: "studio.vbg.contacts",
   chats: "studio.vbg.chats",
   visualMode: "studio.vbg.visual-mode",
-  credentials: "studio.vbg.credentials",
 } as const;
-
-const normaliseEmail = (email: string) => email.trim().toLowerCase();
-const encodePassword = (value: string) =>
-  Array.from(value)
-    .map((char) => char.charCodeAt(0).toString(16).padStart(2, "0"))
-    .join("");
 
 const readStorage = <T,>(key: string, fallback: T): T => {
   if (!isBrowser) return fallback;
@@ -310,90 +300,6 @@ const initialPortfolio: PortfolioItem[] = [
   },
 ];
 
-/* ---------- Données initiales ---------- */
-const initialPortfolio: PortfolioItem[] = [
-  {
-    id: uuid(),
-    title: "Pulse HoloBoard · Lancement corporate QuantumLoop",
-    tagline: "Accompagnement de 12 000 collaborateurs avec un dispositif immersif",
-    category: SERVICE_CATEGORIES[0],
-    year: 2025,
-    duration: "01:32",
-    description:
-      "Film d'entreprise réalisé sur plateau robotisé avec incrustations temps réel Kling 2.5. Script co-écrit avec notre IA rédactionnelle pour rendre accessible la transformation digitale et déclinaisons dédiées aux équipes internes.",
-    thumbnail: "https://images.unsplash.com/photo-1522199992901-41860af3a7f3?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=s6zR2T9vn2c",
-    gradient: gradientPool[0],
-    aiTools: ["Midjourney V7", "Kling 2.5", "DaVinci Resolve"],
-    deliverables: ["Film principal 16:9", "Version onboarding 9:16", "Kit de présentation interne"],
-    socialStack: ["Intranet", "LinkedIn", "YouTube"],
-  },
-  {
-    id: uuid(),
-    title: "Aftermovie NeoSolar · Festival IA & lumière",
-    tagline: "Aftermovie immersif pour un festival dédié à l'innovation lumineuse",
-    category: SERVICE_CATEGORIES[1],
-    year: 2024,
-    duration: "02:08",
-    description:
-      "Captation événementielle associant drones FPV, Seedance Pro pour anticiper les mouvements de foule et montage synchronisé Suno AI. Objectif : donner envie de s'inscrire dès l'ouverture de la prochaine édition.",
-    thumbnail: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
-    gradient: gradientPool[1],
-    aiTools: ["Seedance Pro", "Suno AI", "DaVinci Resolve"],
-    deliverables: ["Aftermovie 4K", "Teaser 30s", "Stories pré-event"],
-    socialStack: ["Instagram", "TikTok", "YouTube Shorts"],
-  },
-  {
-    id: uuid(),
-    title: "Skyline Loop · Visite immobilière narrée par IA",
-    tagline: "Visite premium d'un penthouse avec narration IA",
-    category: SERVICE_CATEGORIES[2],
-    year: 2025,
-    duration: "01:05",
-    description:
-      "Visite immersive en drone FPV avec overlays data générés par Kling 2.5 et voix off Suno IA. Chaque pièce est présentée comme un chapitre et l'appel à l'action est piloté via QR code interactif.",
-    thumbnail: "https://images.unsplash.com/photo-1487956382158-bb926046304a?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=0pdqf4P9MB8",
-    gradient: gradientPool[2],
-    aiTools: ["Midjourney V7", "Kling 2.5", "Suno AI"],
-    deliverables: ["Film 16:9", "Version VR", "Carousel LinkedIn"],
-    socialStack: ["YouTube", "Website", "Meta Ads"],
-  },
-  {
-    id: uuid(),
-    title: "Snackverse · Série sociale pour WaveBite",
-    tagline: "Série verticale de 12 épisodes conçue pour la conversion",
-    category: SERVICE_CATEGORIES[3],
-    year: 2025,
-    duration: "00:45",
-    description:
-      "Production sociale verticale pilotée par IA : scripts testés via GPT CopyLab, tournage en LED volume, montage automatisé Veo 3 et templates livrés aux équipes internes.",
-    thumbnail: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
-    gradient: gradientPool[3],
-    aiTools: ["Veo 3", "Midjourney V7", "Adobe Premiere Pro"],
-    deliverables: ["Série 12x45s", "Capsules additionnelles", "Scripts automatisés"],
-    socialStack: ["TikTok", "Snap", "YouTube Shorts"],
-  },
-  {
-    id: uuid(),
-    title: "Orbit Lovers · Mariage futuriste en live",
-    tagline: "Cérémonie captée en direct avec diffusion privée",
-    category: SERVICE_CATEGORIES[4],
-    year: 2024,
-    duration: "03:20",
-    description:
-      "Captation mariage premium : drones, steadycam, robot caméra et IA pour générer les vœux animés. Diffusion live privée et montage highlight livré avant la fin de la réception.",
-    thumbnail: "https://images.unsplash.com/photo-1520854221050-0f4caff449fb?q=80&w=1200",
-    videoUrl: "https://www.youtube.com/watch?v=oUFJJNQGwhk",
-    gradient: gradientPool[4],
-    aiTools: ["Seedance Pro", "DaVinci Resolve", "Suno AI"],
-    deliverables: ["Live multi-cam", "Highlight 3min", "Stories pour les invités"],
-    socialStack: ["YouTube privé", "Instagram", "Galerie partagée"],
-  },
-];
-
 const initialPricing: PricingTier[] = [
   {
     id: uuid(),
@@ -444,20 +350,34 @@ const initialClients: ClientAccount[] = [
   },
 ];
 
-const initialCredentials: StoredCredential[] = [
-  {
-    email: normaliseEmail("volberg.thomas@gmail.com"),
-    password: encodePassword("StudioVBG2025!"),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    email: normaliseEmail("lena@quantumwear.ai"),
-    password: encodePassword("Hyperdrive2025!"),
-    updatedAt: new Date().toISOString(),
-  },
-];
+const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
+  const adminEmail = initialClients[0].email;
+  const hasAdmin = list.some((client) => client.email === adminEmail);
+  return hasAdmin ? list : [initialClients[0], ...list];
+};
 
-/* Ces deux blocs DOIVENT être placés avant loadInitialQuotes/loadInitialChats */
+const loadInitialClients = () => {
+  const stored = readStorage<StoredClientAccount[]>(storageKeys.clients, initialClients);
+  const sanitized = stored.map(({ password: _password, ...client }) => ({
+    ...client,
+    avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
+  }));
+  return ensureAdminClient(sanitized);
+};
+const loadInitialPortfolio = () => readStorage<PortfolioItem[]>(storageKeys.portfolio, initialPortfolio);
+const loadInitialPricing = () => readStorage<PricingTier[]>(storageKeys.pricing, initialPricing);
+const loadInitialQuotes = () => readStorage<QuoteRequest[]>(storageKeys.quotes, initialQuotes);
+const loadInitialContacts = () => readStorage<ContactRequest[]>(storageKeys.contacts, []);
+const loadInitialChats = () => readStorage<ChatThread[]>(storageKeys.chats, initialChats);
+const loadInitialVisualMode = () => readStorage<VisualMode>(storageKeys.visualMode, "nebula");
+const loadInitialUser = () => {
+  const storedUser = readStorage<(ClientAccount & { password?: string }) | null>(storageKeys.user, null);
+  if (!storedUser) return null;
+  const { password: _password, ...safeUser } = storedUser;
+  const candidates = loadInitialClients();
+  return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
+};
+
 const initialQuotes: QuoteRequest[] = [
   {
     id: uuid(),
@@ -489,76 +409,6 @@ const initialChats: ChatThread[] = [
       {
         id: uuid(),
         from: "studio",
-        content:
-          "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
-        timestamp: new Date().toISOString(),
-      },
-    ],
-  },
-];
-
-/* ---------- Chargement depuis localStorage ---------- */
-const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
-  const adminEmail = initialClients[0].email;
-  const hasAdmin = list.some((client) => client.email === adminEmail);
-  return hasAdmin ? list : [initialClients[0], ...list];
-};
-
-const loadInitialClients = () => {
-  const stored = readStorage<StoredClientAccount[]>(storageKeys.clients, initialClients);
-  const sanitized = stored.map(({ password: _password, ...client }) => ({
-    ...client,
-    avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
-  }));
-  return ensureAdminClient(sanitized);
-};
-const loadInitialPortfolio = () => readStorage<PortfolioItem[]>(storageKeys.portfolio, initialPortfolio);
-const loadInitialPricing = () => readStorage<PricingTier[]>(storageKeys.pricing, initialPricing);
-const loadInitialQuotes = () => readStorage<QuoteRequest[]>(storageKeys.quotes, initialQuotes);
-const loadInitialContacts = () => readStorage<ContactRequest[]>(storageKeys.contacts, []);
-const loadInitialChats = () => readStorage<ChatThread[]>(storageKeys.chats, initialChats);
-const loadInitialVisualMode = () => readStorage<VisualMode>(storageKeys.visualMode, "nebula");
-const loadInitialUser = () => {
-  const storedUser = readStorage<(ClientAccount & { password?: string }) | null>(storageKeys.user, null);
-  if (!storedUser) return null;
-  const { password: _password, ...safeUser } = storedUser;
-  const candidates = loadInitialClients();
-  return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
-};
-const loadInitialCredentials = () =>
-  readStorage<StoredCredential[]>(storageKeys.credentials, initialCredentials);
-
-const initialQuotes2: QuoteRequest[] = [
-  {
-    id: uuid(),
-    clientId: initialClients[1].id,
-    clientName: initialClients[1].name,
-    projectName: "Activation wearable SXSW",
-    budgetRange: "12k€ - 18k€",
-    deadline: "2025-03-11",
-    services: ["Captation multicam", "Scénarisation assistée par IA", "Pack réseaux sociaux"],
-    status: "en revue",
-    moodboardPrompt:
-      "Imagine a slow-motion capture of biometric data turning into aurora borealis patterns inside a dome stage.",
-    createdAt: new Date().toISOString(),
-  },
-];
-
-const initialChats2: ChatThread[] = [
-  {
-    quoteId: initialQuotes2[0].id,
-    clientName: initialClients[1].name,
-    projectName: initialQuotes2[0].projectName,
-    messages: [
-      {
-        id: uuid(),
-        from: "client",
-        content: "On peut ajouter une version 9:16 verticale ?",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        id: uuid(),
-        from: "studio",
         content: "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
         timestamp: new Date().toISOString(),
       },
@@ -570,7 +420,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const supabase = getSupabaseClient();
   const [user, setUser] = useState<ClientAccount | null>(loadInitialUser);
   const [clients, setClients] = useState<ClientAccount[]>(loadInitialClients);
-  const [credentials, setCredentials] = useState<StoredCredential[]>(loadInitialCredentials);
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(loadInitialPortfolio);
   const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(loadInitialPricing);
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>(loadInitialQuotes);
@@ -612,7 +461,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (!supabase) {
     if (!isSupabaseConfigured) {
       return;
     }
@@ -672,10 +520,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   }, [clients]);
 
   useEffect(() => {
-    writeStorage(storageKeys.credentials, credentials);
-  }, [credentials]);
-
-  useEffect(() => {
     if (user) {
       writeStorage(storageKeys.user, user);
     } else {
@@ -710,44 +554,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const register: StudioContextValue["register"] = async (payload) => {
     const { password, ...profile } = payload;
     const avatarHue = Math.floor(Math.random() * 360);
-    const normalizedEmail = normaliseEmail(profile.email);
-
-    if (!supabase || !isSupabaseConfigured) {
-      if (credentials.some((credential) => credential.email === normalizedEmail)) {
-        return {
-          success: false,
-          message: "Un compte existe déjà avec cette adresse email. Essayez de vous connecter.",
-        };
-      }
-
-      const newClient: ClientAccount = {
-        id: uuid(),
-        name: profile.name,
-        email: profile.email.trim(),
-        company: profile.company,
-        industry: profile.industry,
-        membership: profile.membership,
-        avatarHue,
-        lastProject: "Premier projet à venir",
-      };
-
-      setClients((prev) => ensureAdminClient([...prev, newClient]));
-      setCredentials((prev) => [
-        ...prev,
-        {
-          email: normalizedEmail,
-          password: encodePassword(password),
-          updatedAt: new Date().toISOString(),
-        },
-      ]);
-      setUser(newClient);
-
-      return {
-        success: true,
-        message:
-          "Compte créé en mode démo. Vous êtes connecté·e et pouvez accéder immédiatement au tableau de bord.",
-      };
-    }
 
     if (!isSupabaseConfigured) {
       return {
@@ -783,7 +589,8 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
       if (!data.session) {
         return {
           success: true,
-          message: "Compte créé. Confirmez votre adresse email pour accéder au tableau de bord.",
+          message:
+            "Compte créé. Confirmez votre adresse email pour accéder au tableau de bord.",
         };
       }
 
@@ -798,34 +605,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login: StudioContextValue["login"] = async (email, password) => {
-    if (!supabase || !isSupabaseConfigured) {
-      const normalizedEmail = normaliseEmail(email);
-      const storedCredential = credentials.find((credential) => credential.email === normalizedEmail);
-
-      if (!storedCredential) {
-        return {
-          success: false,
-          message: "Aucun compte n'est associé à cette adresse. Créez votre espace client.",
-        };
-      }
-
-      if (storedCredential.password !== encodePassword(password)) {
-        return { success: false, message: "Mot de passe incorrect." };
-      }
-
-      const matchingClient = clients.find((client) => normaliseEmail(client.email) === normalizedEmail);
-
-      if (!matchingClient) {
-        return {
-          success: false,
-          message: "Impossible de retrouver votre profil client. Réalisez une nouvelle inscription.",
-        };
-      }
-
-      setUser(matchingClient);
-      return { success: true, message: "Connexion réussie." };
-    }
-
     if (!isSupabaseConfigured) {
       return {
         success: false,
@@ -854,56 +633,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const requestPasswordReset: StudioContextValue["requestPasswordReset"] = async (email) => {
-    if (!supabase || !isSupabaseConfigured) {
-      const normalizedEmail = normaliseEmail(email);
-      const storedCredential = credentials.find((credential) => credential.email === normalizedEmail);
-
-      if (!storedCredential) {
-        return {
-          success: false,
-          message: "Adresse inconnue. Vérifiez l'orthographe ou créez un nouveau compte.",
-        };
-      }
-
-      return {
-        success: true,
-        message:
-          "Mode démo : contactez support@studiovbg.fr pour réinitialiser votre mot de passe, ou inscrivez-vous de nouveau.",
-      };
-    }
-
-    if (!isSupabaseConfigured) {
-      return {
-        success: false,
-        message: "Supabase n'est pas configuré. Impossible d'envoyer le lien de réinitialisation.",
-      };
-    }
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
-      });
-
-      if (error) {
-        return { success: false, message: error.message };
-      }
-
-      return {
-        success: true,
-        message: "Un email de réinitialisation vient d'être envoyé. Consultez votre boîte de réception.",
-      };
-    } catch (error) {
-      console.error("Erreur de réinitialisation du mot de passe Supabase", error);
-      return {
-        success: false,
-        message: "Impossible d'envoyer le lien de réinitialisation pour le moment.",
-      };
-    }
-  };
-
   const logout = () => {
-    if (supabase) {
     if (isSupabaseConfigured) {
       supabase.auth.signOut().catch((error) => {
         console.error("Erreur lors de la déconnexion Supabase", error);
@@ -1031,7 +761,6 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     cycleVisualMode,
     register,
     login,
-    requestPasswordReset,
     logout,
     addPortfolioItem,
     updatePortfolioItem,
