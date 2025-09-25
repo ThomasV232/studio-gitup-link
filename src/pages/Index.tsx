@@ -4,9 +4,9 @@ import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
 
 const heroHooks = [
-  "Votre board veut du wow. On livre du *whoa*.",
-  "Les algorithmes scrollent aussi — parlons leur langage.",
-  "Les budgets n'aiment pas les tunnels sans fin. Nous non plus.",
+  "Votre direction attend des résultats tangibles : nous concevons des productions qui les démontrent.",
+  "Les plateformes privilégient les contenus cohérents. Chaque format est calibré pour sa diffusion.",
+  "Les échéances serrées exigent une organisation impeccable. Notre équipe reste mobilisée du brief au delivery.",
 ];
 
 const techStack = [
@@ -50,23 +50,22 @@ const Index = () => {
         <header className="mx-auto flex max-w-7xl flex-col gap-12 px-6 pt-20 pb-28 lg:flex-row lg:items-center">
           <div className="flex-1 space-y-10">
             <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-slate-200 backdrop-blur">
-              Studio VBG · Agence vidéaste 2025
+              Studio VBG · Agence vidéo 2025
             </span>
             <h1 className="text-4xl font-black leading-tight sm:text-6xl">
               <span className="bg-gradient-to-r from-cyan-400 via-sky-200 to-fuchsia-400 bg-clip-text text-transparent visual-accent-gradient">
                 Studio VBG
               </span>{" "}
-              orchestre vos contenus vidéo comme un{' '}
-              <span className="underline decoration-wavy decoration-cyan-300 visual-accent-underline">thriller orbital</span>.
+              orchestre vos contenus vidéo avec une précision cinématographique.
             </h1>
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-lg leading-relaxed shadow-[0_0_60px_rgba(56,189,248,0.25)] visual-accent-shadow">
               <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
-              <p className="font-semibold uppercase tracking-[0.2em] text-cyan-200/80 visual-accent-text">Hook du moment</p>
+              <p className="font-semibold uppercase tracking-[0.2em] text-cyan-200/80 visual-accent-text">Message clé</p>
               <p className="mt-4 text-2xl" onMouseEnter={() => setHookIndex((i) => (i + 1) % heroHooks.length)}>
                 {heroHooks[hookIndex]}
               </p>
               <p className="mt-6 text-sm text-slate-200/80">
-                Nous mixons humour calibré, pipeline IA et équipes plateau pour que vos stories deviennent des franchises.
+                Nous combinons conception éditoriale, pipeline IA et expertise plateau pour transformer chaque vidéo en actif durable.
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -75,7 +74,7 @@ const Index = () => {
                 className="group relative overflow-hidden rounded-full border border-cyan-200/30 visual-accent-border bg-cyan-500/20 visual-accent-bg px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-cyan-100 visual-accent-text-strong shadow-[0_10px_40px_rgba(8,145,178,0.35)] visual-accent-shadow transition hover:scale-105"
               >
                 <span className="relative z-10 flex items-center gap-3">
-                  <span className="text-xl">⚡</span> Demande de devis quantique
+                  <span className="text-xl">⚡</span> Demande de devis
                 </span>
                 <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-500 visual-accent-gradient transition-all duration-500 group-hover:translate-y-0 visual-accent-gradient" />
               </Link>
@@ -91,7 +90,7 @@ const Index = () => {
             </div>
             <div className="grid gap-4 text-sm text-slate-300/80 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline IA</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Chaîne IA</p>
                 <p className="mt-2 font-semibold text-white">Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
@@ -147,9 +146,9 @@ const Index = () => {
           <div className="rounded-[3rem] border border-white/10 bg-white/5 p-10 shadow-[0_0_80px_rgba(59,130,246,0.15)] visual-accent-veil">
             <div className="flex flex-col items-start gap-6 pb-10 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Pipeline orchestré</p>
+                <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Méthode intégrée</p>
                 <h2 className="mt-3 text-4xl font-extrabold">
-                  Une stack IA + plateau réel calibrée pour faire sourire vos KPIs
+                  Une chaîne de production qui synchronise IA et équipes de plateau
                 </h2>
               </div>
               <div className="flex gap-3 text-sm text-slate-200/80">
@@ -185,7 +184,7 @@ const Index = () => {
                       ))}
                     </div>
                     <p className="text-xs uppercase tracking-[0.3em] text-slate-300/70">
-                      Lire la méthode →
+                      Consulter la méthodologie →
                     </p>
                   </div>
                 </Link>
@@ -197,21 +196,21 @@ const Index = () => {
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div className="flex flex-col gap-10 lg:flex-row">
             <div className="flex-1 space-y-6">
-              <p className="text-sm uppercase tracking-[0.3em] text-fuchsia-200/70">Réalisations atypiques</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-fuchsia-200/70">Réalisations récentes</p>
               <h2 className="text-4xl font-extrabold leading-tight">
-                Portfolio modulable, prêt à être remixé, supprimé, amélioré en un clic
+                Un portefeuille modulable piloté depuis votre tableau de bord
               </h2>
               <p className="text-lg text-slate-200/80">
-                Chaque projet est pensé comme un kit LEGO vidéo : vous pouvez ajouter, modifier, supprimer les blocs depuis notre dashboard.
+                Chaque projet est structuré pour évoluer. Ajoutez, mettez à jour ou archivez vos références depuis le tableau de bord administrateur.
               </p>
               <div className="grid gap-4 text-sm text-slate-200/80">
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Humour & brise-glace</p>
-                  <p className="mt-2">Avant chaque tournage on joue à deviner le prompt Midjourney du client. Spoiler : on gagne souvent.</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Processus éditorial</p>
+                  <p className="mt-2">Brief, scénario, droits et livrables sont documentés dès la préproduction pour sécuriser la validation interne.</p>
                 </div>
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Organisation atypique</p>
-                  <p className="mt-2">Clusters thématiques, scoring IA, et playlist Suno AI pour caler le rythme des séquences.</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Pilotage data</p>
+                  <p className="mt-2">Classement par thématique, scoring IA des performances et bibliothèques audio certifiées pour accélérer la production.</p>
                 </div>
               </div>
               <Link
@@ -260,16 +259,16 @@ const Index = () => {
               <div className="space-y-6">
                 <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Demande rapide</p>
                 <h2 className="text-4xl font-extrabold leading-tight">
-                  90 secondes pour nous briefer. On vous rappelle avant que votre café refroidisse.
+                  90 secondes suffisent pour lancer un échange avec nos équipes.
                 </h2>
                 <div className="grid gap-4 text-sm text-slate-200/80">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Break the ice</p>
-                    <p className="mt-2">On veut tout savoir : votre running gag préféré, vos pires tournages, vos deadlines absurdes.</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Analyse initiale</p>
+                    <p className="mt-2">Objectifs, publics cibles et formats souhaités : nous collectons les informations essentielles pour préparer la proposition.</p>
                   </div>
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Synergie intelligente</p>
-                    <p className="mt-2">Votre brief est injecté dans notre cockpit : IA, plateau, copywriters. Tout le monde est alerté.</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Coordination interne</p>
+                    <p className="mt-2">Le brief est partagé avec le pôle création, l'équipe plateau et notre cellule IA pour une réponse argumentée et chiffrée.</p>
                   </div>
                 </div>
               </div>
@@ -289,7 +288,7 @@ const Index = () => {
                     value={form.name}
                     onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white placeholder:text-slate-300/60 focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    placeholder="Jane Photon ou CEO qui n'a pas dormi"
+                    placeholder="Nom et prénom"
                   />
                 </div>
                 <div>
@@ -311,7 +310,7 @@ const Index = () => {
                     onChange={(event) => setForm((prev) => ({ ...prev, projectSpark: event.target.value }))}
                     rows={4}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white placeholder:text-slate-300/60 focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    placeholder="On veut un plan séquence avec un chatbot sarcastique qui fait des saltos"
+                    placeholder="Décrivez le contexte, les objectifs et les livrables attendus"
                   />
                 </div>
                 <div>
@@ -321,21 +320,21 @@ const Index = () => {
                     onChange={(event) => setForm((prev) => ({ ...prev, urgency: event.target.value as typeof form.urgency }))}
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   >
-                    <option value="hier">Il fallait hier</option>
-                    <option value="cette-semaine">Cette semaine</option>
-                    <option value="quand-c-est-parfait">Quand c'est parfait</option>
+                    <option value="hier">Projet urgent</option>
+                    <option value="cette-semaine">Démarrage sous 7 jours</option>
+                    <option value="quand-c-est-parfait">Planifié</option>
                   </select>
                 </div>
                 <button
                   type="submit"
                   className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white"
                 >
-                  <span className="relative z-10">Envoyer ma demande fulgurante</span>
+                  <span className="relative z-10">Envoyer ma demande</span>
                   <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
                 </button>
                 {contactSent && (
                   <p className="rounded-2xl border border-cyan-200/30 visual-accent-border bg-cyan-500/10 visual-accent-chip px-4 py-3 text-sm text-cyan-100 visual-accent-text-strong">
-                    Merci ! Notre équipe vous répond avec un meme personnalisé sous 2 heures.
+                    Merci pour votre message. Un membre de l'équipe Studio VBG revient vers vous sous 2 heures ouvrées.
                   </p>
                 )}
               </form>
@@ -356,7 +355,7 @@ const Index = () => {
                 <Link to="/dashboard" className="hover:text-white">Dashboard</Link>
               </div>
               <div className="text-xs text-slate-300/80">
-                © {new Date().getFullYear()} Studio VBG · Pipeline alimenté par IA et bon café.
+                © {new Date().getFullYear()} Studio VBG · Pipeline propulsé par l'IA et une gestion de projet rigoureuse.
               </div>
             </div>
           </div>

@@ -38,7 +38,7 @@ const Auth = () => {
       }
       const response = registerUser(form);
       if (response.success) {
-        setSuccess("Bienvenue à bord ! Vous êtes connecté·e.");
+        setSuccess("Compte créé avec succès. Vous êtes désormais connecté·e.");
       } else {
         setError(response.message ?? "Impossible de créer le compte.");
       }
@@ -47,7 +47,7 @@ const Auth = () => {
       if (!response.success) {
         setError(response.message ?? "Impossible de se connecter.");
       } else {
-        setSuccess("Connexion réussie. Préparez votre brief !");
+        setSuccess("Connexion réussie. Vous pouvez préparer votre brief.");
       }
     }
   };
@@ -68,18 +68,18 @@ const Auth = () => {
             <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
               Studio VBG · Espace client
             </span>
-            <h1 className="text-5xl font-black leading-tight">Préparez votre orbit</h1>
+            <h1 className="text-5xl font-black leading-tight">Accédez à l'espace client</h1>
             <p className="text-lg text-slate-200/80">
-              Créez votre compte ou connectez-vous pour accéder au dashboard, envoyer un brief, suivre vos devis et chatter avec nos équipes.
+              Créez votre compte ou connectez-vous pour consulter le tableau de bord, déposer un brief, suivre vos devis et échanger avec nos équipes.
             </p>
             <div className="grid gap-4 text-sm text-slate-200/70 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Onboarding fun</p>
-                <p className="mt-2">On vous pose une question icebreaker pour chaque projet.</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Onboarding structuré</p>
+                <p className="mt-2">Un formulaire clair pour rassembler les informations essentielles à votre projet.</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Sécurité simple</p>
-                <p className="mt-2">Vos données restent chez nous, pas de partage sauvage.</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Sécurité maîtrisée</p>
+                <p className="mt-2">Vos données sont hébergées en interne et utilisées exclusivement pour vos projets.</p>
               </div>
             </div>
           </div>
@@ -111,7 +111,7 @@ const Auth = () => {
                   className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                   value={form.name}
                   onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                  placeholder="Ada Photon"
+                  placeholder="Nom et prénom"
                   required
                 />
               </div>
@@ -122,7 +122,7 @@ const Auth = () => {
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     value={form.company}
                     onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
-                    placeholder="FutureCorp"
+                    placeholder="Nom de l'entreprise"
                     required
                   />
                 </div>
@@ -132,7 +132,7 @@ const Auth = () => {
                     className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                     value={form.industry}
                     onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
-                    placeholder="Tech / Mode / Finance fun"
+                    placeholder="Secteur d'activité"
                     required
                   />
                 </div>
@@ -181,7 +181,7 @@ const Auth = () => {
             type="submit"
             className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white"
           >
-            <span className="relative z-10">{mode === "register" ? "Créer mon cockpit" : "Connexion"}</span>
+            <span className="relative z-10">{mode === "register" ? "Créer mon compte" : "Connexion"}</span>
             <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
           </button>
 

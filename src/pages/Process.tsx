@@ -1,37 +1,37 @@
 const timeline = [
   {
     id: "brief",
-    title: "Brief cosmique",
+    title: "Brief initial",
     description:
-      "On décode votre univers, vos objectifs, vos inside jokes. Notre IA résume, priorise et propose des premières punchlines.",
+      "Nous analysons votre contexte, vos objectifs et vos audiences. Notre IA priorise les informations clés et structure les premières pistes créatives.",
     gradient: "radial-gradient(circle at top, hsla(var(--visual-accent)/0.25), transparent 70%)",
   },
   {
     id: "design",
-    title: "Design narratif",
+    title: "Conception narrative",
     description:
-      "Moodboards Midjourney V7, script génératif, découpage shotlist. Chaque scène a son hook, son moment humour, son CTA.",
+      "Moodboards Midjourney V7, scripts générés et découpage technique. Chaque séquence est associée à un objectif précis et à des indicateurs de performance.",
     gradient: "radial-gradient(circle at 60% 20%, hsla(var(--visual-secondary)/0.28), transparent 70%)",
   },
   {
     id: "shoot",
-    title: "Tournage chorégraphié",
+    title: "Production",
     description:
-      "Seedance Pro prédit les mouvements, Kling 2.5 projette les décors, nos équipes rigolent mais restent focus.",
+      "Seedance Pro anticipe les mouvements caméra, Kling 2.5 projette les décors et nos équipes plateau pilotent chaque séquence avec précision.",
     gradient: "radial-gradient(circle at 30% 80%, hsla(var(--visual-tertiary)/0.24), transparent 70%)",
   },
   {
     id: "post",
-    title: "Post-prod synchrone",
+    title: "Postproduction",
     description:
-      "Veo 3 accélère le montage, Davinci peaufine, Suno AI livre le sound design, LypSync V2 anime les punchlines.",
+      "Veo 3 accélère le montage, Davinci assure la colorimétrie, Suno AI compose le sound design et LypSync V2 harmonise les voix.",
     gradient: "radial-gradient(circle at bottom right, hsla(var(--visual-accent-soft)/0.24), transparent 70%)",
   },
   {
     id: "launch",
-    title: "Launch orchestré",
+    title: "Diffusion",
     description:
-      "On publie, on tracke, on ajuste. Les memes partent, les stats montent, le chat se remplit de gifs heureux.",
+      "Nous publions, suivons la performance et ajustons les formats. Les reportings sont partagés en temps réel via le tableau de bord.",
     gradient: "radial-gradient(circle at 50% 50%, hsla(var(--visual-secondary)/0.22), transparent 70%)",
   },
 ];
@@ -52,9 +52,9 @@ const Process = () => {
             <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
               Processus Studio VBG
             </span>
-            <h1 className="text-5xl font-black leading-tight">La méthode orbitale qui fait sourire vos KPI</h1>
+            <h1 className="text-5xl font-black leading-tight">Notre méthodologie de production vidéo</h1>
             <p className="text-lg text-slate-200/80">
-              Des micro-hooks en pré-prod aux chats post-devis, chaque étape est calibrée. On mélange IA, rigueur, humour et dashboards.
+              De la définition du brief à la diffusion, chaque étape est orchestrée pour garantir une qualité constante et une visibilité complète sur l'avancement.
             </p>
           </div>
         </header>
@@ -73,13 +73,13 @@ const Process = () => {
                   <p className="text-lg text-slate-200/80">{step.description}</p>
                 </div>
                 <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-6 text-sm text-slate-200/70">
-                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Ce qui se passe réellement</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Livrables associés</p>
                   <p className="mt-3">
-                    {index === 0 && "Notre IA résume les 14 slides reçues, extrait les insights et propose 3 hooks."}
-                    {index === 1 && "On produit des scripts comiques, des visuels 3D et un plan d'attaque social média."}
-                    {index === 2 && "Plateau modulable, robots, macros Atem, humour pour détendre le client."}
-                    {index === 3 && "Montage collaboratif, exports multiples, automatisation sous Notion & Zapier."}
-                    {index === 4 && "On livre, on tracke, on envoie un meme de célébration sur le chat de suivi."}
+                    {index === 0 && "Compte rendu synthétique, plan d'action initial et échéancier partagé."}
+                    {index === 1 && "Scénario validé, moodboards, prévisualisations et planning de tournage."}
+                    {index === 2 && "Feuilles de service, captations sécurisées, rushes organisés et backups."}
+                    {index === 3 && "Montages intermédiaires, validations collaboratives et exports multi-plateformes."}
+                    {index === 4 && "Calendrier de diffusion, reporting de performance et recommandations d'optimisation."}
                   </p>
                 </div>
               </div>
@@ -88,9 +88,9 @@ const Process = () => {
         </section>
 
         <section className="mt-16 rounded-[3rem] border border-white/10 bg-white/5 p-12 text-center text-sm text-slate-200/70">
-          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Prêt·e à rejoindre l'orbite ?</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Prêt à collaborer ?</p>
           <p className="mt-6 text-3xl font-semibold text-white">
-            Connectez-vous, briefez-nous, on déclenche le mode hyperdrive de Studio VBG.
+            Connectez-vous, partagez votre brief et nous lançons la production dans les meilleurs délais.
           </p>
         </section>
       </div>
