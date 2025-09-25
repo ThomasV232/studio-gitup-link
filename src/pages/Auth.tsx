@@ -113,6 +113,12 @@ const Auth = () => {
       membership: membershipTiers[0].value,
     });
 
+  useEffect(() => {
+    if (mode === "forgot") {
+      setForm((prev) => ({ ...prev, password: "" }));
+    }
+  }, [mode]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
@@ -121,12 +127,21 @@ const Auth = () => {
 
     try {
       if (mode === "register") {
-        if (!form.name || !form.email || !form.password || !form.company || !form.industry) {
+        const trimmedPassword = form.password.trim();
+
+        if (!form.name || !form.email || !trimmedPassword || !form.company || !form.industry) {
           setError("Merci de remplir tous les champs indispensables.");
           return;
         }
 
-        const response = await registerUser(form);
+        if (trimmedPassword.length < 8 || !/[A-Z]/.test(trimmedPassword) || !/\d/.test(trimmedPassword)) {
+          setError(
+            "Votre mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.",
+          );
+          return;
+        }
+
+        const response = await registerUser({ ...form, password: trimmedPassword });
         if (response.success) {
           setSuccess(response.message ?? "Compte créé avec succès. Vous êtes désormais connecté·e.");
           resetForm();
@@ -134,7 +149,14 @@ const Auth = () => {
           setError(response.message ?? "Impossible de créer le compte.");
         }
       } else if (mode === "login") {
-        const response = await login(form.email, form.password);
+        const trimmedPassword = form.password.trim();
+
+        if (!trimmedPassword) {
+          setError("Merci d'indiquer votre mot de passe.");
+          return;
+        }
+
+        const response = await login(form.email, trimmedPassword);
         if (!response.success) {
           setError(response.message ?? "Impossible de se connecter.");
         } else {
@@ -330,8 +352,6 @@ const Auth = () => {
                   value={form.password}
                   onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
                   placeholder={mode === "register" ? "Créer un mot de passe sécurisé" : "Votre mot de passe"}
-                  required
-                  minLength={8}
                 />
                 {mode === "register" && (
                   <p className="mt-2 text-[0.7rem] text-slate-300/70">
