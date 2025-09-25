@@ -5,17 +5,22 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
-let supabase: SupabaseClient | undefined;
+let supabase: SupabaseClient | null = null;
 
 const isBrowser = typeof window !== "undefined";
 
 export const getSupabaseClient = () => {
   if (!supabase) {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn("Supabase credentials are missing. Provide VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+    if (!isSupabaseConfigured) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          "Supabase credentials are missing. Provide VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable authentication.",
+        );
+      }
+      return null;
     }
 
-    supabase = createClient(supabaseUrl ?? "", supabaseAnonKey ?? "", {
+    supabase = createClient(supabaseUrl!, supabaseAnonKey!, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,

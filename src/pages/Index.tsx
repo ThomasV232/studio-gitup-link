@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
+import { cn } from "@/lib/utils";
 
 const heroHooks = [
   "Votre direction attend des résultats tangibles : nous concevons des productions qui les démontrent.",
@@ -21,9 +22,11 @@ const techStack = [
 ];
 
 const Index = () => {
-  const { portfolioItems, recordContactRequest } = useStudio();
+  const { portfolioItems, recordContactRequest, user } = useStudio();
   const [hookIndex, setHookIndex] = useState(0);
   const [contactSent, setContactSent] = useState(false);
+  const [heroImageLoaded, setHeroImageLoaded] = useState(false);
+  const [heroImageError, setHeroImageError] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -32,6 +35,11 @@ const Index = () => {
   });
 
   const heroProject = portfolioItems[0];
+
+  useEffect(() => {
+    setHeroImageLoaded(false);
+    setHeroImageError(false);
+  }, [heroProject?.thumbnail]);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
@@ -90,6 +98,16 @@ const Index = () => {
                 </span>
                 <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
               </a>
+              <Link
+                to={user ? "/dashboard" : "/auth"}
+                className="group relative overflow-hidden rounded-full border border-white/20 bg-white/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-white transition hover:scale-105"
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  <span className="text-xl">{user ? "📊" : "✨"}</span>
+                  {user ? "Tableau de bord" : "S'inscrire / Connexion"}
+                </span>
+                <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
+              </Link>
             </div>
             <div className="grid gap-4 text-sm text-slate-300/80 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
@@ -118,11 +136,37 @@ const Index = () => {
                   <div className="rounded-2xl bg-white/5 p-3 text-center">{heroProject?.duration}</div>
                   <div className="rounded-2xl bg-white/5 p-3 text-center">{heroProject?.year}</div>
                 </div>
-                <img
-                  src={heroProject?.thumbnail}
-                  alt={heroProject?.title}
-                  className="h-64 w-full rounded-[2rem] object-cover object-center"
-                />
+                <div className="relative h-64 w-full overflow-hidden rounded-[2rem]">
+                  <div
+                    className={cn(
+                      "absolute inset-0 bg-gradient-to-br",
+                      heroProject?.gradient ?? "from-cyan-500 via-sky-500 to-indigo-600",
+                    )}
+                  />
+                  {!heroImageError && heroProject?.thumbnail ? (
+                    <img
+                      src={heroProject.thumbnail}
+                      alt={heroProject.title}
+                      onLoad={() => setHeroImageLoaded(true)}
+                      onError={() => setHeroImageError(true)}
+                      className={cn(
+                        "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700",
+                        heroImageLoaded ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  ) : (
+                    <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-slate-950/40 text-center">
+                      <span className="text-3xl">🎬</span>
+                      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
+                        Aperçu en cours de préparation
+                      </p>
+                      <p className="text-xs text-white/60">
+                        L'image du projet se charge avec un rendu dégradé artistique en attendant.
+                      </p>
+                    </div>
+                  )}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
+                </div>
                 <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
                   {heroProject?.aiTools.map((tool) => (
                     <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
