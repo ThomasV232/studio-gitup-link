@@ -164,24 +164,26 @@ const Portfolio = () => {
                 livrables et la stratégie IA correspondante.
               </p>
             </div>
-            <nav className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.35em]">
-              {categories.map((category) => {
-                const isActive = filter === category;
-                return (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setFilter(category)}
-                    className={`portfolio-filter-trigger ${
-                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
-                    }`}
-                    aria-pressed={isActive}
-                  >
-                    {category}
-                  </button>
-                );
-              })}
-            </nav>
+            <div className="portfolio-filter-scroll-wrapper overflow-x-auto whitespace-nowrap pb-2">
+              <nav className="flex w-max flex-nowrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.35em]">
+                {categories.map((category) => {
+                  const isActive = filter === category;
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => setFilter(category)}
+                      className={`portfolio-filter-trigger ${
+                        isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
+                      }`}
+                      aria-pressed={isActive}
+                    >
+                      {category}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
           </header>
 
           <div className="portfolio-gallery grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
