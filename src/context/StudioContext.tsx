@@ -203,6 +203,7 @@ const removeStorage = (key: string) => {
   window.localStorage.removeItem(key);
 };
 
+/* ---------- Données initiales ---------- */
 const initialPortfolio: PortfolioItem[] = [
   {
     id: uuid(),
@@ -352,6 +353,47 @@ const initialClients: ClientAccount[] = [
   },
 ];
 
+/* Ces deux blocs DOIVENT être placés avant loadInitialQuotes/loadInitialChats */
+const initialQuotes: QuoteRequest[] = [
+  {
+    id: uuid(),
+    clientId: initialClients[1].id,
+    clientName: initialClients[1].name,
+    projectName: "Activation wearable SXSW",
+    budgetRange: "12k€ - 18k€",
+    deadline: "2025-03-11",
+    services: ["Captation multicam", "Scénarisation assistée par IA", "Pack réseaux sociaux"],
+    status: "en revue",
+    moodboardPrompt:
+      "Imagine a slow-motion capture of biometric data turning into aurora borealis patterns inside a dome stage.",
+    createdAt: new Date().toISOString(),
+  },
+];
+
+const initialChats: ChatThread[] = [
+  {
+    quoteId: initialQuotes[0].id,
+    clientName: initialClients[1].name,
+    projectName: initialQuotes[0].projectName,
+    messages: [
+      {
+        id: uuid(),
+        from: "client",
+        content: "On peut ajouter une version 9:16 verticale ?",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        id: uuid(),
+        from: "studio",
+        content:
+          "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  },
+];
+
+/* ---------- Chargement depuis localStorage ---------- */
 const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
   const adminEmail = initialClients[0].email;
   const hasAdmin = list.some((client) => client.email === adminEmail);
