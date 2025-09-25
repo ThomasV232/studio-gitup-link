@@ -2,6 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { v4 as uuid } from "uuid";
 import type { User } from "@supabase/supabase-js";
+
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 // Local helper to generate shimmering gradient placeholders
@@ -130,6 +131,7 @@ type StudioContextValue = {
   cycleVisualMode: () => void;
   register: (payload: RegistrationPayload) => Promise<{ success: boolean; message?: string }>;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  requestPasswordReset: (email: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   addPortfolioItem: (payload: Omit<PortfolioItem, "id" | "gradient"> & { gradient?: string }) => void;
   updatePortfolioItem: (id: string, updates: Partial<PortfolioItem>) => void;
@@ -420,7 +422,44 @@ const loadInitialUser = () => {
   return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
 };
 
-/* ---------- Provider ---------- */
+const initialQuotes: QuoteRequest[] = [
+  {
+    id: uuid(),
+    clientId: initialClients[1].id,
+    clientName: initialClients[1].name,
+    projectName: "Activation wearable SXSW",
+    budgetRange: "12k€ - 18k€",
+    deadline: "2025-03-11",
+    services: ["Captation multicam", "Scénarisation assistée par IA", "Pack réseaux sociaux"],
+    status: "en revue",
+    moodboardPrompt:
+      "Imagine a slow-motion capture of biometric data turning into aurora borealis patterns inside a dome stage.",
+    createdAt: new Date().toISOString(),
+  },
+];
+
+const initialChats: ChatThread[] = [
+  {
+    quoteId: initialQuotes[0].id,
+    clientName: initialClients[1].name,
+    projectName: initialQuotes[0].projectName,
+    messages: [
+      {
+        id: uuid(),
+        from: "client",
+        content: "On peut ajouter une version 9:16 verticale ?",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        id: uuid(),
+        from: "studio",
+        content: "Bien sûr, on la génère via Veo 3 + montage Davinci. Je t'envoie le chiffrage dans 5 minutes.",
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  },
+];
+
 const StudioProvider = ({ children }: { children: ReactNode }) => {
   const supabase = getSupabaseClient();
   const [user, setUser] = useState<ClientAccount | null>(loadInitialUser);
@@ -637,6 +676,36 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const requestPasswordReset: StudioContextValue["requestPasswordReset"] = async (email) => {
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        message: "Supabase n'est pas configuré. Impossible d'envoyer le lien de réinitialisation.",
+      };
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
+      });
+
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      return {
+        success: true,
+        message: "Un email de réinitialisation vient d'être envoyé. Consultez votre boîte de réception.",
+      };
+    } catch (error) {
+      console.error("Erreur de réinitialisation du mot de passe Supabase", error);
+      return {
+        success: false,
+        message: "Impossible d'envoyer le lien de réinitialisation pour le moment.",
+      };
+    }
+  };
+
   const logout = () => {
     if (isSupabaseConfigured) {
       supabase.auth.signOut().catch((error) => {
@@ -765,6 +834,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     cycleVisualMode,
     register,
     login,
+    requestPasswordReset,
     logout,
     addPortfolioItem,
     updatePortfolioItem,

@@ -13,6 +13,20 @@ const membershipTiers = [
       "3 tournages prioritaires par mois, cellule IA dédiée et reportings hebdomadaires.",
   },
   {
+    value: "Cinematic",
+    label: "Cinematic",
+    tagline: "Pack signature",
+    description:
+      "Mix plateau / IA, direction artistique senior, livraison multi-formats en 7 jours.",
+  },
+  {
+    value: "Launchpad",
+    label: "Launchpad",
+    tagline: "Accélérateur",
+    description:
+      "Kit contenu mensuel, optimisation réseaux sociaux et accompagnement éditorial.",
+  },
+  {
     value: "Impulse",
     label: "Impulse",
     tagline: "Starter",
@@ -29,16 +43,46 @@ const membershipTiers = [
 ] as const;
 
 type MembershipPlan = (typeof membershipTiers)[number]["value"];
+type AuthMode = "register" | "login" | "forgot";
 
 const Auth = () => {
-  const [mode, setMode] = useState<"login" | "register">("register");
+  const [mode, setMode] = useState<AuthMode>("register");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register: registerUser, login, user } = useStudio();
+  const { register: registerUser, login, requestPasswordReset, user } = useStudio();
   const navigate = useNavigate();
   const location = useLocation();
   const redirectPath = (location.state as { from?: string })?.from ?? "/dashboard";
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const view = params.get("mode");
+
+    if (view === "login" || view === "register" || view === "forgot") {
+      setMode(view);
+    } else {
+      setMode("register");
+    }
+
+    setError(null);
+    setSuccess(null);
+  }, [location.search]);
+
+  const changeMode = (nextMode: AuthMode) => {
+    setMode(nextMode);
+    setError(null);
+    setSuccess(null);
+
+    const search = nextMode === "register" ? "" : `?mode=${nextMode}`;
+    navigate(
+      {
+        pathname: location.pathname,
+        search,
+      },
+      { replace: true, state: location.state },
+    );
+  };
 
   const [form, setForm] = useState({
     name: "",
@@ -89,12 +133,24 @@ const Auth = () => {
         } else {
           setError(response.message ?? "Impossible de créer le compte.");
         }
-      } else {
+      } else if (mode === "login") {
         const response = await login(form.email, form.password);
         if (!response.success) {
           setError(response.message ?? "Impossible de se connecter.");
         } else {
           setSuccess("Connexion réussie. Vous pouvez préparer votre brief.");
+        }
+      } else {
+        if (!form.email) {
+          setError("Merci d'indiquer l'adresse email associée à votre compte.");
+          return;
+        }
+
+        const response = await requestPasswordReset(form.email);
+        if (!response.success) {
+          setError(response.message ?? "Impossible d'envoyer le lien de réinitialisation.");
+        } else {
+          setSuccess(response.message ?? "Email de réinitialisation envoyé. Pensez à vérifier vos spams.");
         }
       }
     } finally {
@@ -140,19 +196,49 @@ const Auth = () => {
           className="space-y-6 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
           onSubmit={handleSubmit}
         >
-          <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-slate-200/70">
-            <span>{mode === "register" ? "Créer un compte" : "Connexion"}</span>
-            <button
-              type="button"
-              onClick={() => {
-                setMode((prev) => (prev === "register" ? "login" : "register"));
-                setError(null);
-                setSuccess(null);
-              }}
-              className="rounded-full border border-white/20 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white"
-            >
-              {mode === "register" ? "J'ai déjà un compte" : "Créer un compte"}
-            </button>
+          <div className="flex flex-wrap items-center justify-between gap-3 text-[0.65rem] uppercase tracking-[0.3em] text-slate-200/70">
+            <span>
+              {mode === "register" ? "Créer un compte" : mode === "login" ? "Connexion" : "Mot de passe oublié"}
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex overflow-hidden rounded-full border border-white/15 bg-white/10">
+                <button
+                  type="button"
+                  onClick={() => changeMode("register")}
+                  className={cn(
+                    "px-4 py-2 text-[0.65rem] font-semibold transition",
+                    mode === "register"
+                      ? "bg-white/25 text-slate-900"
+                      : "text-white/80 hover:text-white"
+                  )}
+                  aria-pressed={mode === "register"}
+                >
+                  S'inscrire
+                </button>
+                <button
+                  type="button"
+                  onClick={() => changeMode("login")}
+                  className={cn(
+                    "px-4 py-2 text-[0.65rem] font-semibold transition",
+                    mode === "login" ? "bg-white/25 text-slate-900" : "text-white/80 hover:text-white"
+                  )}
+                  aria-pressed={mode === "login"}
+                >
+                  Connexion
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => changeMode(mode === "forgot" ? "login" : "forgot")}
+                className={cn(
+                  "rounded-full border border-white/20 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] transition",
+                  mode === "forgot" ? "bg-white/20 text-slate-900" : "text-white"
+                )}
+                aria-pressed={mode === "forgot"}
+              >
+                Mot de passe oublié
+              </button>
+            </div>
           </div>
 
           {mode === "register" && (
@@ -237,6 +323,40 @@ const Auth = () => {
                 required
               />
             </div>
+            {mode !== "forgot" ? (
+              <div>
+                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
+                <input
+                  type="password"
+                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                  value={form.password}
+                  onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                  placeholder={mode === "register" ? "Créer un mot de passe sécurisé" : "Votre mot de passe"}
+                  required
+                  minLength={8}
+                />
+                {mode === "register" && (
+                  <p className="mt-2 text-[0.7rem] text-slate-300/70">
+                    Au moins 8 caractères, une majuscule et un chiffre pour sécuriser votre espace client.
+                  </p>
+                )}
+                {mode === "login" && (
+                  <button
+                    type="button"
+                    onClick={() => changeMode("forgot")}
+                    className="mt-3 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-cyan-200/80 transition hover:text-cyan-100"
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-white/15 bg-white/10 p-4 text-[0.75rem] text-slate-200/80">
+                <p>
+                  Saisissez l'adresse email associée à votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.
+                </p>
+              </div>
+            )}
             <div>
               <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
               <input
@@ -273,7 +393,13 @@ const Auth = () => {
             )}
           >
             <span className="relative z-10">
-              {isSubmitting ? "Traitement en cours..." : mode === "register" ? "Créer mon espace" : "Me connecter"}
+              {isSubmitting
+                ? "Traitement en cours..."
+                : mode === "register"
+                  ? "Créer mon espace"
+                  : mode === "login"
+                    ? "Me connecter"
+                    : "Envoyer le lien"}
             </span>
             <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 transition-transform duration-700 group-hover:translate-x-0" />
           </button>
