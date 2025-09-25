@@ -26,6 +26,20 @@ const membershipTiers = [
     description:
       "Kit contenu mensuel, optimisation réseaux sociaux et accompagnement éditorial.",
   },
+  {
+    value: "Impulse",
+    label: "Impulse",
+    tagline: "Starter",
+    description:
+      "Lancement rapide : sprint créatif IA, tournage condensé, kit social optimisé.",
+  },
+  {
+    value: "Continuum",
+    label: "Continuum",
+    tagline: "Retainer annuel",
+    description:
+      "Équipe dédiée, production continue, live trimestriels et optimisation permanente.",
+  },
 ] as const;
 
 type MembershipPlan = (typeof membershipTiers)[number]["value"];
@@ -162,7 +176,8 @@ const Auth = () => {
             </span>
             <h1 className="text-5xl font-black leading-tight">Accédez à l'espace client</h1>
             <p className="text-lg text-slate-200/80">
-              Créez votre compte ou connectez-vous pour consulter le tableau de bord, déposer un brief, suivre vos devis et échanger avec nos équipes.
+              Créez votre compte ou connectez-vous pour consulter le tableau de bord, déposer un brief, suivre vos devis
+              et échanger avec nos équipes.
             </p>
             <div className="grid gap-4 text-sm text-slate-200/70 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/10 p-5">
@@ -176,6 +191,7 @@ const Auth = () => {
             </div>
           </div>
         </div>
+
         <form
           className="space-y-6 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
           onSubmit={handleSubmit}
@@ -259,6 +275,8 @@ const Auth = () => {
                   />
                 </div>
               </div>
+
+              {/* Sélecteur de formule compatible avec StudioContext */}
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Formule sélectionnée</p>
                 <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -339,6 +357,23 @@ const Auth = () => {
                 </p>
               </div>
             )}
+            <div>
+              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
+              <input
+                type="password"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                value={form.password}
+                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                placeholder={mode === "register" ? "Créer un mot de passe sécurisé" : "Votre mot de passe"}
+                required
+                minLength={8}
+              />
+              {mode === "register" && (
+                <p className="mt-2 text-[0.7rem] text-slate-300/70">
+                  Au moins 8 caractères, une majuscule et un chiffre pour sécuriser votre espace client.
+                </p>
+              )}
+            </div>
           </div>
 
           {error && (
