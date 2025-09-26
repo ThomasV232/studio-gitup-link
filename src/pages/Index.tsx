@@ -154,7 +154,7 @@ const Index = () => {
         }}
       />
       <HeroRibbon />
-      <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-32 pt-32 sm:px-10 lg:gap-28">
+      <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-24 lg:gap-28">
         {/* HERO */}
         <section className={cn(glassPanel, "relative overflow-hidden p-10 sm:p-12 lg:p-16")}>
           <div
