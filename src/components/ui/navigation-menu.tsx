@@ -40,14 +40,11 @@ const navigationMenuTriggerStyle = cva(
     variants: {
       variant: {
         default:
-          // Plein / thème système + accessibilité focus-visible
           "bg-background hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[active]:bg-accent/50 data-[state=open]:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         translucent:
-          // Variante translucide (utilisée dans le header)
           "border border-black/10 bg-transparent hover:bg-black/5 focus-visible:bg-black/5 data-[state=open]:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-0 dark:border-white/10 dark:hover:bg-white/10 dark:focus-visible:bg-white/10 dark:data-[state=open]:bg-white/10 dark:focus-visible:ring-white/60",
         ghost:
-          // Option légère si besoin
-          "border border-transparent bg-transparent hover:bg-slate-900/5 focus-visible:ring-2 focus-visible:ring-slate-900/40 focus-visible:ring-offset-0 data-[active]:bg-slate-900/10 data-[state=open]:bg-slate-900/10 dark:hover:bg-white/10 dark:focus-visible:ring-white/60 dark:data-[active]:bg-white/10 dark:data-[state=open]:bg-white/10",
+          "border border-transparent bg-transparent text-foreground/70 transition-colors hover:border-foreground/20 hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[active]:border-foreground/25 data-[active]:bg-foreground/10 data-[active]:text-foreground data-[state=open]:border-foreground/25 data-[state=open]:bg-foreground/10 data-[state=open]:text-foreground",
       },
     },
     defaultVariants: {

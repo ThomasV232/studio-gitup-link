@@ -57,6 +57,7 @@ export function HeaderRoot() {
     document.documentElement.style.colorScheme = value;
   }, []);
 
+  // Apply and persist theme
   useEffect(() => {
     applyTheme(theme);
     if (typeof window !== "undefined") {
@@ -64,11 +65,29 @@ export function HeaderRoot() {
     }
   }, [applyTheme, theme]);
 
+  // Persist language
   useEffect(() => {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("studio-lang", language);
   }, [language]);
 
+  // Fallback initial theme sync on first mount (SSR safety)
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (typeof window === "undefined") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.style.colorScheme = "dark";
+      return;
+    }
+    const stored = window.localStorage.getItem("studio-theme");
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+    const value =
+      stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
+    document.documentElement.classList.toggle("dark", value === "dark");
+    document.documentElement.style.colorScheme = value;
+  }, []);
+
+  // ⌘/Ctrl+K opens command dialog
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -80,6 +99,7 @@ export function HeaderRoot() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  // Scroll progress
   useEffect(() => {
     const updateProgress = () => {
       if (typeof document === "undefined") return;
@@ -343,11 +363,11 @@ export function HeaderRoot() {
                       >
                         {item.label}
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/95 p-3 text-white shadow-xl">
+                      <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-slate-900/10 bg-white/90 p-3 text-slate-900 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-slate-950/95 dark:text-white">
                         <NavigationMenuLink asChild>
                           <Link
                             to={item.href ?? "#"}
-                            className="mb-2 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                            className="mb-2 flex items-center justify-between rounded-2xl border border-slate-900/10 bg-slate-900/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-900/70 transition hover:border-slate-900/20 hover:bg-slate-900/10 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white"
                           >
                             Voir tout
                             <ArrowUpRight className="h-3.5 w-3.5" />
@@ -358,7 +378,7 @@ export function HeaderRoot() {
                             <li key={child.href}>
                               <Link
                                 to={child.href}
-                                className="block rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                                className="block rounded-2xl border border-slate-900/10 bg-slate-900/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-900/70 transition hover:border-slate-900/20 hover:bg-slate-900/10 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white"
                               >
                                 {child.label}
                               </Link>
@@ -377,11 +397,11 @@ export function HeaderRoot() {
                     >
                       {item.label}
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl">
+                    <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-slate-900/10 bg-white/90 p-6 text-slate-900 shadow-2xl backdrop-blur-md dark:border-white/10 dark:bg-slate-950/95 dark:text-white">
                       <NavigationMenuLink asChild>
                         <Link
                           to={item.href ?? "#"}
-                          className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                          className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-slate-900/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-900/70 transition hover:border-slate-900/20 hover:bg-slate-900/10 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white"
                         >
                           Voir tout
                           <ArrowUpRight className="h-3.5 w-3.5" />
@@ -392,13 +412,15 @@ export function HeaderRoot() {
                           <Link
                             key={entry.href}
                             to={entry.href}
-                            className="group flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30 hover:bg-white/10"
+                            className="group flex flex-col gap-2 rounded-2xl border border-slate-900/10 bg-slate-900/5 p-4 transition hover:border-slate-900/20 hover:bg-slate-900/10 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10"
                           >
-                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">
+                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-900/70 transition group-hover:text-slate-900 dark:text-cyan-200/80 dark:group-hover:text-cyan-100">
                               {entry.label}
                             </span>
-                            <p className="text-sm text-white/70">{entry.excerpt}</p>
-                            <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition group-hover:translate-x-1">
+                            <p className="text-sm text-slate-900/70 transition group-hover:text-slate-900 dark:text-white/70 dark:group-hover:text-white">
+                              {entry.excerpt}
+                            </p>
+                            <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-slate-900/60 transition group-hover:translate-x-1 group-hover:text-slate-900 dark:text-white/60 dark:group-hover:text-white">
                               Explorer
                               <ArrowUpRight className="h-3.5 w-3.5" />
                             </span>
