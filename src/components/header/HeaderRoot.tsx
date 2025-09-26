@@ -40,17 +40,20 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const progressStyles =
   "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
+
 const progressTransition = {
   type: "spring",
   stiffness: 210,
   damping: 32,
   mass: 0.8,
 };
+
 const navUnderlineTransition = {
   type: "spring",
   stiffness: 360,
   damping: 32,
 };
+
 const subnavHighlightTransition = {
   type: "spring",
   stiffness: 320,
