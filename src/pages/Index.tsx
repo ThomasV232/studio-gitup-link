@@ -422,7 +422,7 @@ const Index = () => {
                 <textarea
                   value={form.projectSpark}
                   onChange={(event) => setForm((current) => ({ ...current, projectSpark: event.target.value }))}
-                  className="min-h[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-sky-400 focus:outline-none"
+                  className="min-h-[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-sky-400 focus:outline-none"
                   placeholder="Lancement film de marque, aftermovie, série social..."
                   required
                 />
