@@ -13,6 +13,8 @@ import Process from "./pages/Process";
 import QuoteBuilder from "./pages/QuoteBuilder";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import { StudioProvider } from "./context/StudioContext";
 import { WaveMenu } from "./components/WaveMenu";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -33,8 +35,11 @@ const App = () => (
             <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/playground" element={<Playground />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/realisations" element={<Portfolio />} />
             <Route path="/process" element={<Process />} />
             <Route path="/quote" element={<QuoteBuilder />} />
+            <Route path="/a-propos" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/dashboard"

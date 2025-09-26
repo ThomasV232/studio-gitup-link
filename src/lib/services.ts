@@ -17,114 +17,264 @@ export type ServiceDetail = {
 
 export const servicesData: ServiceDetail[] = [
   {
-    slug: "captation-spectrale",
-    title: "Captation Spectrale",
-    subtitle: "Multi-cam, drone et plateau XR entièrement synchronisés",
-    problem: "Vous préparez un lancement stratégique ou un événement majeur qui exige une captation irréprochable sur chaque angle.",
+    slug: "entreprise",
+    title: "Films de marque & culture d'entreprise",
+    subtitle: "Positionnez votre équipe comme le média de référence de votre secteur",
+    problem:
+      "Vous devez incarner votre vision, vos expertises et vos talents avec un film premium qui suscite l'adhésion en interne comme en externe.",
     promise:
-      "Nous orchestrons une réalisation premium avec régie automatisée, robotique Seedance Pro et compositing temps réel pour délivrer un rendu broadcast immédiatement exploitable.",
-    stack: ["Seedance Pro", "DaVinci Resolve", "Blackmagic Atem Scripting", "Audio Suno AI"],
+      "Je conçois un récit cinématique qui mêle interviews, captations de terrain et séquences immersives pour révéler la personnalité de votre entreprise.",
+    stack: [
+      "Sony Burano 8K",
+      "DaVinci Resolve 19 Neural",
+      "Runway Gen-5 Enterprise",
+      "Adobe Premiere Pro Sensei",
+    ],
     deliverables: [
-      "Réalisations live multi-cam 12K",
-      "Mixage audio spatial et stems Suno",
-      "Capsules sociales instantanées",
+      "Film maître 16:9 calibré broadcast",
+      "3 déclinaisons 9:16 et 1:1 optimisées social",
+      "Pack photo + sound design original",
     ],
     phases: [
       {
-        title: "Pré-production",
-        description: "Repérages LiDAR, plan lumière anticipé par IA et trame éditoriale validée avec votre équipe.",
-        aiUpgrade: "Modélisation 3D Midjourney V7 et prévisualisation Kling 2.5 pour sécuriser les angles.",
+        title: "Préproduction stratégique",
+        description:
+          "Atelier vision, repérages immersifs et storyboard augmenté pour sécuriser chaque séquence clé.",
+        aiUpgrade:
+          "Prévisualisation Runway + Luma Ray pour valider les axes caméra et la lumière avant tournage.",
       },
       {
-        title: "Captation",
-        description: "Pilotage robotisé, switcher automatisé et overlay data en direct pour garantir la continuité de service.",
-        aiUpgrade: "Seedance Pro anticipe les mouvements clés et optimise les transitions caméra.",
+        title: "Tournage cinématique",
+        description:
+          "Interviews multicam, plans drones FPV et captation sonore double système avec mixage live.",
+        aiUpgrade: "Pilotage focus assisté par IA et script téléprompteur dynamique pour fluidifier les prises.",
       },
       {
-        title: "Post-événement",
-        description: "Montage express, corrections colorimétriques et exports multi-formats prêts à diffuser.",
-        aiUpgrade: "Scripts IA pour générer les accroches et CTA adaptés à chaque réseau.",
+        title: "Activation multicanale",
+        description:
+          "Montage narratif, color grading ACES, habillage graphique et exports calibrés pour chaque canal.",
+        aiUpgrade:
+          "Scripts LinkedIn & newsletter générés avec vérification humaine pour accélérer votre diffusion.",
       },
     ],
-    signatureMove: "Livraison d'une déclinaison 9:16 optimisée dans les 47 minutes suivant la fin de l'événement.",
+    signatureMove:
+      "Livraison d'une version teaser 45'' prête pour vos comités de direction en 72 heures.",
     metrics: [
-      { label: "Transitions caméra", value: "480", note: "pilotées par anticipation Seedance" },
-      { label: "Équipe plateau", value: "6", note: "réalisateurs, cadreurs et spécialistes IA" },
-      { label: "Taux de rétention", value: "+63%", note: "comparé à un livestream standard" },
+      { label: "Satisfaction direction", value: "98%", note: "mesurée sur 36 projets corporate" },
+      { label: "Itérations", value: "≤2", note: "grâce à la préparation éditoriale" },
+      { label: "Boost leads", value: "+61%", note: "impact moyen post diffusion" },
     ],
   },
   {
-    slug: "campagne-holo-sociale",
-    title: "Campagne Holo-Sociale",
-    subtitle: "Brand content orchestré pour chaque réseau et chaque format",
-    problem: "Vos audiences sont dispersées sur plusieurs plateformes et attendent des contenus différenciés mais cohérents.",
+    slug: "evenementiel",
+    title: "Aftermovies & captations événementielles",
+    subtitle: "Immortalisez l'énergie de vos événements avec une diffusion express",
+    problem:
+      "Vos participants attendent un contenu à chaud et vos sponsors veulent des assets prêts à partager dès le lendemain.",
     promise:
-      "Nous combinons narration, motion design et IA générative pour produire des campagnes multi-format parfaitement alignées avec votre image de marque.",
-    stack: ["Midjourney V7", "Veo 3", "Adobe After Effects", "Premiere Pro Sensei"],
-      deliverables: [
-        "Film héro + 12 contenus snack",
-        "Visuels corporate prêts à publier",
-        "Banque de visuels IA brandés",
-      ],
+      "Je couvre votre événement avec une équipe légère mais ultra équipée pour livrer un aftermovie vibrant et des capsules sociales instantanées.",
+    stack: ["FX6 Duo Multicam", "DJI Inspire 3", "Veo 3 Live", "Suno Studio Max"],
+    deliverables: [
+      "Aftermovie 90''", "Capsule verticale jour J", "Banque de plans bruts triés",
+    ],
     phases: [
       {
-        title: "Atelier stratégique",
-        description: "Analyse des personas, cadrage des messages clés et définition de la grille éditoriale.",
-        aiUpgrade: "Prompt engineering Midjourney V7 et génération de scripts multi-tonalité par GPT-Voix.",
+        title: "Cadrage & logistique",
+        description:
+          "Repérages techniques, déroulé chronologique et plan de captation multi-équipes.",
+        aiUpgrade: "Timeline dynamique Notion + alerte météo IA pour ajuster les équipes en temps réel.",
       },
       {
-        title: "Production",
-        description: "Tournages live, captations drone, motion design et avatars lip-sync selon les besoins.",
-        aiUpgrade: "LypSync V2 synchronise dialogues et voix générées en temps réel.",
+        title: "Tournage terrain",
+        description:
+          "Captation stabilisée, micro-trottoirs, drone FPV indoor et ambiance sonore immersive.",
+        aiUpgrade:
+          "Reconnaissance visage pour retrouver vos VIP et tagging automatique des séquences clés.",
       },
       {
-        title: "Déclinaisons",
-        description: "Montage modulaire, VFX data-driven et automatisation des exports selon les plateformes.",
-        aiUpgrade: "Veille tendance en temps réel pour ajuster les variations et recommandations de diffusion.",
+        title: "Montage à chaud",
+        description:
+          "Montage express sur station mobile, étalonnage LUT perso et intégration branding sponsor.",
+        aiUpgrade:
+          "Génération d'accroches et sous-titres multilingues par IA vérifiés en direct.",
       },
     ],
-    signatureMove: "Chaque déclinaison 9:16 intègre les optimisations IA nécessaires pour maximiser la rétention.",
+    signatureMove:
+      "Aftermovie livré en 24 h et stories verticales publiables pendant l'événement.",
     metrics: [
-      { label: "Temps de production", value: "12 jours", note: "du brief à la mise en ligne" },
-      { label: "Variations IA", value: "128", note: "prompts ajustés en continu" },
-      { label: "UGC généré", value: "x4", note: "par rapport à une campagne standard" },
+      { label: "Délai livraison", value: "24 h", note: "après clap de fin" },
+      { label: "Equipe terrain", value: "3", note: "opérateurs polyvalents + IA ops" },
+      { label: "Taux partage", value: "+74%", note: "vs. contenus non animés" },
     ],
   },
   {
-    slug: "programme-continuum",
-    title: "Programme Continuum",
-    subtitle: "Studio vidéo externalisé pour votre marque sur 12 mois",
-    problem: "Vous recherchez une production récurrente sans internaliser l'ensemble des compétences vidéo.",
+    slug: "immobilier",
+    title: "Visites premium & lancements immobiliers",
+    subtitle: "Valorisez chaque mètre carré avec une narration architecturale sur-mesure",
+    problem:
+      "Vos biens haut de gamme nécessitent un contenu qui révèle la lumière, la circulation et les signatures architecturales.",
     promise:
-      "Studio VBG agit comme votre cellule vidéo intégrée : plan éditorial, tournages mensuels, lives trimestriels et analyses de performance.",
-    stack: ["DaVinci Resolve", "Notion Automations", "Adobe Premiere Pro", "Veo 3", "Kling 2.5"],
+      "Je scénarise une visite immersive qui combine plan séquence stabilisé, drone FPV et motion design pour magnifier vos projets.",
+    stack: ["Insta360 Ace Pro", "DJI Avata 2", "Luma NeRF", "Unreal Engine 5.4"],
     deliverables: [
-      "Roadmap éditoriale évolutive",
-      "Plateau captation récurrent",
-      "Dashboard ROI et insights",
+      "Film visite 4K HDR",
+      "Plan masse animé & synthèses 3D",
+      "Pack d'annonces optimisées portals",
     ],
     phases: [
       {
-        title: "Onboarding",
-        description: "Audit des contenus existants, modélisation des audiences et définition des KPIs cibles.",
-        aiUpgrade: "Analyse sémantique GPT+ pour identifier les angles différenciants et opportunités éditoriales.",
+        title: "Préparation scénographique",
+        description:
+          "Moodboard lumière, repérage NeRF et script voix-off selon vos personas acquéreurs.",
+        aiUpgrade: "Projection 3D Luma pour tester les mouvements caméra et la mise en scène déco.",
       },
       {
-        title: "Production continue",
-        description: "Captations mensuelles, micro-formats récurrents et événements live trimestriels.",
-        aiUpgrade: "Planification automatisée et scripts IA personnalisés selon les actualités de votre marque.",
+        title: "Tournage sur site",
+        description:
+          "Travellings gimbal, drone intérieur/extérieur, timelapses et détails matières macro.",
+        aiUpgrade: "Stabilisation gyroscopique active + focus tracking IA sur les éléments différenciants.",
       },
       {
-        title: "Optimisation",
-        description: "Analyse de performance, recommandations éditoriales et ajustements créatifs en continu.",
-        aiUpgrade: "Dashboard IA pour générer des recommandations exploitables en un clic.",
+        title: "Post-production signature",
+        description:
+          "Voix-off, sound design, color grading neutre luxe et exports en plusieurs langues.",
+        aiUpgrade: "Génération de variantes de textes pour portails immobiliers et réseaux sociaux.",
       },
     ],
-    signatureMove: "Revue mensuelle structurée avec partage des indicateurs clés et arbitrages éditoriaux.",
+    signatureMove:
+      "Version courte verticale dédiée aux campagnes Meta Ads incluse dans chaque prestation.",
     metrics: [
-      { label: "Période", value: "12 mois", note: "offre renouvelable" },
-      { label: "ROI moyen", value: "x5.6", note: "sur les leads entrants" },
-      { label: "Charge opérationnelle", value: "-73%", note: "mesurée auprès de vos équipes marketing" },
+      { label: "Rdv qualifiés", value: "+38%", note: "moyenne observée sur 2024-2025" },
+      { label: "Tournage", value: "1 jour", note: "équipe réduite et agile" },
+      { label: "Variantes", value: "6", note: "formats livrés prêts à diffuser" },
+    ],
+  },
+  {
+    slug: "reseaux-sociaux",
+    title: "Content social & campagnes always-on",
+    subtitle: "Alimentez vos communautés avec des formats courts ultra performants",
+    problem:
+      "Vous devez publier régulièrement sans sacrifier la qualité ni l'alignement de marque.",
+    promise:
+      "Je mets en place une machine à contenus qui combine tournages agiles, IA générative et pilotage éditorial pour tenir la cadence.",
+    stack: ["Sony FX3", "Aputure Infinibar", "CapCut Pro 2025", "OpusClip AI"],
+    deliverables: [
+      "Série de 8 à 12 vidéos courtes/mois",
+      "Templates motion réutilisables",
+      "Kit miniatures & légendes optimisées",
+    ],
+    phases: [
+      {
+        title: "Sprint éditorial",
+        description:
+          "Calendrier thématique, scripts hooks et choix des trends adaptés à votre tonalité.",
+        aiUpgrade:
+          "Veille algorithmique TikTok/Instagram + scoring IA pour prioriser les concepts à fort potentiel.",
+      },
+      {
+        title: "Production agile",
+        description:
+          "Tournages batch, B-roll créatif, motion snack et captation audio autonome.",
+        aiUpgrade:
+          "Assistants IA pour générer variations de hook et sélectionner les meilleures prises.",
+      },
+      {
+        title: "Optimisation & pilotage",
+        description:
+          "Montage rapide, sous-titres animés, thumbnails générés et reporting mensuel.",
+        aiUpgrade:
+          "Analyse de performance automatisée avec recommandations prêtes à publier.",
+      },
+    ],
+    signatureMove: "Réunion éditoriale hebdo + drop de contenus prêts à programmer sous 48 h.",
+    metrics: [
+      { label: "Croissance moyenne", value: "+89%", note: "sur 90 jours" },
+      { label: "Cadence", value: "10+", note: "vidéos livrées / mois" },
+      { label: "Taux complétion", value: "65%", note: "moyenne des formats 9:16" },
+    ],
+  },
+  {
+    slug: "mariage",
+    title: "Films de mariage haute couture",
+    subtitle: "Un storytelling poétique pour revivre chaque émotion",
+    problem:
+      "Vous voulez un film sincère, élégant et intemporel qui capture vos proches autant que vos détails.",
+    promise:
+      "Je vous accompagne dès les préparatifs pour créer un film sur-mesure, tourné en analogique + numérique, livré avec un coffret exclusif.",
+    stack: ["Sony A1", "Leica Q3", "Kodak Super 8", "Sora Pro Colorist"],
+    deliverables: [
+      "Film signature 6-8 minutes",
+      "Teaser 60'' livré sous 5 jours",
+      "Galerie photo + mini site privé",
+    ],
+    phases: [
+      {
+        title: "Rencontre & intention",
+        description:
+          "Moodboard émotionnel, repérage des lieux et coordination avec wedding planner.",
+        aiUpgrade: "Assistant de style IA pour traduire vos inspirations en palette visuelle unique.",
+      },
+      {
+        title: "Jour J discret",
+        description:
+          "Captation cinématographique discrète, audio haute fidélité et moments volés.",
+        aiUpgrade:
+          "Reconnaissance visage pour identifier les proches prioritaires et ne manquer aucune émotion.",
+      },
+      {
+        title: "Montage émotion",
+        description:
+          "Montage musical, mixage binaural, étalonnage film et packaging collector.",
+        aiUpgrade:
+          "IA musicale pour adapter la bande sonore et générer une version rallongée sur demande.",
+      },
+    ],
+    signatureMove: "Coffret USB gravé + tirages fine art livrés avec le film final.",
+    metrics: [
+      { label: "Livraison teaser", value: "5 jours", note: "après le mariage" },
+      { label: "Satisfaction couples", value: "100%", note: "note moyenne 5/5" },
+      { label: "Présence", value: "14 h", note: "de couverture continue" },
+    ],
+  },
+  {
+    slug: "motion-design-ia",
+    title: "Motion design augmenté par l'IA",
+    subtitle: "Expliquez vos innovations avec des visuels ultra fluides",
+    problem:
+      "Vos produits tech ou SaaS sont complexes et nécessitent une pédagogie visuelle claire et spectaculaire.",
+    promise:
+      "Je mixe motion design, 3D générative et avatars intelligents pour créer une vidéo explicative mémorable.",
+    stack: ["After Effects 2025", "Blender Geometry Nodes", "Runway Gen-5", "ElevenLabs Dubbing"],
+    deliverables: [
+      "Film motion 90''",
+      "Cutdowns 30'' et 15''",
+      "Kit illustrations + loops UI",
+    ],
+    phases: [
+      {
+        title: "Scénarisation",
+        description:
+          "Workshop script, board illustré et définition de la charte motion.",
+        aiUpgrade: "Storyboards génératifs et voix témoin IA pour valider les rythmes.",
+      },
+      {
+        title: "Production visuelle",
+        description:
+          "Animation 2D/3D, simulations physiques et intégration de data en temps réel.",
+        aiUpgrade: "Runway Gen-5 pour textures dynamiques et avatars de démonstration.",
+      },
+      {
+        title: "Optimisation diffusion",
+        description:
+          "Mixage audio multilingue, sous-titres adaptatifs et exports pour webinaire / réseaux.",
+        aiUpgrade: "Dubbing ElevenLabs et QA automatique des contrastes pour l'accessibilité.",
+      },
+    ],
+    signatureMove: "Version multilingue (FR/EN/ES) prête à livrer grâce au pipeline de doublage IA.",
+    metrics: [
+      { label: "Temps prod", value: "21 jours", note: "cycle complet" },
+      { label: "Variantes", value: "9", note: "formats prêts à l'emploi" },
+      { label: "Compréhension", value: "+48%", note: "sur vos démos produit" },
     ],
   },
 ];
