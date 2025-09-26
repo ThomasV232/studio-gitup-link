@@ -32,7 +32,11 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Copy the example environment file and set your Supabase credentials.
+cp .env.example .env
+# Edit .env and provide the Supabase project URL and anon key.
+
+# Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
@@ -63,6 +67,8 @@ This project is built with:
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/bdbb4cdb-ba08-4e6d-9461-1ba67606caf8) and click on Share -> Publish.
+
+Before publishing (or when configuring a custom hosting provider such as Vercel or Netlify), make sure to define the `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` environment variables so that password reset emails can be sent successfully in production.
 
 ## Can I connect a custom domain to my Lovable project?
 
