@@ -34,7 +34,10 @@ npm i
 
 # Step 4: Copy the example environment file and set your Supabase credentials.
 cp .env.example .env
-# Edit .env and provide the Supabase project URL and anon key.
+# Edit .env and provide the Supabase project URL and anon key that you can
+# find in the Supabase dashboard under Project Settings > API.
+#   VITE_SUPABASE_URL="https://<your-project-ref>.supabase.co"
+#   VITE_SUPABASE_ANON_KEY="<your-anon-key>"
 
 # Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
@@ -69,6 +72,13 @@ This project is built with:
 Simply open [Lovable](https://lovable.dev/projects/bdbb4cdb-ba08-4e6d-9461-1ba67606caf8) and click on Share -> Publish.
 
 Before publishing (or when configuring a custom hosting provider such as Vercel or Netlify), make sure to define the `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` environment variables so that password reset emails can be sent successfully in production.
+
+For Lovable hosting or any other deployment platform:
+
+1. Copy `.env.example` to `.env` (or add the variables in the platform's UI).
+2. Paste the Supabase project URL in `VITE_SUPABASE_URL`.
+3. Paste the Supabase anon/public API key in `VITE_SUPABASE_ANON_KEY`.
+4. Redeploy/start the application so that `isSupabaseConfigured` evaluates to `true` and the authentication form works without the blocking alert.
 
 ## Can I connect a custom domain to my Lovable project?
 
