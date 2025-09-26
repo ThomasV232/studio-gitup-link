@@ -1,49 +1,10 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { useStudio } from "@/context/StudioContext";
+import { CLIENT_TYPES, useStudio } from "@/context/StudioContext";
 import { isSupabaseConfigured } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 
-const membershipTiers = [
-  {
-    value: "Hyperdrive",
-    label: "Hyperdrive",
-    tagline: "Production intensive",
-    description:
-      "3 tournages prioritaires par mois, cellule IA dédiée et reportings hebdomadaires.",
-  },
-  {
-    value: "Cinematic",
-    label: "Cinematic",
-    tagline: "Pack signature",
-    description:
-      "Mix plateau / IA, direction artistique senior, livraison multi-formats en 7 jours.",
-  },
-  {
-    value: "Launchpad",
-    label: "Launchpad",
-    tagline: "Accélérateur",
-    description:
-      "Kit contenu mensuel, optimisation réseaux sociaux et accompagnement éditorial.",
-  },
-  {
-    value: "Impulse",
-    label: "Impulse",
-    tagline: "Starter",
-    description:
-      "Lancement rapide : sprint créatif IA, tournage condensé, kit social optimisé.",
-  },
-  {
-    value: "Continuum",
-    label: "Continuum",
-    tagline: "Retainer annuel",
-    description:
-      "Équipe dédiée, production continue, live trimestriels et optimisation permanente.",
-  },
-] as const;
-
-type MembershipPlan = (typeof membershipTiers)[number]["value"];
 type AuthMode = "register" | "login" | "forgot";
 
 const Auth = () => {
@@ -102,18 +63,17 @@ const Auth = () => {
     );
   };
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    name: string;
+    email: string;
+    password: string;
+    clientType: (typeof CLIENT_TYPES)[number] | "";
+  }>({
     name: "",
     email: "",
     password: "",
-    company: "",
-    industry: "",
-    membership: membershipTiers[0].value as MembershipPlan,
+    clientType: "",
   });
-
-  const membershipLabel = useMemo(() => {
-    return membershipTiers.find((tier) => tier.value === form.membership)?.label ?? "";
-  }, [form.membership]);
 
   useEffect(() => {
     if (user) {
@@ -126,9 +86,7 @@ const Auth = () => {
       name: "",
       email: "",
       password: "",
-      company: "",
-      industry: "",
-      membership: membershipTiers[0].value,
+      clientType: "",
     });
 
   useEffect(() => {
@@ -153,7 +111,7 @@ const Auth = () => {
       if (mode === "register") {
         const trimmedPassword = form.password.trim();
 
-        if (!form.name || !form.email || !trimmedPassword || !form.company || !form.industry) {
+        if (!form.name || !form.email || !trimmedPassword || !form.clientType) {
           setError("Merci de remplir tous les champs indispensables.");
           return;
         }
@@ -165,7 +123,12 @@ const Auth = () => {
           return;
         }
 
-        const response = await registerUser({ ...form, password: trimmedPassword });
+        const response = await registerUser({
+          name: form.name,
+          email: form.email,
+          password: trimmedPassword,
+          clientType: form.clientType as (typeof CLIENT_TYPES)[number],
+        });
         if (response.success) {
           setSuccess(response.message ?? "Compte créé avec succès. Vous êtes désormais connecté·e.");
           resetForm();
@@ -293,84 +256,61 @@ const Auth = () => {
 
           {mode === "register" && (
             <div className="space-y-4">
-                <div>
-                  <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom complet</label>
-                  <input
-                    className={cn(
-                      "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
-                      formDisabled && "cursor-not-allowed opacity-60",
-                    )}
-                    value={form.name}
-                    onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                    placeholder="Nom et prénom"
-                    required
-                    disabled={formDisabled}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Entreprise</label>
-                    <input
-                      className={cn(
-                        "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
-                        formDisabled && "cursor-not-allowed opacity-60",
-                      )}
-                      value={form.company}
-                      onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
-                      placeholder="Nom de l'entreprise"
-                      required
-                      disabled={formDisabled}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Secteur</label>
-                    <input
-                      className={cn(
-                        "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
-                        formDisabled && "cursor-not-allowed opacity-60",
-                      )}
-                      value={form.industry}
-                      onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
-                      placeholder="Secteur d'activité"
-                      required
-                      disabled={formDisabled}
-                    />
-                  </div>
-                </div>
-
-              {/* Sélecteur de formule compatible avec StudioContext */}
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Formule sélectionnée</p>
-                <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                  {membershipTiers.map((tier) => {
-                    const isActive = tier.value === form.membership;
+                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom complet</label>
+                <input
+                  className={cn(
+                    "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
+                    formDisabled && "cursor-not-allowed opacity-60",
+                  )}
+                  value={form.name}
+                  onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                  placeholder="Nom et prénom"
+                  required
+                  disabled={formDisabled}
+                />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Type de client</p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {CLIENT_TYPES.map((type) => {
+                    const isSelected = form.clientType === type;
                     return (
                       <button
-                        key={tier.value}
+                        key={type}
                         type="button"
-                        onClick={() => setForm((prev) => ({ ...prev, membership: tier.value }))}
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            clientType: type,
+                          }))
+                        }
                         className={cn(
-                          "rounded-2xl border bg-white/5 px-4 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300",
-                          isActive
-                            ? "border-cyan-300/80 bg-cyan-500/20 text-white shadow-[0_10px_40px_rgba(56,189,248,0.25)]"
-                            : "border-white/10 text-slate-100/80 hover:border-cyan-200/40 hover:bg-white/10",
-                          formDisabled && "cursor-not-allowed opacity-60"
+                          "rounded-2xl border px-4 py-3 text-left text-sm transition",
+                          isSelected
+                            ? "border-cyan-300/80 bg-cyan-500/20 text-white shadow-[0_10px_35px_rgba(56,189,248,0.25)]"
+                            : "border-white/10 bg-white/5 text-slate-200/80 hover:border-cyan-200/40 hover:bg-white/10",
+                          formDisabled && "cursor-not-allowed opacity-60",
                         )}
-                        aria-pressed={isActive}
+                        aria-pressed={isSelected}
                         disabled={formDisabled}
                       >
-                        <span className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-100/80 visual-accent-text-strong">
-                          {tier.label}
+                        <span className="font-semibold uppercase tracking-[0.25em] text-cyan-100/80 visual-accent-text-strong">
+                          {type}
                         </span>
-                        <p className="mt-2 text-xs text-slate-200/80">{tier.tagline}</p>
-                        <p className="mt-1 text-[0.7rem] text-slate-300/70">{tier.description}</p>
+                        <p className="mt-2 text-xs text-slate-200/70">
+                          {type === "Entreprise"
+                            ? "Sociétés, startups, studios..."
+                            : type === "Particulier"
+                              ? "Créateurs et projets personnels."
+                              : type === "Association"
+                                ? "Collectifs, ONG, réseaux engagés."
+                                : "Institutions publiques ou territoriales."}
+                        </p>
                       </button>
                     );
                   })}
                 </div>
-                <p className="mt-2 text-[0.7rem] text-slate-300/70">
-                  {membershipLabel} · ajustable à tout moment depuis le tableau de bord.
-                </p>
               </div>
             </div>
           )}
