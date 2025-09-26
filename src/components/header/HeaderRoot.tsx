@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, Menu } from "lucide-react";
+import { ArrowUpRight, Languages, Menu, MoonStar, Search, SunMedium } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
 import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
 
 const progressStyles =
@@ -36,8 +35,43 @@ export function HeaderRoot() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [language, setLanguage] = useState<"FR" | "EN">(() => {
+    if (typeof window === "undefined") return "FR";
+    const stored = window.localStorage.getItem("studio-lang");
+    return stored === "EN" ? "EN" : "FR";
+  });
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "dark";
+    const stored = window.localStorage.getItem("studio-theme");
+    if (stored === "light" || stored === "dark") return stored;
+    const prefersDark =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return prefersDark ? "dark" : "light";
+  });
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  const applyTheme = useCallback((value: "light" | "dark") => {
+    if (typeof document === "undefined") return;
+    document.documentElement.classList.toggle("dark", value === "dark");
+    document.documentElement.style.colorScheme = value;
+  }, []);
+
+  // Apply and persist theme
+  useEffect(() => {
+    applyTheme(theme);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("studio-theme", theme);
+    }
+  }, [applyTheme, theme]);
+
+  // Persist language
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("studio-lang", language);
+  }, [language]);
+
+  // Fallback initial theme sync on first mount (SSR safety)
   useEffect(() => {
     if (typeof document === "undefined") return;
     if (typeof window === "undefined") {
@@ -45,19 +79,15 @@ export function HeaderRoot() {
       document.documentElement.style.colorScheme = "dark";
       return;
     }
-
     const stored = window.localStorage.getItem("studio-theme");
     const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
-    const value = stored === "light" || stored === "dark"
-      ? stored
-      : prefersDark
-        ? "dark"
-        : "light";
-
+    const value =
+      stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
     document.documentElement.classList.toggle("dark", value === "dark");
     document.documentElement.style.colorScheme = value;
   }, []);
 
+  // ⌘/Ctrl+K opens command dialog
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -65,11 +95,11 @@ export function HeaderRoot() {
         setCommandOpen(true);
       }
     };
-
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  // Scroll progress
   useEffect(() => {
     const updateProgress = () => {
       if (typeof document === "undefined") return;
@@ -77,11 +107,20 @@ export function HeaderRoot() {
       const max = Math.max(scrollHeight - clientHeight, 1);
       setScrollProgress(Math.min(scrollTop / max, 1));
     };
-
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
+
+  const toggleTheme = useCallback(
+    () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+    [],
+  );
+
+  const toggleLanguage = useCallback(
+    () => setLanguage((current) => (current === "FR" ? "EN" : "FR")),
+    [],
+  );
 
   const commandGroups = useMemo(() => {
     const primary = MAIN_NAV.map((item) => ({ label: item.label, href: item.href }));
@@ -93,15 +132,12 @@ export function HeaderRoot() {
       label: `Réalisations · ${category.label}`,
       href: `/realisations/${category.slug}`,
     }));
-
-    return {
-      primary,
-      services,
-      works,
-    };
+    return { primary, services, works };
   }, []);
 
-  const serviceSlugFromPath = location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
+  const serviceSlugFromPath = location.pathname.match(
+    /^\/services\/(?<slug>[^/]+)/,
+  )?.groups?.slug;
   const serviceSlugFromQuery = new URLSearchParams(location.search).get("service");
   const activeService = useMemo(() => {
     const preferred = (serviceSlugFromPath || serviceSlugFromQuery) as CategorySlug | null;
@@ -123,19 +159,24 @@ export function HeaderRoot() {
     }));
   }, [isRealisations, isServices]);
 
-  const activeSubnavSlug = location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
+  const activeSubnavSlug =
+    location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
 
   return (
     <Fragment>
+      {/* Top progress bar */}
       <span className={progressStyles} aria-hidden>
         <span
           className="block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 transition-transform duration-150 ease-out"
           style={{ transform: `scaleX(${scrollProgress})` }}
         />
       </span>
+
       <header className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+          {/* Left: mobile menu + brand */}
           <div className="flex items-center gap-3">
+            {/* Mobile drawer */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <button
@@ -173,9 +214,13 @@ export function HeaderRoot() {
                       }
 
                       const nestedLinks = item.children ?? item.mega ?? [];
-
                       return (
-                        <Accordion key={item.label} type="single" collapsible className="rounded-2xl border border-white/10 bg-white/5">
+                        <Accordion
+                          key={item.label}
+                          type="single"
+                          collapsible
+                          className="rounded-2xl border border-white/10 bg-white/5"
+                        >
                           <AccordionItem value={item.href ?? item.label}>
                             <AccordionTrigger className="px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-white">
                               {item.label}
@@ -212,6 +257,36 @@ export function HeaderRoot() {
                   </nav>
 
                   <div className="mt-auto space-y-4">
+                    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => setCommandOpen(true)}
+                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:text-white"
+                      >
+                        <Search className="h-4 w-4" />
+                        Rechercher (⌘K)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={toggleTheme}
+                        className="rounded-full border border-white/10 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+                        aria-label="Changer de thème"
+                      >
+                        {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs uppercase tracking-[0.3em] text-white/70">
+                      <span>Langue</span>
+                      <button
+                        type="button"
+                        onClick={toggleLanguage}
+                        className="rounded-full border border-white/10 px-3 py-1 text-white/90 transition hover:bg-white/10"
+                      >
+                        {language}
+                      </button>
+                    </div>
+
                     <SheetClose asChild>
                       <Link
                         to={ctaHref}
@@ -233,6 +308,7 @@ export function HeaderRoot() {
               </SheetContent>
             </Sheet>
 
+            {/* Brand */}
             <Link
               to="/"
               className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white transition hover:bg-white/10"
@@ -242,6 +318,7 @@ export function HeaderRoot() {
             </Link>
           </div>
 
+          {/* Desktop nav */}
           <NavigationMenu className="hidden flex-1 justify-center lg:flex">
             <NavigationMenuList className="flex items-center gap-6">
               {MAIN_NAV.map((item) => {
@@ -282,8 +359,7 @@ export function HeaderRoot() {
                   return (
                     <NavigationMenuItem key={item.label}>
                       <NavigationMenuTrigger
-                        variant="ghost"
-                        className="text-sm font-medium uppercase tracking-[0.3em] text-foreground/75 data-[state=open]:text-foreground"
+                        className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white"
                       >
                         {item.label}
                       </NavigationMenuTrigger>
@@ -317,8 +393,7 @@ export function HeaderRoot() {
                 return (
                   <NavigationMenuItem key={item.label}>
                     <NavigationMenuTrigger
-                      variant="ghost"
-                      className="text-sm font-medium uppercase tracking-[0.3em] text-foreground/75 data-[state=open]:text-foreground"
+                      className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white"
                     >
                       {item.label}
                     </NavigationMenuTrigger>
@@ -339,8 +414,12 @@ export function HeaderRoot() {
                             to={entry.href}
                             className="group flex flex-col gap-2 rounded-2xl border border-slate-900/10 bg-slate-900/5 p-4 transition hover:border-slate-900/20 hover:bg-slate-900/10 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10"
                           >
-                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-900/70 transition group-hover:text-slate-900 dark:text-cyan-200/80 dark:group-hover:text-cyan-100">{entry.label}</span>
-                            <p className="text-sm text-slate-900/70 transition group-hover:text-slate-900 dark:text-white/70 dark:group-hover:text-white">{entry.excerpt}</p>
+                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-900/70 transition group-hover:text-slate-900 dark:text-cyan-200/80 dark:group-hover:text-cyan-100">
+                              {entry.label}
+                            </span>
+                            <p className="text-sm text-slate-900/70 transition group-hover:text-slate-900 dark:text-white/70 dark:group-hover:text-white">
+                              {entry.excerpt}
+                            </p>
                             <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-slate-900/60 transition group-hover:translate-x-1 group-hover:text-slate-900 dark:text-white/60 dark:group-hover:text-white">
                               Explorer
                               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -355,13 +434,43 @@ export function HeaderRoot() {
             </NavigationMenuList>
           </NavigationMenu>
 
+          {/* Right: actions */}
           <div className="ml-auto hidden items-center gap-2 lg:flex">
-            <Button asChild className="rounded-full bg-white px-5 text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 hover:bg-white/90">
+            <button
+              type="button"
+              onClick={() => setCommandOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              <Search className="h-4 w-4" />
+              Rechercher
+              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[0.6rem]">⌘K</span>
+            </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white"
+              aria-label="Changer de thème"
+            >
+              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              <Languages className="h-4 w-4" />
+              {language}
+            </button>
+            <Button
+              asChild
+              className="rounded-full bg-white px-5 text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 hover:bg-white/90"
+            >
               <Link to={ctaHref}>{ctaLabel}</Link>
             </Button>
           </div>
         </div>
 
+        {/* Secondary subnav */}
         {subNavItems.length > 0 && (
           <div className="border-t border-white/10 bg-slate-950/80">
             <div className="mx-auto max-w-6xl px-4">
@@ -389,10 +498,12 @@ export function HeaderRoot() {
         )}
       </header>
 
+      {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
           <CommandEmpty>Aucun résultat pour cette recherche.</CommandEmpty>
+
           <CommandGroup heading="Navigation">
             {commandGroups.primary.map((item) => (
               <CommandItem
@@ -408,7 +519,9 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
+
           <CommandSeparator />
+
           <CommandGroup heading="Services">
             {commandGroups.services.map((item) => (
               <CommandItem
@@ -423,6 +536,7 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
+
           <CommandGroup heading="Réalisations">
             {commandGroups.works.map((item) => (
               <CommandItem
