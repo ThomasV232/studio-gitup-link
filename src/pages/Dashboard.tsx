@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useStudio } from "@/context/StudioContext";
-import type { QuoteRequest } from "@/context/StudioContext";
+import { CLIENT_TYPES, useStudio } from "@/context/StudioContext";
+import type { ClientType, QuoteRequest } from "@/context/StudioContext";
 
 /* ----------------------------- NAV / STATUS UI ---------------------------- */
 
@@ -35,6 +35,7 @@ type MembershipValue = (typeof membershipOptions)[number]["value"];
 
 type AccountDraft = {
   name: string;
+  clientType: ClientType;
   company: string;
   industry: string;
   membership: MembershipValue;
@@ -147,6 +148,7 @@ const Dashboard = () => {
   const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
   const [accountDraft, setAccountDraft] = useState<AccountDraft>(() => ({
     name: user?.name ?? "",
+    clientType: (user?.clientType ?? CLIENT_TYPES[0]) as ClientType,
     company: user?.company ?? "",
     industry: user?.industry ?? "",
     membership: (user?.membership ?? "Hyperdrive") as MembershipValue,
@@ -179,6 +181,7 @@ const Dashboard = () => {
     if (!user) return;
     setAccountDraft({
       name: user.name,
+      clientType: user.clientType as ClientType,
       company: user.company,
       industry: user.industry,
       membership: user.membership as MembershipValue,
@@ -206,6 +209,7 @@ const Dashboard = () => {
 
     const response = await updateAccount({
       name: accountDraft.name.trim(),
+      clientType: accountDraft.clientType,
       company: accountDraft.company.trim(),
       industry: accountDraft.industry.trim(),
       membership: accountDraft.membership,
@@ -223,6 +227,7 @@ const Dashboard = () => {
     if (!user) return;
     setAccountDraft({
       name: user.name,
+      clientType: user.clientType as ClientType,
       company: user.company,
       industry: user.industry,
       membership: user.membership as MembershipValue,
@@ -434,7 +439,35 @@ const Dashboard = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Entreprise</label>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Type de client</p>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {CLIENT_TYPES.map((type) => {
+                        const isActive = accountDraft.clientType === type;
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => {
+                              setAccountDraft((p) => ({ ...p, clientType: type }));
+                              setAccountFeedback(null);
+                            }}
+                            className={`rounded-2xl border px-3 py-3 text-left text-sm transition ${
+                              isActive
+                                ? "border-cyan-300/80 bg-cyan-500/20 text-white shadow-[0_8px_30px_rgba(56,189,248,0.25)]"
+                                : "border-white/10 bg-white/5 text-slate-200/80 hover:border-cyan-200/40 hover:bg-white/10"
+                            }`}
+                            aria-pressed={isActive}
+                          >
+                            <span className="font-semibold uppercase tracking-[0.25em] text-cyan-100/80 visual-accent-text-strong">
+                              {type}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Structure</label>
                     <input
                       className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
                       value={accountDraft.company}
@@ -442,7 +475,7 @@ const Dashboard = () => {
                         setAccountDraft((p) => ({ ...p, company: e.target.value }));
                         setAccountFeedback(null);
                       }}
-                      placeholder="Votre structure ou collectif"
+                      placeholder="Votre entreprise, collectif ou service"
                     />
                   </div>
                   <div>
@@ -457,7 +490,6 @@ const Dashboard = () => {
                       placeholder="Ex. Tech, Luxe, Événementiel..."
                     />
                   </div>
-                  <div className="hidden md:block" />
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -1146,7 +1178,9 @@ const Dashboard = () => {
                         {client.membership}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-200/60">{client.company} · {client.industry}</p>
+                    <p className="mt-2 text-xs text-slate-200/60">
+                      {[client.clientType, client.company, client.industry].filter(Boolean).join(" · ")}
+                    </p>
                   </div>
                 ))}
               </div>

@@ -38,6 +38,15 @@ export type PricingTier = {
   sla: string;
 };
 
+export const CLIENT_TYPES = [
+  "Entreprise",
+  "Particulier",
+  "Association",
+  "Institution",
+] as const;
+
+export type ClientType = (typeof CLIENT_TYPES)[number];
+
 export type QuoteRequest = {
   id: string;
   clientId: string;
@@ -78,6 +87,7 @@ export type ClientAccount = {
   id: string;
   name: string;
   email: string;
+  clientType: ClientType;
   company: string;
   industry: string;
   membership: "Impulse" | "Hyperdrive" | "Continuum";
@@ -91,9 +101,7 @@ export type RegistrationPayload = {
   name: string;
   email: string;
   password: string;
-  company: string;
-  industry: string;
-  membership: ClientAccount["membership"];
+  clientType: ClientType;
 };
 
 type VisualMode = "nebula" | "solstice";
@@ -336,6 +344,7 @@ const initialClients: ClientAccount[] = [
     id: uuid(),
     name: "Thomas Volberg",
     email: "volberg.thomas@gmail.com",
+    clientType: "Entreprise",
     company: "Studio VBG",
     industry: "Production vidéo",
     membership: "Continuum",
@@ -346,6 +355,7 @@ const initialClients: ClientAccount[] = [
     id: uuid(),
     name: "Lena Photon",
     email: "lena@quantumwear.ai",
+    clientType: "Entreprise",
     company: "QuantumWear",
     industry: "Tech santé",
     membership: "Hyperdrive",
@@ -362,10 +372,20 @@ const ensureAdminClient = (list: ClientAccount[]): ClientAccount[] => {
 
 const loadInitialClients = () => {
   const stored = readStorage<StoredClientAccount[]>(storageKeys.clients, initialClients);
-  const sanitized = stored.map(({ password: _password, ...client }) => ({
-    ...client,
-    avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
-  }));
+  const sanitized = stored.map(({ password: _password, ...client }) => {
+    const rawType = client.clientType;
+    const safeType = CLIENT_TYPES.includes(rawType as ClientType)
+      ? (rawType as ClientType)
+      : CLIENT_TYPES[0];
+
+    return {
+      ...client,
+      clientType: safeType,
+      company: client.company ?? "",
+      industry: client.industry ?? "",
+      avatarHue: typeof client.avatarHue === "number" ? client.avatarHue : Math.floor(Math.random() * 360),
+    };
+  });
   return ensureAdminClient(sanitized);
 };
 const loadInitialPortfolio = () => readStorage<PortfolioItem[]>(storageKeys.portfolio, initialPortfolio);
@@ -379,7 +399,22 @@ const loadInitialUser = () => {
   if (!storedUser) return null;
   const { password: _password, ...safeUser } = storedUser;
   const candidates = loadInitialClients();
-  return candidates.find((client) => client.email === safeUser.email) ?? safeUser;
+  const candidate = candidates.find((client) => client.email === safeUser.email);
+  if (candidate) return candidate;
+
+  const rawType = safeUser.clientType;
+  const safeType = CLIENT_TYPES.includes(rawType as ClientType)
+    ? (rawType as ClientType)
+    : CLIENT_TYPES[0];
+
+  return {
+    ...safeUser,
+    clientType: safeType,
+    company: safeUser.company ?? "",
+    industry: safeUser.industry ?? "",
+    avatarHue:
+      typeof safeUser.avatarHue === "number" ? safeUser.avatarHue : Math.floor(Math.random() * 360),
+  };
 };
 
 const initialQuotes: QuoteRequest[] = [
@@ -434,13 +469,22 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const syncClientFromSupabase = useCallback(
     (supabaseUser: User): ClientAccount => {
       const metadata = (supabaseUser.user_metadata ?? {}) as Partial<
-        RegistrationPayload & { avatarHue?: number; lastProject?: string }
+        RegistrationPayload & {
+          company?: string;
+          industry?: string;
+          avatarHue?: number;
+          lastProject?: string;
+          membership?: ClientAccount["membership"];
+        }
       >;
 
       const nextClient: ClientAccount = {
         id: supabaseUser.id,
         name: metadata.name ?? supabaseUser.email ?? "Compte Studio VBG",
         email: supabaseUser.email ?? "",
+        clientType: CLIENT_TYPES.includes(metadata.clientType as ClientType)
+          ? (metadata.clientType as ClientType)
+          : CLIENT_TYPES[0],
         company: metadata.company ?? "",
         industry: metadata.industry ?? "",
         membership: (metadata.membership as ClientAccount["membership"]) ?? "Hyperdrive",
@@ -590,8 +634,9 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register: StudioContextValue["register"] = async (payload) => {
-    const { password, ...profile } = payload;
+    const { password, clientType, ...profile } = payload;
     const avatarHue = Math.floor(Math.random() * 360);
+    const defaultMembership: ClientAccount["membership"] = "Hyperdrive";
 
     if (!isSupabaseConfigured || !supabase) {
       return {
@@ -607,6 +652,10 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
         options: {
           data: {
             ...profile,
+            clientType,
+            company: "",
+            industry: "",
+            membership: defaultMembership,
             avatarHue,
           },
           emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
@@ -746,6 +795,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
         ...(updates.email && updates.email !== user.email ? { email: updates.email } : {}),
         data: {
           name: nextSnapshot.name,
+          clientType: nextSnapshot.clientType,
           company: nextSnapshot.company,
           industry: nextSnapshot.industry,
           membership: nextSnapshot.membership,
