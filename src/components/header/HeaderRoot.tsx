@@ -404,7 +404,10 @@ export function HeaderRoot() {
                 if (item.children?.length) {
                   return (
                     <NavigationMenuItem key={item.label}>
-                      <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white">
+                      <NavigationMenuTrigger
+                        variant="translucent"
+                        className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white focus-visible:text-white"
+                      >
                         {item.label}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/95 p-3 text-white shadow-xl">
@@ -436,7 +439,10 @@ export function HeaderRoot() {
 
                 return (
                   <NavigationMenuItem key={item.label}>
-                    <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white">
+                    <NavigationMenuTrigger
+                      variant="translucent"
+                      className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white focus-visible:text-white"
+                    >
                       {item.label}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl">
