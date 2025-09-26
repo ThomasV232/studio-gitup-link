@@ -1,14 +1,36 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, Languages, Menu, MoonStar, Search, SunMedium } from "lucide-react";
+import { ArrowUpRight, Menu, MoonStar, Search, SunMedium } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
+import { CTA, CATEGORIES, MAIN_NAV } from "./nav.config";
+import { AnimatePresence, motion } from "framer-motion";
 const progressStyles = "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
+const progressTransition = {
+  type: "spring",
+  stiffness: 210,
+  damping: 32,
+  mass: 0.8
+};
+const navUnderlineTransition = {
+  type: "spring",
+  stiffness: 360,
+  damping: 32
+};
+const subnavHighlightTransition = {
+  type: "spring",
+  stiffness: 320,
+  damping: 34
+};
+const floatingPanelClass = "relative overflow-hidden rounded-[2.25rem] border border-white/12 bg-slate-950/92 text-white shadow-[0_32px_80px_rgba(15,23,42,0.68)] backdrop-blur-[26px] before:absolute before:inset-[1px] before:rounded-[2.1rem] before:bg-slate-950/80 before:content-['']";
+const floatingPanelGlow = "pointer-events-none absolute -inset-[120px] rounded-[3.5rem] bg-[conic-gradient(at_top_left,_theme(colors.cyan.400/15),_transparent_35%,_theme(colors.fuchsia.400/12),_transparent_70%,_theme(colors.sky.400/18))] opacity-70 blur-[72px]";
+const frostedCapsClass = "rounded-full border border-white/12 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30";
+const frostedTileClass = "rounded-[1.75rem] border border-white/12 bg-white/5 px-4 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-white/80 transition duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white";
+const navTriggerClass = "group relative inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white data-[state=open]:border-white/40 data-[state=open]:bg-white/10 data-[state=open]:text-white";
 export function HeaderRoot() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,6 +49,7 @@ export function HeaderRoot() {
     return prefersDark ? "dark" : "light";
   });
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [navReady, setNavReady] = useState(false);
   const applyTheme = useCallback((value: "light" | "dark") => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", value === "dark");
@@ -69,6 +92,14 @@ export function HeaderRoot() {
     });
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      setNavReady(true);
+      return;
+    }
+    const id = window.requestAnimationFrame(() => setNavReady(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
   const toggleTheme = useCallback(() => setTheme(current => current === "dark" ? "light" : "dark"), []);
   const toggleLanguage = useCallback(() => setLanguage(current => current === "FR" ? "EN" : "FR"), []);
   const commandGroups = useMemo(() => {
@@ -90,14 +121,6 @@ export function HeaderRoot() {
       works
     };
   }, []);
-  const serviceSlugFromPath = location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
-  const serviceSlugFromQuery = new URLSearchParams(location.search).get("service");
-  const activeService = useMemo(() => {
-    const preferred = (serviceSlugFromPath || serviceSlugFromQuery) as CategorySlug | null;
-    return CATEGORIES.find(category => category.slug === preferred);
-  }, [serviceSlugFromPath, serviceSlugFromQuery]);
-  const ctaLabel = activeService ? `Devis ${activeService.label}` : CTA.label;
-  const ctaHref = activeService ? `/contact?service=${activeService.slug}` : CTA.href;
   const isRealisations = location.pathname.startsWith("/realisations");
   const isServices = location.pathname.startsWith("/services");
   const subNavItems = useMemo(() => {
@@ -115,13 +138,36 @@ export function HeaderRoot() {
   return <Fragment>
       {/* Top progress bar */}
       <span className={progressStyles} aria-hidden>
-        <span className="block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 transition-transform duration-150 ease-out" style={{
-        transform: `scaleX(${scrollProgress})`
-      }} />
+        <motion.span
+          className="block h-full w-full origin-left rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-500"
+          initial={false}
+          animate={{ scaleX: Math.max(scrollProgress, 0.001) }}
+          transition={progressTransition}
+          style={{ transformOrigin: "left" }}
+        />
       </span>
 
-      <header className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+      <header className="relative isolate sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 shadow-[0_0_35px_rgba(15,23,42,0.65)] backdrop-blur-xl before:absolute before:inset-0 before:-z-10 before:bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.16),rgba(76,29,149,0.12),rgba(15,23,42,0.9))] before:opacity-80 before:content-['']">
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <motion.div
+            className="absolute -inset-x-32 -top-24 h-48 bg-gradient-to-r from-cyan-400/30 via-fuchsia-400/15 to-transparent blur-3xl"
+            animate={{ x: [0, 60, -40, 0] }}
+            transition={{ repeat: Infinity, repeatType: "mirror", duration: 18, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </motion.div>
+        <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
           {/* Left: mobile menu + brand */}
           <div className="flex items-center gap-3">
             {/* Mobile drawer */}
@@ -193,13 +239,11 @@ export function HeaderRoot() {
                     </div>
 
                     <SheetClose asChild>
-                      <Link to={ctaHref} className="block rounded-full border border-white/20 bg-white px-6 py-3 text-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 transition hover:bg-white/90">
-                        {ctaLabel}
-                      </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Link to="/connexion" className="block rounded-full border border-white/10 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white">
-                        Connexion
+                      <Link
+                        to={CTA.href}
+                        className="block rounded-full border border-white/20 bg-white px-6 py-3 text-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 transition hover:bg-white/90"
+                      >
+                        {CTA.label}
                       </Link>
                     </SheetClose>
                   </div>
@@ -208,78 +252,196 @@ export function HeaderRoot() {
             </Sheet>
 
             {/* Brand */}
-            <Link to="/" className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white transition hover:bg-white/10">
-              
-              <span className="hidden sm:inline">Studio VBG</span>
+            <Link
+              to="/"
+              className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white/30 hover:bg-white/10"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[0.6rem] font-bold text-white/80">
+                VBG
+              </span>
+              <span className="relative hidden flex-col leading-tight text-left sm:flex">
+                <AnimatePresence>
+                  {navReady && (
+                    <motion.span
+                      aria-hidden
+                      className="absolute -inset-y-1 -inset-x-2 rounded-full bg-white/35 opacity-0 blur-md"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 0.5, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+                    />
+                  )}
+                </AnimatePresence>
+                <span className="relative z-10">Studio VBG</span>
+                <span className="relative z-10 text-[0.6rem] font-normal uppercase tracking-[0.5em] text-white/50">
+                  Vidéo · IA · Diffusion
+                </span>
+              </span>
             </Link>
           </div>
 
           {/* Desktop nav */}
           <NavigationMenu className="hidden flex-1 justify-center lg:flex">
             <NavigationMenuList className="flex items-center gap-6">
-              {MAIN_NAV.map(item => {
+              {MAIN_NAV.map((item, index) => {
               const hasNested = Boolean('children' in item && item.children?.length || 'mega' in item && item.mega?.length);
               if (!hasNested) {
                 return <NavigationMenuItem key={item.href}>
                       <NavigationMenuLink asChild>
                         <NavLink to={item.href} className={({
                       isActive
-                    }) => cn("relative text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition hover:text-white", isActive && "text-white")}>
+                    }) => cn("group relative inline-flex flex-col items-center gap-2 text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition-colors duration-300", isActive && "text-white")}>
                           {({
                         isActive
-                      }) => <span className="inline-flex flex-col items-center gap-1">
-                              
-                              <span aria-hidden className={cn("h-[2px] w-full origin-left scale-x-0 rounded-full bg-white/70 transition-transform duration-300", isActive ? "scale-x-100" : "group-hover:scale-x-100")} />
-                            </span>}
+                      }) => <motion.span className="relative inline-flex flex-col items-center gap-2" initial="inactive" animate={isActive ? "active" : "inactive"} whileHover="hover" variants={{
+                        inactive: { opacity: 1 },
+                        hover: { opacity: 1 },
+                        active: { opacity: 1 }
+                      }}>
+                              <span className="relative px-2 py-1">
+                                <AnimatePresence>
+                                  {isActive && <motion.span
+                                      layoutId="nav-label-glow"
+                                      className="absolute inset-0 rounded-full bg-white/10 blur-md"
+                                      initial={{ opacity: 0, scale: 0.85 }}
+                                      animate={{ opacity: 0.45, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.9 }}
+                                      transition={navUnderlineTransition}
+                                    />}
+                                </AnimatePresence>
+                                <span className="relative z-10">{item.label}</span>
+                              </span>
+                              <motion.span
+                                aria-hidden
+                                className="h-[2px] w-full rounded-full bg-gradient-to-r from-cyan-400/80 via-fuchsia-400/80 to-purple-500/80"
+                                variants={{
+                                  inactive: { scaleX: 0, opacity: 0 },
+                                  hover: { scaleX: 1, opacity: 0.4 },
+                                  active: { scaleX: 1, opacity: 1 }
+                                }}
+                                transition={navUnderlineTransition}
+                                style={{ transformOrigin: "center" }}
+                              />
+                            </motion.span>}
                         </NavLink>
                       </NavigationMenuLink>
                     </NavigationMenuItem>;
               }
               if ('children' in item && item.children?.length) {
                 return <NavigationMenuItem key={item.label}>
-                      <NavigationMenuTrigger className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white">
-                        {item.label}
+                      <NavigationMenuTrigger className={navTriggerClass}>
+                        <span className="relative inline-flex items-center gap-2 px-1.5 py-0.5">
+                          <AnimatePresence>
+                            {navReady && <motion.span
+                                className="absolute inset-0 rounded-full bg-white/5"
+                                initial={{ opacity: 0, scale: 0.85 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+                              />}
+                          </AnimatePresence>
+                          <span className="relative z-10">{item.label}</span>
+                        </span>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/70 backdrop-blur-lg p-3 text-white shadow-xl">
-                        <NavigationMenuLink asChild>
-                          <Link to={item.href ?? "#"} className="mb-2 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white">
-                            Voir tout
-                            <ArrowUpRight className="h-3.5 w-3.5" />
-                          </Link>
-                        </NavigationMenuLink>
-                        <ul className="grid gap-2">
-                          {item.children.map(child => <li key={child.href}>
-                              <Link to={child.href} className="block rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white">
-                                {child.label}
+                      <NavigationMenuContent className="mt-3 overflow-visible">
+                        <motion.div
+                          className={cn(floatingPanelClass, "w-80 p-5")}
+                          initial={{ opacity: 0, y: 14, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                          transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                          layout
+                        >
+                          <motion.span
+                            aria-hidden
+                            className={floatingPanelGlow}
+                            initial={{ opacity: 0, scale: 0.92 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                          />
+                          <div className="relative z-10 space-y-4">
+                            <NavigationMenuLink asChild>
+                              <Link to={item.href ?? "#"} className={cn(frostedCapsClass, "flex items-center justify-between gap-3")}>
+                                Voir tout
+                                <ArrowUpRight className="h-3.5 w-3.5" />
                               </Link>
-                            </li>)}
-                        </ul>
+                            </NavigationMenuLink>
+                            <motion.ul className="grid gap-3">
+                              {item.children.map((child, index) => <motion.li
+                                  key={child.href}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: index * 0.05 }}
+                                >
+                                  <Link to={child.href} className={cn("block", frostedTileClass)}>
+                                    {child.label}
+                                  </Link>
+                                </motion.li>)}
+                            </motion.ul>
+                          </div>
+                        </motion.div>
                       </NavigationMenuContent>
                     </NavigationMenuItem>;
               }
               return <NavigationMenuItem key={item.label}>
-                    <NavigationMenuTrigger className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white">
-                      {item.label}
+                    <NavigationMenuTrigger className={navTriggerClass}>
+                      <span className="relative inline-flex items-center gap-2 px-1.5 py-0.5">
+                        <AnimatePresence>
+                          {navReady && <motion.span
+                              className="absolute inset-0 rounded-full bg-white/5"
+                              initial={{ opacity: 0, scale: 0.85 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+                            />}
+                        </AnimatePresence>
+                        <span className="relative z-10">{item.label}</span>
+                      </span>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl">
-                      <NavigationMenuLink asChild>
-                        <Link to={item.href ?? "#"} className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white">
-                          Voir tout
-                          <ArrowUpRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </NavigationMenuLink>
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {'mega' in item && item.mega ? item.mega.map(entry => <Link key={entry.href} to={entry.href} className="group flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30 hover:bg-white/10">
-                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">
-                              {entry.label}
-                            </span>
-                            <p className="text-sm text-white/70">{entry.excerpt}</p>
-                            <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition group-hover:translate-x-1">
-                              Explorer
+                    <NavigationMenuContent className="mt-4 overflow-visible">
+                      <motion.div
+                        className={cn(floatingPanelClass, "w-[720px] p-6")}
+                        initial={{ opacity: 0, y: 18, scale: 0.94 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 16, scale: 0.97 }}
+                        transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                        layout
+                      >
+                        <motion.span
+                          aria-hidden
+                          className={floatingPanelGlow}
+                          initial={{ opacity: 0, rotate: -6, scale: 0.94 }}
+                          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                        />
+                        <div className="relative z-10 space-y-5">
+                          <NavigationMenuLink asChild>
+                              <Link to={item.href ?? "#"} className={cn(frostedCapsClass, "inline-flex items-center gap-2")}>
+                              Voir tout
                               <ArrowUpRight className="h-3.5 w-3.5" />
-                            </span>
-                          </Link>) : null}
-                      </div>
+                            </Link>
+                          </NavigationMenuLink>
+                          <motion.div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {'mega' in item && item.mega ? item.mega.map((entry, index) => <motion.div
+                                  key={entry.href}
+                                  initial={{ opacity: 0, y: 12 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: index * 0.05 }}
+                                >
+                                  <Link to={entry.href} className="group flex h-full flex-col gap-3 rounded-[1.85rem] border border-white/12 bg-white/5 p-4 transition duration-300 hover:border-white/35 hover:bg-white/10">
+                                    <span className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-cyan-200/85">
+                                      {entry.label}
+                                    </span>
+                                    <p className="text-sm text-white/70">{entry.excerpt}</p>
+                                    <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.32em] text-white/60 transition group-hover:translate-x-1">
+                                      Explorer
+                                      <ArrowUpRight className="h-3.5 w-3.5" />
+                                    </span>
+                                  </Link>
+                                </motion.div>) : null}
+                          </motion.div>
+                        </div>
+                      </motion.div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>;
             })}
@@ -288,25 +450,40 @@ export function HeaderRoot() {
 
           {/* Right: actions */}
           <div className="ml-auto hidden items-center gap-2 lg:flex">
-            
-            
-            
-            <Button asChild className="rounded-full border border-white/10 bg-white/5 px-5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80 hover:bg-white/10 hover:text-white">
-              <Link to="/connexion">Connexion</Link>
+            <Button
+              asChild
+              className="rounded-full border border-white/10 bg-white/5 px-5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+              <Link to={CTA.href}>{CTA.label}</Link>
             </Button>
           </div>
         </div>
 
         {/* Secondary subnav */}
-        {subNavItems.length > 0 && <div className="border-t border-white/10 bg-slate-950/80">
+        {subNavItems.length > 0 && <div className="relative z-10 border-t border-white/10 bg-slate-950/80">
             <div className="mx-auto max-w-6xl px-4">
               <nav className="flex gap-3 overflow-x-auto py-3">
                 {subNavItems.map(item => {
               const isActive = item.href.endsWith(`/${activeSubnavSlug}`);
-              return <NavLink key={item.href} to={item.href} className={({
-                isActive: routeActive
-              }) => cn("inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/60 transition hover:bg-white/10 hover:text-white", (isActive || routeActive) && "border-white/40 text-white")}>
-                      {item.label}
+              return <NavLink key={item.href} to={item.href} className="group relative inline-flex focus:outline-none">
+                      {({
+                    isActive: routeActive
+                  }) => {
+                const active = isActive || routeActive;
+                return <span className={cn("relative inline-flex items-center justify-center overflow-hidden rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition-colors duration-300 group-focus-visible:ring-2 group-focus-visible:ring-white/40 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-slate-950", active ? "border-white/40 text-white" : "border-white/10 text-white/60 hover:border-white/20 hover:text-white")}> 
+                          <AnimatePresence>
+                            {active && <motion.span
+                                layoutId="subnav-highlight"
+                                className="absolute inset-0 rounded-full bg-white/10"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={subnavHighlightTransition}
+                              />}
+                          </AnimatePresence>
+                          <span className="relative z-10">{item.label}</span>
+                        </span>;
+              }}
                     </NavLink>;
             })}
               </nav>
