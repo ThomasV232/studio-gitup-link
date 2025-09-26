@@ -146,14 +146,17 @@ const Index = () => {
             <div className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="space-y-8">
                 <span className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/75 backdrop-blur">
-                  Studio VBG Premiere
+                  Studio VBG · Communication Engine
                 </span>
                 <h1 className="text-4xl font-black uppercase leading-[1.05] sm:text-5xl lg:text-[3.75rem]">
                   <span className="block text-xs font-semibold uppercase tracking-[0.55em] text-white/55">
-                    Feel the sensation of
+                    Operating system de communication
                   </span>
                   <span className="mt-4 block text-[2.75rem] leading-[1.05] sm:text-[3.5rem] lg:text-[4.25rem]">
-                    le <span className="text-transparent bg-gradient-to-r from-rose-400 via-fuchsia-500 to-purple-500 bg-clip-text">cinéma</span> chez vous
+                    votre communication orchestrée par{" "}
+                    <span className="text-transparent bg-gradient-to-r from-sky-400 via-indigo-500 to-violet-500 bg-clip-text">
+                      Studio&nbsp;VBG
+                    </span>
                   </span>
                 </h1>
                 <p className="max-w-xl text-lg text-white/75">
@@ -164,33 +167,33 @@ const Index = () => {
                 <div className="flex flex-wrap gap-4 pt-4">
                   <Link
                     to="/quote"
-                    className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-purple-500 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white shadow-[0_18px_80px_rgba(236,72,153,0.4)] transition-transform duration-300 hover:translate-y-[-2px]"
+                    className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white shadow-[0_18px_80px_rgba(59,130,246,0.4)] transition-transform duration-300 hover:translate-y-[-2px]"
                   >
-                    Join now
+                    Planifier un workshop
                   </Link>
                   <Link
                     to="/services"
                     className="inline-flex items-center gap-3 rounded-full border border-white/30 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white/70 transition-colors duration-300 hover:text-white"
                   >
-                    Learn more
+                    Découvrir nos offres
                   </Link>
                 </div>
                 <div className="flex items-center gap-3 pt-6 text-xs font-semibold uppercase tracking-[0.35em] text-white/60">
-                  <span className="inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-500 shadow-[0_0_0_6px_rgba(236,72,153,0.25)]" />
+                  <span className="inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 shadow-[0_0_0_6px_rgba(59,130,246,0.35)]" />
                   <span>{heroHooks[hookIndex]}</span>
                 </div>
               </div>
 
               <div className="relative">
-                <div className="absolute -inset-10 rounded-[3.5rem] bg-gradient-to-br from-fuchsia-500/25 via-transparent to-purple-500/25 blur-3xl" />
-                <div className="relative overflow-hidden rounded-[3rem] border border-white/15 bg-white/10 shadow-[0_40px_140px_rgba(236,72,153,0.35)] backdrop-blur">
+                <div className="absolute -inset-10 rounded-[3.5rem] bg-gradient-to-br from-sky-500/25 via-transparent to-indigo-500/25 blur-3xl" />
+                <div className="relative overflow-hidden rounded-[3rem] border border-white/15 bg-white/10 shadow-[0_40px_140px_rgba(59,130,246,0.35)] backdrop-blur">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 opacity-60" />
                   <div className="relative">
                     <div className="relative h-[420px] overflow-hidden rounded-[2.5rem]">
                       <div
                         className={cn(
                           "absolute inset-0 bg-gradient-to-br opacity-70",
-                          heroProject?.gradient ?? "from-fuchsia-500 via-rose-500 to-purple-600",
+                          heroProject?.gradient ?? "from-sky-500 via-indigo-500 to-violet-600",
                         )}
                       />
                       {!heroImageError && heroProject?.thumbnail ? (
@@ -205,9 +208,9 @@ const Index = () => {
                           )}
                         />
                       ) : (
-                        <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-[#12061f] text-center">
-                          <span className="text-3xl">🎬</span>
-                          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">Aperçu en préparation</p>
+                        <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-[#0a1124] text-center">
+                          <span className="text-3xl">🎨</span>
+                          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">Prototype en préparation</p>
                           <p className="text-xs text-white/60">L'image du projet sera bientôt disponible.</p>
                         </div>
                       )}
@@ -221,10 +224,10 @@ const Index = () => {
                     <div className="absolute inset-x-0 bottom-0 rounded-b-[3rem] bg-gradient-to-t from-[#0b0617]/95 via-[#0b0617]/55 to-transparent px-8 pb-10 pt-16">
                       <div className="flex flex-wrap items-end justify-between gap-6">
                         <div className="space-y-3">
-                          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/45">Now streaming</p>
-                          <p className="text-2xl font-bold text-white">{heroProject?.title ?? "Votre prochain film"}</p>
+                          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/45">En orchestration</p>
+                          <p className="text-2xl font-bold text-white">{heroProject?.title ?? "Votre prochaine campagne"}</p>
                           <p className="text-sm text-white/70">
-                            {heroProject?.tagline ?? "Immersion totale dans notre univers narratif."}
+                            {heroProject?.tagline ?? "Écosystème visuel modulable prêt pour chaque activation pilotée par KPI."}
                           </p>
                           <div className="flex flex-wrap gap-2 text-[0.55rem] font-semibold uppercase tracking-[0.3em] text-white/45">
                             {heroTools.map((tool) => (
@@ -320,7 +323,7 @@ const Index = () => {
                   <Link
                     key={project.id}
                     to="/portfolio"
-                    className="group relative block overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 shadow-[0_30px_110px_rgba(236,72,153,0.18)] transition-transform duration-500 hover:-translate-y-2"
+                    className="group relative block overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 shadow-[0_30px_110px_rgba(59,130,246,0.18)] transition-transform duration-500 hover:-translate-y-2"
                     aria-label={`Voir le projet ${project.title} dans le portfolio`}
                   >
                     {project.thumbnail ? (
@@ -330,7 +333,7 @@ const Index = () => {
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-fuchsia-500/30 via-purple-500/20 to-slate-900/40 text-sm uppercase tracking-[0.3em] text-white/70">
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-sky-500/30 via-indigo-500/20 to-slate-900/40 text-sm uppercase tracking-[0.3em] text-white/70">
                         Aperçu en attente
                       </div>
                     )}
@@ -361,7 +364,7 @@ const Index = () => {
               <div>
                 <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Méthode intégrée</p>
                 <h2 className="mt-3 text-4xl font-extrabold">
-                  Une chaîne de production qui synchronise IA et équipes de plateau
+                  Une chaîne de production orchestrée par IA, DesignOps et équipes de plateau
                 </h2>
               </div>
               <div className="flex gap-3 text-sm text-slate-200/80">
@@ -388,6 +391,7 @@ const Index = () => {
                     <span className="inline-flex items-center gap-3 text-sm font-semibold text-cyan-200/80 visual-accent-text">
                       <span className="text-2xl">0{index + 1}</span> {service.title}
                     </span>
+                    <p className="text-xl font-bold text_white">{/* fix typo? was text-white */}</p>
                     <p className="text-xl font-bold text-white">{service.subtitle}</p>
                     <p className="text-sm text-slate-200/80">{service.promise}</p>
                     <div className="flex flex-wrap gap-2 text-xs text-cyan-100/70 visual-accent-text-strong">
@@ -408,26 +412,26 @@ const Index = () => {
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div className="flex flex-col gap-10 lg:flex-row">
             <div className="flex-1 space-y-6">
-              <p className="text-sm uppercase tracking-[0.3em] text-fuchsia-200/70">Réalisations récentes</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-indigo-200/70">Réalisations récentes</p>
               <h2 className="text-4xl font-extrabold leading-tight">
                 Un portefeuille modulable piloté depuis votre tableau de bord
               </h2>
               <p className="text-lg text-slate-200/80">
-                Chaque projet est structuré pour évoluer. Ajoutez, mettez à jour ou archivez vos références depuis le tableau de bord administrateur.
+                Chaque projet est structuré selon les standards de gouvernance employés par Accenture Song ou Wieden+Kennedy : roadmaps dynamiques, assets versionnés et analytics intégrés.
               </p>
               <div className="grid gap-4 text-sm text-slate-200/80">
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Processus éditorial</p>
-                  <p className="mt-2">Brief, scénario, droits et livrables sont documentés dès la préproduction pour sécuriser la validation interne.</p>
+                  <p className="mt-2">Brief, scénario, droits et livrables sont cadrés avec les frameworks RACI et Brand Sprint pour accélérer la validation interne.</p>
                 </div>
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                   <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Pilotage data</p>
-                  <p className="mt-2">Classement par thématique, scoring IA des performances et bibliothèques audio certifiées pour accélérer la production.</p>
+                  <p className="mt-2">Classement par thématique, scoring IA des performances et bibliothèques audio certifiées garantissent un pilotage MMM-ready.</p>
                 </div>
               </div>
               <Link
                 to="/portfolio"
-                className="inline-flex items-center gap-3 rounded-full border border-fuchsia-200/40 bg-fuchsia-500/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_15px_50px_rgba(236,72,153,0.3)] visual-secondary-glow visual-accent-glow"
+                className="inline-flex items-center gap-3 rounded-full border border-indigo-200/40 bg-indigo-500/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_15px_50px_rgba(59,130,246,0.3)] visual-secondary-glow visual-accent-glow"
               >
                 Explorer la galerie complète
               </Link>
@@ -437,7 +441,7 @@ const Index = () => {
               {portfolioItems.slice(0, 3).map((project, index) => (
                 <article
                   key={project.id}
-                  className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(244,114,182,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)]"
+                  className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-[0_25px_90px_rgba(59,130,246,0.12)] visual-accent-hover-shadow transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_120px_rgba(14,165,233,0.2)]"
                 >
                   <span
                     className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
@@ -470,18 +474,18 @@ const Index = () => {
           <div className="rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-10 shadow-[0_25px_100px_rgba(8,145,178,0.18)]">
             <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
               <div className="space-y-6">
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Demande rapide</p>
+                <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Onboarding express</p>
                 <h2 className="text-4xl font-extrabold leading-tight">
-                  90 secondes suffisent pour lancer un échange avec nos équipes.
+                  Kick-off 360° en 90 secondes avec nos stratèges et producteurs.
                 </h2>
                 <div className="grid gap-4 text-sm text-slate-200/80">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Analyse initiale</p>
-                    <p className="mt-2">Objectifs, publics cibles et formats souhaités : nous collectons les informations essentielles pour préparer la proposition.</p>
+                    <p className="mt-2">Objectifs, audiences, canaux et KPI sont captés dans un canvas Miro pour préparer une réponse opérationnelle.</p>
                   </div>
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60 visual-accent-text">Coordination interne</p>
-                    <p className="mt-2">Le brief est partagé avec le pôle création, l'équipe plateau et notre cellule IA pour une réponse argumentée et chiffrée.</p>
+                    <p className="mt-2">Le brief est synchronisé avec le pôle création, la cellule IA et la production plateau via Notion et Slack Connect pour une réponse argumentée et chiffrée.</p>
                   </div>
                 </div>
               </div>
@@ -544,7 +548,7 @@ const Index = () => {
                   className="group relative w-full overflow-hidden rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white"
                 >
                   <span className="relative z-10">Envoyer ma demande</span>
-                  <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
+                  <span className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 visual-accent-gradient transition-transform duration-700 group-hover:translate-x-0 visual-accent-gradient" />
                 </button>
                 {contactSent && (
                   <p className="rounded-2xl border border-cyan-200/30 visual-accent-border bg-cyan-500/10 visual-accent-chip px-4 py-3 text-sm text-cyan-100 visual-accent-text-strong">
