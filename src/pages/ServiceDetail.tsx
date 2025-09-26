@@ -26,7 +26,7 @@ const ServiceDetail = () => {
             "conic-gradient(from 120deg at 20% 20%, hsla(var(--visual-accent)/0.25), hsla(var(--visual-secondary)/0.18), transparent 70%)",
         }}
       />
-      <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-28">
+      <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16">
         <header className="rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(34,211,238,0.2)] visual-accent-veil">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-6">

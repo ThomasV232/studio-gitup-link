@@ -12,14 +12,14 @@ export const HeroRibbon = ({ visible = true }: HeroRibbonProps) => {
         <span className="hero-ribbon__pulse" aria-hidden="true" />
         <div className="hero-ribbon__text">
           <p className="hero-ribbon__headline">
-            Studio VBG synchronise vos lancements vidéo IA avec vos équipes marketing.
+            Alex VBG · vidéaste freelance + studio hybride 2025.
           </p>
           <p className="hero-ribbon__subheadline">
-            Planning prioritaire, scripts sur-mesure, rendu premium en 48h.
+            Films premium, IA créative et diffusion orchestrée pour booster vos lancements.
           </p>
         </div>
         <Link to="/quote" className="hero-ribbon__cta">
-          Réserver un audit
+          Réserver un créneau découverte
         </Link>
       </div>
     </div>
