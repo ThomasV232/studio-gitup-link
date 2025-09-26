@@ -1,25 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
-import type { ChangeEvent } from "react";
+import { useCallback, useMemo, useState, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
-
 import { servicesData } from "@/lib/services";
 
 const heroHighlights = [
-  {
-    label: "Stack 2025",
-    value: "Burano 8K + Gen-3",
-    note: "Workflow hybride IA & humain",
-  },
-  {
-    label: "Délais",
-    value: "72 h – 4 sem.",
-    note: "selon complexité & canal",
-  },
-  {
-    label: "Satisfaction",
-    value: "4.9/5",
-    note: "50 retours vérifiés",
-  },
+  { label: "Stack 2025", value: "Burano 8K + Gen-3", note: "Workflow hybride IA & humain" },
+  { label: "Délais", value: "72 h – 4 sem.", note: "selon complexité & canal" },
+  { label: "Satisfaction", value: "4.9/5", note: "50 retours vérifiés" },
 ];
 
 const reasons = [
@@ -41,44 +27,17 @@ const reasons = [
 ];
 
 const processSteps = [
-  {
-    title: "Brief & objectifs",
-    description: "30 min d’appel pour cadrer message, public, KPI.",
-  },
-  {
-    title: "Scénario & planning",
-    description: "J’écris, vous validez, on cale les dates.",
-  },
-  {
-    title: "Tournage / prod",
-    description: "Discret, efficace, respect du cadre & sécurité.",
-  },
-  {
-    title: "Montage & révisions",
-    description: "1 à 2 allers-retours inclus, sous-titres, habillage.",
-  },
-  {
-    title: "Livraison & publications",
-    description: "Exports optimisés (YouTube, LinkedIn, Insta), miniatures.",
-  },
+  { title: "Brief & objectifs", description: "30 min d’appel pour cadrer message, public, KPI." },
+  { title: "Scénario & planning", description: "J’écris, vous validez, on cale les dates." },
+  { title: "Tournage / prod", description: "Discret, efficace, respect du cadre & sécurité." },
+  { title: "Montage & révisions", description: "1 à 2 allers-retours inclus, sous-titres, habillage." },
+  { title: "Livraison & publications", description: "Exports optimisés (YouTube, LinkedIn, Insta), miniatures." },
 ];
 
 const packs = [
-  {
-    name: "Essentiel",
-    description: "Tournage 1/2 journée, film principal, sous-titres.",
-    price: "À partir de 950 € HT",
-  },
-  {
-    name: "Pro",
-    description: "1 journée, film principal + 2 déclinaisons, miniatures.",
-    price: "Dès 1 400 € HT",
-  },
-  {
-    name: "Full",
-    description: "1–2 jours, multi-formats (16:9 & 9:16), 5–8 capsules.",
-    price: "Sur devis",
-  },
+  { name: "Essentiel", description: "Tournage 1/2 journée, film principal, sous-titres.", price: "À partir de 950 € HT" },
+  { name: "Pro", description: "1 journée, film principal + 2 déclinaisons, miniatures.", price: "Dès 1 400 € HT" },
+  { name: "Full", description: "1–2 jours, multi-formats (16:9 & 9:16), 5–8 capsules.", price: "Sur devis" },
 ];
 
 const options = [
@@ -94,7 +53,8 @@ const options = [
 const faqs = [
   {
     question: "Combien coûte une vidéo ?",
-    answer: "Ça dépend du temps de tournage, du montage et des livrables. Mes projets démarrent dès 650 € HT (immobilier) et 1 400–1 900 € HT pour entreprise/événementiel. Vous recevez un devis poste par poste.",
+    answer:
+      "Ça dépend du temps de tournage, du montage et des livrables. Mes projets démarrent dès 650 € HT (immobilier) et 1 400–1 900 € HT pour entreprise/événementiel. Vous recevez un devis poste par poste.",
   },
   {
     question: "Quels délais prévoir ?",
@@ -123,18 +83,9 @@ const faqs = [
 ];
 
 const testimonials = [
-  {
-    quote: "\"+38 % d’inscriptions au webinar — on a enfin un film clair.\"",
-    author: "Lina, Marketing",
-  },
-  {
-    quote: "\"Aftermovie livré en 72h, parfait pour relancer les ventes early-bird.\"",
-    author: "Romain, Event manager",
-  },
-  {
-    quote: "\"Notre annonce immo a pris 2 offres en 3 jours.\"",
-    author: "Sophie, Agence immo",
-  },
+  { quote: '" +38 % d’inscriptions au webinar — on a enfin un film clair. "', author: "Lina, Marketing" },
+  { quote: '" Aftermovie livré en 72h, parfait pour relancer les ventes early-bird. "', author: "Romain, Event manager" },
+  { quote: '" Notre annonce immo a pris 2 offres en 3 jours. "', author: "Sophie, Agence immo" },
 ];
 
 const Services = () => {
@@ -156,20 +107,15 @@ const Services = () => {
   );
 
   const handleServiceJump = useCallback((slug: string) => {
-    if (!slug) {
-      return;
-    }
+    if (!slug) return;
 
     const element = document.getElementById(`service-${slug}`);
-
     if (element instanceof HTMLElement) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
-
       if (typeof element.focus === "function") {
         element.focus({ preventScroll: true });
       }
     }
-
     if (typeof window !== "undefined") {
       window.history.replaceState(null, "", `#service-${slug}`);
     }
@@ -178,7 +124,6 @@ const Services = () => {
   const handleSelectChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const { value } = event.target;
-
       setSelectedSlug(value);
       handleServiceJump(value);
     },
@@ -187,6 +132,7 @@ const Services = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      {/* Backdrops */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.28),transparent_55%),radial-gradient(circle_at_80%_15%,rgba(147,51,234,0.18),transparent_60%),radial-gradient(circle_at_50%_90%,rgba(236,72,153,0.2),transparent_65%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(15,23,42,0.4)_0%,rgba(15,23,42,0.75)_55%,rgba(15,23,42,0.95)_100%)]" />
@@ -197,6 +143,7 @@ const Services = () => {
       <div aria-hidden className="pointer-events-none absolute bottom-[-240px] right-[-140px] h-[460px] w-[460px] rounded-full bg-gradient-to-l from-violet-500/15 via-cyan-500/10 to-transparent blur-3xl" />
 
       <div className="relative mx-auto max-w-6xl px-6 pb-32 pt-24">
+        {/* HERO */}
         <header className="relative overflow-hidden rounded-[3.5rem] border border-white/10 bg-white/[0.04] p-12 shadow-[0_40px_140px_rgba(14,165,233,0.28)] backdrop-blur-3xl">
           <div aria-hidden className="absolute inset-0 -z-10">
             <div className="absolute inset-0 animate-[spin_18s_linear_infinite] bg-[conic-gradient(from_180deg_at_50%_50%,rgba(125,211,252,0.15),rgba(244,114,182,0.1),rgba(14,165,233,0.25),transparent_65%)]" />
@@ -212,7 +159,8 @@ const Services = () => {
                   Des vidéos qui servent vos objectifs — pas seulement l’esthétique
                 </h1>
                 <p className="max-w-2xl text-lg text-slate-200/80">
-                  De l’idée au livrable prêt à publier, je produis des vidéos efficaces pour l’entreprise, l’événementiel, l’immobilier, les réseaux sociaux, le mariage et le motion design/IA.
+                  De l’idée au livrable prêt à publier, je produis des vidéos efficaces pour l’entreprise, l’événementiel,
+                  l’immobilier, les réseaux sociaux, le mariage et le motion design/IA.
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
@@ -233,10 +181,7 @@ const Services = () => {
               </div>
               <dl className="grid gap-6 sm:grid-cols-3">
                 {heroHighlights.map((item) => (
-                  <div
-                    key={item.label}
-                    className="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl"
-                  >
+                  <div key={item.label} className="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl">
                     <dt className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">{item.label}</dt>
                     <dd className="mt-3 text-2xl font-bold">{item.value}</dd>
                     <p className="text-xs text-slate-200/70">{item.note}</p>
@@ -244,6 +189,7 @@ const Services = () => {
                 ))}
               </dl>
             </div>
+
             <div className="relative flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
               <div aria-hidden className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-cyan-400/20 blur-3xl" />
               <div className="space-y-3">
@@ -262,6 +208,7 @@ const Services = () => {
           </div>
         </header>
 
+        {/* REASONS + NAV SELECT */}
         <section className="mt-20 space-y-12">
           <div className="flex flex-col gap-10 rounded-[3rem] border border-white/10 bg-white/[0.05] p-12 shadow-[0_30px_120px_rgba(236,72,153,0.22)]">
             <header className="max-w-3xl space-y-4">
@@ -298,6 +245,8 @@ const Services = () => {
                 Chaque carte résume l’angle, les livrables clés, le délai, le prix d’appel, une preuve concrète et l’accès à la fiche détaillée.
               </p>
             </header>
+
+            {/* Select to jump to a card */}
             <div className="flex flex-col gap-5 rounded-[2.5rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_24px_120px_rgba(56,189,248,0.18)] backdrop-blur-2xl lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
                 <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/70">Navigation services</p>
@@ -334,6 +283,7 @@ const Services = () => {
               </label>
             </div>
 
+            {/* Service cards */}
             <div className="grid gap-10 lg:grid-cols-2">
               {serviceCards.map((service) => (
                 <article
@@ -351,6 +301,7 @@ const Services = () => {
                       <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/70">{service.title}</p>
                       <h3 className="text-2xl font-semibold leading-snug text-white">{service.hook}</h3>
                     </header>
+
                     <ul className="space-y-2 text-sm text-slate-200/80">
                       {service.deliverables.map((item) => (
                         <li key={item} className="flex items-center gap-3">
@@ -359,13 +310,18 @@ const Services = () => {
                         </li>
                       ))}
                     </ul>
+
                     <div className="flex flex-wrap items-center gap-3 text-sm text-slate-100/80">
-                      <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2">{service.timeline}</span>
+                      <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2">
+                        {service.timeline}
+                      </span>
                       <span className="rounded-full border border-cyan-200/30 bg-cyan-500/20 px-4 py-2 text-cyan-100/90">
                         {service.price}
                       </span>
                     </div>
+
                     <p className="text-sm text-cyan-100/80">{service.proof}</p>
+
                     <Link
                       to={`/services/${service.slug}`}
                       className="group/link inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-white/20"
@@ -380,6 +336,7 @@ const Services = () => {
           </div>
         </section>
 
+        {/* PROCESS */}
         <section className="mt-24 space-y-12">
           <header className="max-w-3xl space-y-4">
             <h2 className="text-3xl font-bold md:text-4xl">Comment ça se passe</h2>
@@ -408,6 +365,7 @@ const Services = () => {
           </div>
         </section>
 
+        {/* PACKS + OPTIONS */}
         <section className="mt-24 grid gap-10 lg:grid-cols-[1.35fr_0.9fr]">
           <div className="space-y-8 rounded-[3rem] border border-white/10 bg-white/[0.05] p-12 shadow-[0_32px_120px_rgba(236,72,153,0.22)]">
             <header className="space-y-4">
@@ -426,6 +384,7 @@ const Services = () => {
               ))}
             </div>
           </div>
+
           <aside className="flex flex-col justify-between gap-6 rounded-[3rem] border border-white/10 bg-white/[0.05] p-12">
             <div>
               <h3 className="text-2xl font-semibold text-white">Options utiles</h3>
@@ -444,6 +403,7 @@ const Services = () => {
           </aside>
         </section>
 
+        {/* FAQ */}
         <section className="mt-24 space-y-8">
           <header className="space-y-4">
             <h2 className="text-3xl font-bold md:text-4xl">FAQ</h2>
@@ -465,24 +425,7 @@ const Services = () => {
           </div>
         </section>
 
-        <section className="mt-24 space-y-10">
-          <header className="space-y-4">
-            <h2 className="text-3xl font-bold md:text-4xl">Témoignages</h2>
-            <p className="text-slate-200/70">Des résultats concrets, livrés vite et bien.</p>
-          </header>
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((testimonial) => (
-              <figure
-                key={testimonial.author}
-                className="rounded-[2.5rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_24px_100px_rgba(236,72,153,0.2)]"
-              >
-                <blockquote className="text-sm text-slate-200/80">{testimonial.quote}</blockquote>
-                <figcaption className="mt-4 text-xs uppercase tracking-[0.3em] text-cyan-200/70">{testimonial.author}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-
+        {/* CTA + FORM */}
         <section className="mt-28 overflow-hidden rounded-[3.5rem] border border-white/10 bg-gradient-to-br from-cyan-500/25 via-slate-950/70 to-fuchsia-500/20 p-12 shadow-[0_38px_160px_rgba(59,130,246,0.32)]">
           <div className="grid gap-12 lg:grid-cols-[1.25fr_0.85fr] lg:items-center">
             <div className="space-y-6">
@@ -508,6 +451,7 @@ const Services = () => {
               </div>
               <p className="text-sm text-slate-100/70">Aucun engagement. Réponse claire, budget et délais.</p>
             </div>
+
             <form className="space-y-5 rounded-[2.8rem] border border-white/20 bg-white/10 p-8 text-sm text-slate-100/85 backdrop-blur-xl">
               <div className="space-y-2">
                 <label htmlFor="objectif" className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">
@@ -529,6 +473,7 @@ const Services = () => {
                   <option value="autre">Autre besoin vidéo</option>
                 </select>
               </div>
+
               <div className="space-y-2">
                 <label htmlFor="budget" className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">
                   Quel ordre de budget ? (une fourchette suffit)
@@ -540,6 +485,7 @@ const Services = () => {
                   className="w-full rounded-2xl border border-white/20 bg-slate-950/60 px-4 py-3 text-sm text-white placeholder:text-slate-400"
                 />
               </div>
+
               <div className="space-y-2">
                 <label htmlFor="message" className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">
                   Quelques lignes sur le contexte
@@ -554,10 +500,12 @@ const Services = () => {
                   Aide message : Quelques lignes sur le contexte, la cible, la diffusion.
                 </p>
               </div>
+
               <label className="flex items-start gap-3 text-xs text-slate-200/80">
                 <input type="checkbox" className="mt-1 h-4 w-4 rounded border border-white/30 bg-slate-950/60" />
                 <span>Je consens à être recontacté·e (pas de spam).</span>
               </label>
+
               <button
                 type="submit"
                 className="w-full rounded-full border border-cyan-200/40 bg-cyan-500/35 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-cyan-500/45"
@@ -565,6 +513,27 @@ const Services = () => {
                 Envoyer la demande
               </button>
             </form>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section className="mt-24 space-y-10">
+          <header className="space-y-4">
+            <h2 className="text-3xl font-bold md:text-4xl">Témoignages</h2>
+            <p className="text-slate-200/70">Des résultats concrets, livrés vite et bien.</p>
+          </header>
+          <div className="grid gap-6 md:grid-cols-3">
+            {testimonials.map((testimonial) => (
+              <figure
+                key={testimonial.author}
+                className="rounded-[2.5rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_24px_100px_rgba(236,72,153,0.2)]"
+              >
+                <blockquote className="text-sm text-slate-200/80">{testimonial.quote}</blockquote>
+                <figcaption className="mt-4 text-xs uppercase tracking-[0.3em] text-cyan-200/70">
+                  {testimonial.author}
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </section>
       </div>
