@@ -7,7 +7,7 @@ type HeroRibbonProps = {
 
 export const HeroRibbon = ({ visible = true }: HeroRibbonProps) => {
   return (
-    <div className={cn("hero-ribbon", !visible && "hidden")}> 
+    <div className={cn("hero-ribbon", !visible && "hidden")}>
       <div className="hero-ribbon__content">
         <span className="hero-ribbon__pulse" aria-hidden="true" />
         <div className="hero-ribbon__text">

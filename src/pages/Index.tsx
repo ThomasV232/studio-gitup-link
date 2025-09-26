@@ -33,19 +33,23 @@ const creativePrinciples = [
 const stackHighlights = [
   {
     title: "Capture cinématique",
-    description: "Sony Burano 8K, FX6 duo, DJI Inspire 3 et optiques G Master pour un rendu cinéma en toutes situations.",
+    description:
+      "Sony Burano 8K, FX6 duo, DJI Inspire 3 et optiques G Master pour un rendu cinéma en toutes situations.",
   },
   {
     title: "IA créative",
-    description: "Runway Gen-5 Enterprise, Sora Pro Colorist, Luma Ray Reconstruction, ElevenLabs Dubbing.",
+    description:
+      "Runway Gen-5 Enterprise, Sora Pro Colorist, Luma Ray Reconstruction, ElevenLabs Dubbing.",
   },
   {
     title: "Montage & finishing",
-    description: "DaVinci Resolve 19 Neural, Adobe Premiere Pro Sensei et mixage Dolby Atmos ready.",
+    description:
+      "DaVinci Resolve 19 Neural, Adobe Premiere Pro Sensei et mixage Dolby Atmos ready.",
   },
   {
     title: "Pilotage projet",
-    description: "Notion 2025, automation CRM et dashboards personnalisés pour suivre production et ROI.",
+    description:
+      "Notion 2025, automation CRM et dashboards personnalisés pour suivre production et ROI.",
   },
 ];
 
@@ -91,12 +95,8 @@ const Index = () => {
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!form.name || !form.email || !form.projectSpark) {
-      return;
-    }
-    if (formState === "sending") {
-      return;
-    }
+    if (!form.name || !form.email || !form.projectSpark) return;
+    if (formState === "sending") return;
 
     setFormState("sending");
     recordContactRequest({
@@ -123,6 +123,7 @@ const Index = () => {
       />
       <HeroRibbon />
       <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-32 pt-32 sm:px-10 lg:gap-32">
+        {/* HERO */}
         <header className="relative overflow-hidden rounded-[3.25rem] border border-white/10 bg-white/5 p-12 shadow-[0_24px_120px_rgba(56,189,248,0.35)] backdrop-blur">
           <div className="absolute -top-24 right-16 hidden h-64 w-64 rounded-full bg-sky-500/40 blur-3xl lg:block" aria-hidden />
           <div className="absolute -bottom-28 left-10 hidden h-64 w-64 rounded-full bg-fuchsia-500/30 blur-3xl lg:block" aria-hidden />
@@ -167,6 +168,7 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
             <div className="relative">
               <div className="absolute -inset-8 rounded-[3rem] bg-gradient-to-br from-sky-500/20 via-transparent to-fuchsia-500/20 blur-3xl" aria-hidden />
               <div className="relative overflow-hidden rounded-[2.75rem] border border-white/15 bg-slate-900/60 shadow-[0_40px_160px_rgba(56,189,248,0.25)]">
@@ -202,6 +204,7 @@ const Index = () => {
           </div>
         </header>
 
+        {/* SIGNATURE */}
         <section className="grid gap-6 rounded-[3rem] border border-white/10 bg-white/5 p-12 shadow-[0_20px_120px_rgba(236,72,153,0.18)]">
           <p className="text-xs font-semibold uppercase tracking-[0.5em] text-white/60">Signature</p>
           <h2 className="text-3xl font-extrabold sm:text-4xl">Une méthode de vidéaste freelance pour vos ambitions de marque</h2>
@@ -215,6 +218,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* RÉALISATIONS */}
         <section className="space-y-10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -230,14 +234,25 @@ const Index = () => {
           </div>
           <div className="grid gap-10 lg:grid-cols-3">
             {featuredProjects.map((project) => (
-              <article key={project.id} className="group relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-slate-900/60">
+              <article
+                key={project.id}
+                className="group relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-slate-900/60"
+              >
                 <div className="relative h-64 overflow-hidden">
                   {project.thumbnail ? (
-                    <img src={project.thumbnail} alt={project.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <img
+                      src={project.thumbnail}
+                      alt={project.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                   ) : (
-                    <div className={cn("h-full w-full", project.gradient, "bg-gradient-to-br")}></div>
+                    <div className={cn("h-full w-full", project.gradient, "bg-gradient-to-br")} />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" aria-hidden />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent"
+                    aria-hidden
+                  />
                   <div className="absolute bottom-4 left-5 flex flex-wrap items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/70">
                     <span>{project.category}</span>
                     <span className="h-1 w-1 rounded-full bg-white/40" aria-hidden />
@@ -258,6 +273,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* SERVICES + STACK */}
         <section className="grid gap-8 lg:grid-cols-[1.25fr_1fr]">
           <div className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -272,11 +288,17 @@ const Index = () => {
                 Explorer tous les services
               </Link>
             </div>
+
             <div className="grid gap-8 lg:grid-cols-3">
               {highlightServices.map((service) => (
-                <article key={service.slug} className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6 shadow-[0_18px_80px_rgba(59,130,246,0.18)]">
+                <article
+                  key={service.slug}
+                  className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6 shadow-[0_18px_80px_rgba(59,130,246,0.18)]"
+                >
                   <div className="space-y-2">
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">{service.slug.replaceAll("-", " ")}</p>
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
+                      {service.slug.replaceAll("-", " ")}
+                    </p>
                     <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
                     <p className="text-sm text-white/70">{service.subtitle}</p>
                   </div>
@@ -296,6 +318,7 @@ const Index = () => {
               ))}
             </div>
           </div>
+
           <aside className="flex h-full flex-col justify-between gap-6 rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-sky-500/10 via-slate-900/60 to-indigo-500/10 p-8">
             <div className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.45em] text-white/60">Technologie & craft</p>
@@ -321,6 +344,7 @@ const Index = () => {
           </aside>
         </section>
 
+        {/* TESTIMONIALS */}
         <section className="grid gap-10 rounded-[3rem] border border-white/10 bg-white/5 p-12">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -336,7 +360,10 @@ const Index = () => {
           </div>
           <div className="grid gap-8 lg:grid-cols-3">
             {testimonials.map((testimonial) => (
-              <blockquote key={testimonial.author} className="flex h-full flex-col gap-4 rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-8">
+              <blockquote
+                key={testimonial.author}
+                className="flex h-full flex-col gap-4 rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-8"
+              >
                 <p className="text-base text-white/80">“{testimonial.quote}”</p>
                 <footer className="space-y-1 text-sm text-white/60">
                   <p className="font-semibold text-white">{testimonial.author}</p>
@@ -347,6 +374,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* BRIEF EXPRESS */}
         <section className="grid gap-12 rounded-[3rem] border border-white/10 bg-gradient-to-br from-slate-900/70 via-slate-950 to-indigo-950 p-12">
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-4">
@@ -394,7 +422,7 @@ const Index = () => {
                 <textarea
                   value={form.projectSpark}
                   onChange={(event) => setForm((current) => ({ ...current, projectSpark: event.target.value }))}
-                  className="min-h-[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-sky-400 focus:outline-none"
+                  className="min-h[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-sky-400 focus:outline-none"
                   placeholder="Lancement film de marque, aftermovie, série social..."
                   required
                 />
@@ -409,7 +437,9 @@ const Index = () => {
                         key={option.value}
                         className={cn(
                           "flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-center text-xs font-semibold uppercase tracking-[0.35em] transition-colors",
-                          isActive ? "border-sky-400/60 bg-sky-500/20 text-white" : "border-white/20 bg-white/10 text-white/70"
+                          isActive
+                            ? "border-sky-400/60 bg-sky-500/20 text-white"
+                            : "border-white/20 bg-white/10 text-white/70"
                         )}
                       >
                         <input
@@ -437,6 +467,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* CTA */}
         <section className="rounded-[3rem] border border-white/10 bg-white/5 p-12 text-center">
           <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Prêt à écrire la prochaine scène ?</h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-white/70">
