@@ -132,16 +132,6 @@ const Index = () => {
                 </span>
                 <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
               </a>
-              <Link
-                to={user ? "/dashboard" : "/auth?mode=login"}
-                className="group relative overflow-hidden rounded-full border border-white/20 bg-white/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-white transition hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-3">
-                  <span className="text-xl">{user ? "📊" : "✨"}</span>
-                  {user ? "Tableau de bord" : "S'inscrire / Connexion"}
-                </span>
-                <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
-              </Link>
             </div>
             <div className="grid gap-4 text-sm text-slate-300/80 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
