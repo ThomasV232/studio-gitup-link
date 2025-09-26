@@ -1,592 +1,349 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import {
-  ArrowUpRight,
-  Languages,
-  Menu,
-  MoonStar,
-  Search,
-  SunMedium,
-} from "lucide-react";
+export type ServiceDetail = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  hook: string;
+  problem: string;
+  promise: string;
+  stack: string[];
+  deliverables: string[];
+  timeline: string;
+  startingPrice: string;
+  proof: string;
+  ctaLabel: string;
+  phases: {
+    title: string;
+    description: string;
+    aiUpgrade: string;
+  }[];
+  signatureMove: string;
+  metrics: { label: string; value: string; note: string }[];
+};
 
-import { Button } from "@/components/ui/button";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+export const servicesData: ServiceDetail[] = [
+  /* -------------------------------------------------- */
+  /* 1) ENTREPRISE                                      */
+  /* -------------------------------------------------- */
+  {
+    slug: "entreprise",
+    title: "Vidéo d’entreprise — claire, crédible, utile",
+    subtitle: "Expliquez mieux, recrutez plus, vendez sans forcer.",
+    hook: "Expliquez, recrutez, vendez — avec des films clairs et crédibles.",
+    problem:
+      "Vous avez besoin d’un film qui clarifie votre proposition de valeur autant pour les prospects que pour les talents que vous ciblez.",
+    promise:
+      "Je construis un récit structuré autour de vos objectifs business, avec interviews guidées, preuves sociales et assets prêts à diffuser sur vos canaux clés.",
+    stack: ["Sony Burano 8K", "DaVinci Resolve Neural 19", "Notion Storyboard AI", "Runway Gen-3 Alpha"],
+    deliverables: [
+      "Film principal 60–90 s (16:9)",
+      "3 déclinaisons courtes 15–30 s (9:16 & 1:1)",
+      "Pack sous-titres FR/EN + miniatures brandées",
+    ],
+    timeline: "10–15 jours ouvrés",
+    startingPrice: "À partir de 1 900 € HT",
+    proof: "+38 % d’inscriptions à un webinaire (cas client)",
+    ctaLabel: "Découvrir le service Entreprise",
+    phases: [
+      {
+        title: "Brief & objectifs",
+        description: "Session de cadrage 30 min pour prioriser vos messages, audiences et KPI.",
+        aiUpgrade: "Synthèse automatique des enjeux et moodboard instantané partagé à l’équipe.",
+      },
+      {
+        title: "Scénario & planning",
+        description: "Scripts interview, repérages, organisation plateau et validation direction.",
+        aiUpgrade: "Storyboard génératif + checklist logistique intelligente.",
+      },
+      {
+        title: "Tournage cinématique",
+        description: "Interviews multicam, B-roll immersif, captation audio double système.",
+        aiUpgrade: "Téléprompteur adaptatif et monitoring colorimétrique en direct.",
+      },
+      {
+        title: "Montage & révisions",
+        description: "Montage narratif, motion léger, habillage sonore, 2 allers-retours inclus.",
+        aiUpgrade: "Suggestions de cuts par IA vérifiées humainement pour accélérer les itérations.",
+      },
+      {
+        title: "Activation multicanale",
+        description: "Exports LinkedIn, YouTube, intranet + scripts de diffusion prêts à publier.",
+        aiUpgrade: "Assistant publication pour générer posts et thumbnails optimisés.",
+      },
+    ],
+    signatureMove: "Teaser 45 s livré sous 72 h pour vos comités ou campagnes teasing.",
+    metrics: [
+      { label: "Preuve", value: "+38%", note: "d’inscriptions webinar (cas client 2025)" },
+      { label: "Délais", value: "10–15 j", note: "ouvrés selon agenda tournage" },
+      { label: "Itérations", value: "≤2", note: "grâce au script validé en amont" },
+    ],
+  },
 
-import {
-  ANNOUNCEMENT,
-  CTA,
-  CATEGORIES,
-  MAIN_NAV,
-  TRUST_BADGES,
-  type CategorySlug,
-} from "./nav.config";
+  /* -------------------------------------------------- */
+  /* 2) ÉVÉNEMENTIEL                                    */
+  /* -------------------------------------------------- */
+  {
+    slug: "evenementiel",
+    title: "Aftermovie & contenus événementiels — l’énergie qui reste",
+    subtitle: "Faites revivre, vendez le prochain.",
+    hook: "Faites revivre votre événement, et donnez envie de venir au prochain.",
+    problem:
+      "Vous devez capitaliser à chaud sur l’émotion des participants et fournir des preuves tangibles à vos sponsors.",
+    promise:
+      "Je capte l’événement avec une équipe mobile, monte en flux tendu et livre un aftermovie vibrant accompagné de capsules verticales prêtes à poster.",
+    stack: ["Sony FX6 Duo", "DJI Inspire 3", "Veo Live Suite", "Suno Studio Max"],
+    deliverables: ["Aftermovie 60–90 s", "5 capsules verticales 10–15 s", "Galerie photo optionnelle"],
+    timeline: "J+3 à J+7",
+    startingPrice: "À partir de 1 400 € HT",
+    proof: "Taux de réinscription +24 %",
+    ctaLabel: "Voir le service Événementiel",
+    phases: [
+      {
+        title: "Brief & objectifs",
+        description: "30 min pour valider messages sponsor, moments forts et KPIs post-event.",
+        aiUpgrade: "Feuille de route dynamique + scénarisation des séquences à capturer.",
+      },
+      {
+        title: "Scénario & planning",
+        description: "Run de production, repérages et coordination avec vos équipes scène et sécurité.",
+        aiUpgrade: "Alertes logistiques IA (météo, flux visiteurs) et gestion accréditations.",
+      },
+      {
+        title: "Tournage terrain",
+        description: "Multi-cam, micro-trottoirs, drone FPV indoor, captation audio immersive.",
+        aiUpgrade: "Reconnaissance VIP + tagging automatique pour retrouver les moments clés.",
+      },
+      {
+        title: "Montage & révisions",
+        description: "Montage express, étalonnage, sous-titres multilingues, brand kit sponsors.",
+        aiUpgrade: "Templates IA pour générer hooks et variations verticales en temps réel.",
+      },
+      {
+        title: "Diffusion",
+        description: "Exports prêts LinkedIn, Insta, YouTube + kit médias pour vos partenaires.",
+        aiUpgrade: "Analyse performance 72 h avec recommandations de relance.",
+      },
+    ],
+    signatureMove: "Aftermovie livré en J+3 maximum, stories verticales pendant l’événement.",
+    metrics: [
+      { label: "Preuve", value: "+24%", note: "de réinscriptions early-bird" },
+      { label: "Délais", value: "J+3", note: "after movie complet" },
+      { label: "Capsules", value: "5", note: "verticales prêtes à publier" },
+    ],
+  },
 
-const progressStyles =
-  "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
+  /* -------------------------------------------------- */
+  /* 3) IMMOBILIER                                      */
+  /* -------------------------------------------------- */
+  {
+    slug: "immobilier",
+    title: "Vidéo immobilière — déclencheur de visites",
+    subtitle: "Valorisez volumes, lumière et quartier.",
+    hook: "Vendez plus vite — mettez en valeur volumes, lumière et quartier.",
+    problem:
+      "Vos annonces doivent se démarquer instantanément pour générer des demandes qualifiées avant vos concurrents.",
+    promise:
+      "Je capture le bien en 4K HDR, révèle les points forts du quartier et livre une version verticale dédiée aux portails et réseaux sociaux.",
+    stack: ["Sony A1", "DJI Avata 2", "Luma Rooms AI", "Lightroom 2025"],
+    deliverables: ["Visite vidéo 60 s", "Version verticale 30 s", "Photos HDR & plan de coupe (option)"],
+    timeline: "48–72 h après tournage",
+    startingPrice: "À partir de 650 € HT",
+    proof: "2 offres reçues en 72 h",
+    ctaLabel: "Découvrir le service Immobilier",
+    phases: [
+      {
+        title: "Brief & objectifs",
+        description: "Identification des arguments clés, calendrier et ciblage acquéreurs.",
+        aiUpgrade: "Analyse du marché local + benchmark express des annonces concurrentes.",
+      },
+      {
+        title: "Scénario & planning",
+        description: "Storyboard visite, planning tournage et check-list home staging.",
+        aiUpgrade: "Simulation de lumière horaire pour choisir le meilleur créneau.",
+      },
+      {
+        title: "Tournage sur site",
+        description: "Plans gimbal, drone intérieur/extérieur, détails architecturaux.",
+        aiUpgrade: "Stabilisation gyroscopique IA + correction de perspective en direct.",
+      },
+      {
+        title: "Montage & révisions",
+        description: "Montage rythmé, titrage quartiers, étalonnage neutre luxe.",
+        aiUpgrade: "Suggestions de call-to-action et miniatures optimisées.",
+      },
+      {
+        title: "Activation",
+        description: "Exports portails, réseaux sociaux, emailing + kit visuels.",
+        aiUpgrade: "Génération d’annonces texte prêtes à publier.",
+      },
+    ],
+    signatureMove: "Version verticale ADS incluse pour booster vos campagnes Meta/Google.",
+    metrics: [
+      { label: "Preuve", value: "2 offres", note: "reçues en 72 h (cas réel)" },
+      { label: "Délais", value: "48–72 h", note: "après tournage" },
+      { label: "Prix d’appel", value: "650 €", note: "HT" },
+    ],
+  },
 
-export function HeaderRoot() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  /* -------------------------------------------------- */
+  /* 4) RÉSEAUX SOCIAUX                                 */
+  /* -------------------------------------------------- */
+  {
+    slug: "reseaux-sociaux",
+    title: "Contenus courts récurrents — rester visible sans y passer vos soirées",
+    subtitle: "Un pack mensuel cadré, des posts qui sortent du lot.",
+    hook: "Un workflow mensuel pour rester visible sans y passer vos soirées.",
+    problem:
+      "Vous manquez de temps pour produire des vidéos courtes régulières sans sacrifier la cohérence de marque.",
+    promise:
+      "Je mets en place un workflow mensuel avec tournages batchés, automatisations IA et reporting clair pour nourrir vos réseaux.",
+    stack: ["Sony FX3", "Aputure Infinibar", "CapCut Pro 2025", "OpusClip AI"],
+    deliverables: [
+      "8–16 vidéos verticales/mois",
+      "Pack sous-titres & templates titres",
+      "Calendrier éditorial + scripts hooks",
+    ],
+    timeline: "Production mensuelle cadencée",
+    startingPrice: "Abonnement dès 890 € HT / mois",
+    proof: "+120 % de vues sur 60 jours",
+    ctaLabel: "Voir le service Réseaux sociaux",
+    phases: [
+      {
+        title: "Brief & objectifs",
+        description: "Atelier éditorial pour prioriser vos campagnes, promos et piliers de contenu.",
+        aiUpgrade: "Audit performance social + recommandations de formats IA.",
+      },
+      {
+        title: "Scénario & planning",
+        description: "Scripts hooks, plan de tournage batch et pré-production logistique.",
+        aiUpgrade: "Générateur de variations de scripts pour A/B testing.",
+      },
+      {
+        title: "Production agile",
+        description: "Tournages 1/2 journée, B-roll snack, captation audio autonome.",
+        aiUpgrade: "Sélection automatique des meilleures prises et cadrages.",
+      },
+      {
+        title: "Montage & révisions",
+        description: "Montage rapide, sous-titres animés, habillage motion réutilisable.",
+        aiUpgrade: "Templates dynamiques et suggestions de cuts pour chaque plateforme.",
+      },
+      {
+        title: "Pilotage",
+        description: "Livraison hebdo, bibliothèque Notion, reporting mensuel détaillé.",
+        aiUpgrade: "Dashboards automatisés avec idées de posts à venir.",
+      },
+    ],
+    signatureMove: "Réunion éditoriale mensuelle + livraison des contenus prêts à programmer sous 48 h.",
+    metrics: [
+      { label: "Preuve", value: "+120%", note: "de vues sur 60 jours" },
+      { label: "Cadence", value: "8–16", note: "vidéos verticales / mois" },
+      { label: "Abonnement", value: "890 €", note: "HT / mois dès" },
+    ],
+  },
 
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [commandOpen, setCommandOpen] = useState(false);
-  const [language, setLanguage] = useState<"FR" | "EN">(() => {
-    if (typeof window === "undefined") return "FR";
-    const stored = window.localStorage.getItem("studio-lang");
-    return stored === "EN" ? "EN" : "FR";
-  });
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window === "undefined") return "dark";
-    const stored = window.localStorage.getItem("studio-theme");
-    if (stored === "light" || stored === "dark") return stored;
-    const prefersDark = typeof window.matchMedia === "function"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-      : false;
-    return prefersDark ? "dark" : "light";
-  });
-  const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("studio-announcement-dismissed") === "true";
-  });
-  const [scrollProgress, setScrollProgress] = useState(0);
+  /* -------------------------------------------------- */
+  /* 5) MARIAGE                                         */
+  /* -------------------------------------------------- */
+  {
+    slug: "mariage",
+    title: "Film de mariage — vivant, élégant, fidèle à vous",
+    subtitle: "Un film que vous aurez plaisir à revoir et partager.",
+    hook: "Un film sincère, vivant, pour revivre l’émotion sans longueur.",
+    problem:
+      "Vous voulez revivre votre journée sans longueurs ni artifices, avec vos proches au centre.",
+    promise:
+      "Je capture chaque instant avec discrétion et livre un film sincère accompagné d’un teaser rapide et d’une galerie privée.",
+    stack: ["Sony A1", "Leica Q3", "Kodak Super 8", "Sora Colorist"],
+    deliverables: ["Film 5–8 minutes", "Bande-annonce 60 s", "Discours & moments bonus + galerie privée"],
+    timeline: "3–6 semaines",
+    startingPrice: "À partir de 1 900 € TTC",
+    proof: "97 % des couples recommandent",
+    ctaLabel: "Voir le service Mariage",
+    phases: [
+      {
+        title: "Brief & objectifs",
+        description: "Rencontre vidéo, intentions artistiques, planning avec le wedding planner.",
+        aiUpgrade: "Moodboard émotionnel généré à partir de vos inspirations.",
+      },
+      {
+        title: "Scénario & planning",
+        description: "Storyline de la journée, repérages, coordination prestataires.",
+        aiUpgrade: "Assistant planning pour anticiper les moments clés et la lumière.",
+      },
+      {
+        title: "Tournage",
+        description: "Captation discrète, audio haute fidélité, séquences super 8 en option.",
+        aiUpgrade: "Focus tracking pour ne manquer aucun visage important.",
+      },
+      {
+        title: "Montage & révisions",
+        description: "Montage narratif, musique licenciée, 1 aller-retour inclus.",
+        aiUpgrade: "Sélection musicale assistée par IA validée avec vous.",
+      },
+      {
+        title: "Livraison",
+        description: "Bande-annonce J+7, film final 3–6 semaines, coffret souvenir.",
+        aiUpgrade: "Galerie privée sécurisée + backup 12 mois.",
+      },
+    ],
+    signatureMove: "Teaser livré sous 7 jours pour annoncer votre film complet.",
+    metrics: [
+      { label: "Preuve", value: "97%", note: "des couples recommandent" },
+      { label: "Délais", value: "3–6 sem.", note: "selon saison" },
+      { label: "Présence", value: "14 h", note: "de couverture continue" },
+    ],
+  },
 
-  const applyTheme = useCallback(
-    (value: "light" | "dark") => {
-      if (typeof document === "undefined") return;
-      document.documentElement.classList.toggle("dark", value === "dark");
-      document.documentElement.style.colorScheme = value;
-    },
-    [],
-  );
-
-  useEffect(() => {
-    applyTheme(theme);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("studio-theme", theme);
-    }
-  }, [applyTheme, theme]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("studio-lang", language);
-  }, [language]);
-
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setCommandOpen(true);
-      }
-    };
-
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
-
-  useEffect(() => {
-    const updateProgress = () => {
-      if (typeof document === "undefined") return;
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-      const max = Math.max(scrollHeight - clientHeight, 1);
-      setScrollProgress(Math.min(scrollTop / max, 1));
-    };
-
-    updateProgress();
-    window.addEventListener("scroll", updateProgress, { passive: true });
-    return () => window.removeEventListener("scroll", updateProgress);
-  }, []);
-
-  const handleDismissAnnouncement = useCallback(() => {
-    setAnnouncementDismissed(true);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("studio-announcement-dismissed", "true");
-    }
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === "dark" ? "light" : "dark"));
-  }, []);
-
-  const toggleLanguage = useCallback(() => {
-    setLanguage((current) => (current === "FR" ? "EN" : "FR"));
-  }, []);
-
-  const commandGroups = useMemo(() => {
-    const primary = MAIN_NAV.map((item) => ({ label: item.label, href: item.href }));
-    const services = CATEGORIES.map((category) => ({
-      label: `Service · ${category.label}`,
-      href: `/services/${category.slug}`,
-    }));
-    const works = CATEGORIES.map((category) => ({
-      label: `Réalisations · ${category.label}`,
-      href: `/realisations/${category.slug}`,
-    }));
-
-    return {
-      primary,
-      services,
-      works,
-    };
-  }, []);
-
-  const serviceSlugFromPath = location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
-  const serviceSlugFromQuery = new URLSearchParams(location.search).get("service");
-  const activeService = useMemo(() => {
-    const preferred = (serviceSlugFromPath || serviceSlugFromQuery) as CategorySlug | null;
-    return CATEGORIES.find((category) => category.slug === preferred);
-  }, [serviceSlugFromPath, serviceSlugFromQuery]);
-
-  const ctaLabel = activeService ? `Devis ${activeService.label}` : CTA.label;
-  const ctaHref = activeService ? `/contact?service=${activeService.slug}` : CTA.href;
-
-  const isRealisations = location.pathname.startsWith("/realisations");
-  const isServices = location.pathname.startsWith("/services");
-
-  const subNavItems = useMemo(() => {
-    if (!isRealisations && !isServices) return [] as { label: string; href: string }[];
-    const base = isRealisations ? "/realisations" : "/services";
-    return CATEGORIES.map((category) => ({
-      label: category.label,
-      href: `${base}/${category.slug}`,
-    }));
-  }, [isRealisations, isServices]);
-
-  const activeSubnavSlug = location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
-
-  const showAnnouncement = Boolean(ANNOUNCEMENT.message) && !announcementDismissed;
-
-  return (
-    <Fragment>
-      <span className={progressStyles} aria-hidden>
-        <span
-          className="block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 transition-transform duration-150 ease-out"
-          style={{ transform: `scaleX(${scrollProgress})` }}
-        />
-      </span>
-
-      {showAnnouncement && (
-        <div className="relative z-50 flex items-center justify-center bg-gradient-to-r from-cyan-500/20 via-slate-900 to-fuchsia-600/20 px-3 py-2 text-xs text-white">
-          <div className="flex items-center gap-3">
-            <span className="uppercase tracking-[0.3em] text-white/70">News</span>
-            <span className="font-medium text-white/90">{ANNOUNCEMENT.message}</span>
-            {ANNOUNCEMENT.href && (
-              <Link
-                to={ANNOUNCEMENT.href}
-                className="inline-flex items-center gap-1 rounded-full border border-white/30 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/80 transition hover:bg-white/10"
-              >
-                {ANNOUNCEMENT.linkLabel}
-                <ArrowUpRight className="h-3 w-3" />
-              </Link>
-            )}
-          </div>
-          {ANNOUNCEMENT.dismissible && (
-            <button
-              type="button"
-              onClick={handleDismissAnnouncement}
-              className="ml-4 rounded-full px-2 py-1 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
-              aria-label="Fermer l’annonce"
-            >
-              Fermer
-            </button>
-          )}
-        </div>
-      )}
-
-      <header className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl">
-        {TRUST_BADGES.length > 0 && (
-          <div className="border-b border-white/10 bg-white/5">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-4 px-4 py-2 text-[0.7rem] uppercase tracking-[0.35em] text-white/50">
-              {TRUST_BADGES.map((badge) => (
-                <div key={badge.label} className="flex items-center gap-2 text-white/60">
-                  <span className="font-semibold text-white/70">{badge.label}</span>
-                  <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:inline-flex" aria-hidden />
-                  <span>{badge.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:hidden"
-                  aria-label="Ouvrir la navigation"
-                >
-                  <Menu className="h-5 w-5" />
-                </button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-full max-w-sm border-white/10 bg-slate-950/95 p-0 text-white">
-                <SheetHeader className="space-y-2 border-b border-white/10 px-6 pb-4 pt-6 text-left">
-                  <SheetTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.35em] text-white/60">
-                    Studio VBG
-                  </SheetTitle>
-                  <p className="text-xs text-white/50">Navigation principale</p>
-                </SheetHeader>
-
-                <div className="flex h-full flex-col gap-8 px-6 py-8">
-                  <nav className="space-y-4 text-sm font-medium text-white/85">
-                    {MAIN_NAV.map((item) => {
-                      const hasNested = Boolean(item.children?.length || item.mega?.length);
-
-                      if (!hasNested) {
-                        return (
-                          <SheetClose asChild key={item.href}>
-                            <Link
-                              to={item.href}
-                              className="block rounded-2xl border border-white/10 bg-white/5 px-4 py-3 uppercase tracking-[0.3em] text-white transition hover:bg-white/10"
-                            >
-                              {item.label}
-                            </Link>
-                          </SheetClose>
-                        );
-                      }
-
-                      const nestedLinks = item.children ?? item.mega ?? [];
-
-                      return (
-                        <Accordion key={item.label} type="single" collapsible className="rounded-2xl border border-white/10 bg-white/5">
-                          <AccordionItem value={item.href ?? item.label}>
-                            <AccordionTrigger className="px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-white">
-                              {item.label}
-                            </AccordionTrigger>
-                            <AccordionContent className="space-y-2 px-4 pb-4">
-                              {item.href && (
-                                <SheetClose asChild>
-                                  <Link
-                                    to={item.href}
-                                    className="block rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/15 hover:text-white"
-                                  >
-                                    Voir tout
-                                  </Link>
-                                </SheetClose>
-                              )}
-                              {nestedLinks.map((link) => (
-                                <SheetClose asChild key={link.href}>
-                                  <Link
-                                    to={link.href}
-                                    className="block rounded-xl border border-white/5 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/15 hover:text-white"
-                                  >
-                                    <div>{link.label}</div>
-                                    {"excerpt" in link && link.excerpt && (
-                                      <p className="pt-1 text-[0.65rem] normal-case text-white/60">{link.excerpt}</p>
-                                    )}
-                                  </Link>
-                                </SheetClose>
-                              ))}
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      );
-                    })}
-                  </nav>
-
-                  <div className="mt-auto space-y-4">
-                    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                      <button
-                        type="button"
-                        onClick={() => setCommandOpen(true)}
-                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:text-white"
-                      >
-                        <Search className="h-4 w-4" />
-                        Rechercher (⌘K)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={toggleTheme}
-                        className="rounded-full border border-white/10 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
-                        aria-label="Changer de thème"
-                      >
-                        {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs uppercase tracking-[0.3em] text-white/70">
-                      <span>Langue</span>
-                      <button type="button" onClick={toggleLanguage} className="rounded-full border border-white/10 px-3 py-1 text-white/90 transition hover:bg-white/10">
-                        {language}
-                      </button>
-                    </div>
-                    <SheetClose asChild>
-                      <Link
-                        to={ctaHref}
-                        className="block rounded-full border border-white/20 bg-white px-6 py-3 text-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 transition hover:bg-white/90"
-                      >
-                        {ctaLabel}
-                      </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Link
-                        to="/connexion"
-                        className="block rounded-full border border-white/10 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
-                      >
-                        Connexion
-                      </Link>
-                    </SheetClose>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-
-            <Link
-              to="/"
-              className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white transition hover:bg-white/10"
-            >
-              <span className="rounded-full border border-white/20 px-2 py-1">VBG</span>
-              <span className="hidden sm:inline">Studio VBG</span>
-            </Link>
-          </div>
-
-          <NavigationMenu className="hidden flex-1 justify-center lg:flex">
-            <NavigationMenuList className="flex items-center gap-6">
-              {MAIN_NAV.map((item) => {
-                const hasNested = Boolean(item.children?.length || item.mega?.length);
-
-                if (!hasNested) {
-                  return (
-                    <NavigationMenuItem key={item.href}>
-                      <NavigationMenuLink asChild>
-                        <NavLink
-                          to={item.href}
-                          className={({ isActive }) =>
-                            cn(
-                              "relative text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition hover:text-white",
-                              isActive && "text-white",
-                            )
-                          }
-                        >
-                          {({ isActive }) => (
-                            <span className="inline-flex flex-col items-center gap-1">
-                              <span>{item.label}</span>
-                              <span
-                                aria-hidden
-                                className={cn(
-                                  "h-[2px] w-full origin-left scale-x-0 rounded-full bg-white/70 transition-transform duration-300",
-                                  isActive ? "scale-x-100" : "group-hover:scale-x-100",
-                                )}
-                              />
-                            </span>
-                          )}
-                        </NavLink>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  );
-                }
-
-                if (item.children?.length) {
-                  return (
-                    <NavigationMenuItem key={item.label}>
-                      <NavigationMenuTrigger
-                        variant="translucent"
-                        className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white focus-visible:text-white"
-                      >
-                        {item.label}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/95 p-3 text-white shadow-xl">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to={item.href ?? "#"}
-                            className="mb-2 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
-                          >
-                            Voir tout
-                            <ArrowUpRight className="h-3.5 w-3.5" />
-                          </Link>
-                        </NavigationMenuLink>
-                        <ul className="grid gap-2">
-                          {item.children.map((child) => (
-                            <li key={child.href}>
-                              <Link
-                                to={child.href}
-                                className="block rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
-                              >
-                                {child.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  );
-                }
-
-                return (
-                  <NavigationMenuItem key={item.label}>
-                    <NavigationMenuTrigger
-                      variant="translucent"
-                      className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white focus-visible:text-white"
-                    >
-                      {item.label}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl">
-                      <NavigationMenuLink asChild>
-                        <Link
-                          to={item.href ?? "#"}
-                          className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
-                        >
-                          Voir tout
-                          <ArrowUpRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </NavigationMenuLink>
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {item.mega?.map((entry) => (
-                          <Link
-                            key={entry.href}
-                            to={entry.href}
-                            className="group flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30 hover:bg-white/10"
-                          >
-                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">{entry.label}</span>
-                            <p className="text-sm text-white/70">{entry.excerpt}</p>
-                            <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition group-hover:translate-x-1">
-                              Explorer
-                              <ArrowUpRight className="h-3.5 w-3.5" />
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                );
-              })}
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          <div className="ml-auto hidden items-center gap-2 lg:flex">
-            <button
-              type="button"
-              onClick={() => setCommandOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70 transition hover:bg-white/10 hover:text-white"
-            >
-              <Search className="h-4 w-4" />
-              Rechercher
-              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[0.6rem]">⌘K</span>
-            </button>
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white"
-              aria-label="Changer de thème"
-            >
-              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-            </button>
-            <button
-              type="button"
-              onClick={toggleLanguage}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70 transition hover:bg-white/10 hover:text-white"
-            >
-              <Languages className="h-4 w-4" />
-              {language}
-            </button>
-            <Button asChild className="rounded-full bg-white px-5 text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 hover:bg-white/90">
-              <Link to={ctaHref}>{ctaLabel}</Link>
-            </Button>
-          </div>
-        </div>
-
-        {subNavItems.length > 0 && (
-          <div className="border-t border-white/10 bg-slate-950/80">
-            <div className="mx-auto max-w-6xl px-4">
-              <nav className="flex gap-3 overflow-x-auto py-3">
-                {subNavItems.map((item) => {
-                  const isActive = item.href.endsWith(`/${activeSubnavSlug}`);
-                  return (
-                    <NavLink
-                      key={item.href}
-                      to={item.href}
-                      className={({ isActive: routeActive }) =>
-                        cn(
-                          "inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/60 transition hover:bg-white/10 hover:text-white",
-                          (isActive || routeActive) && "border-white/40 text-white",
-                        )
-                      }
-                    >
-                      {item.label}
-                    </NavLink>
-                  );
-                })}
-              </nav>
-            </div>
-          </div>
-        )}
-      </header>
-
-      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-        <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
-        <CommandList>
-          <CommandEmpty>Aucun résultat pour cette recherche.</CommandEmpty>
-          <CommandGroup heading="Navigation">
-            {commandGroups.primary.map((item) => (
-              <CommandItem
-                key={item.href}
-                value={item.label}
-                onSelect={() => {
-                  navigate(item.href);
-                  setCommandOpen(false);
-                }}
-              >
-                {item.label}
-                <CommandShortcut>↵</CommandShortcut>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Services">
-            {commandGroups.services.map((item) => (
-              <CommandItem
-                key={item.href}
-                value={item.label}
-                onSelect={() => {
-                  navigate(item.href);
-                  setCommandOpen(false);
-                }}
-              >
-                {item.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Réalisations">
-            {commandGroups.works.map((item) => (
-              <CommandItem
-                key={item.href}
-                value={item.label}
-                onSelect={() => {
-                  navigate(item.href);
-                  setCommandOpen(false);
-                }}
-              >
-                {item.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </Fragment>
-  );
-}
+  /* -------------------------------------------------- */
+  /* 6) MOTION DESIGN / IA                              */
+  /* -------------------------------------------------- */
+  {
+    slug: "motion-design-ia",
+    title: "Motion design / IA — rendez l’abstrait évident",
+    subtitle: "On comprend vite, on retient mieux, on agit plus.",
+    hook: "Expliquez l’invisible : process, produit tech, data — simplement.",
+    problem:
+      "Vos process tech ou data sont difficiles à expliquer sans support visuel pédagogique.",
+    promise:
+      "Je combine motion 2D/3D, avatars génératifs et sound design immersif pour vulgariser vos innovations et déclencher l’action.",
+    stack: ["After Effects 2025", "Blender Geo Nodes", "Runway Gen-3", "ElevenLabs Dubbing"],
+    deliverables: ["Vidéo 45–90 s animée", "Déclinaisons 30 s et 15 s", "Kit illustrations & loops UI"],
+    timeline: "2–4 semaines",
+    startingPrice: "À partir de 2 400 € HT",
+    proof: "+32 % de taux de complétion",
+    ctaLabel: "Voir le service Motion design/IA",
+    phases: [
+      {
+        title: "Brief & objectifs",
+        description: "Atelier storytelling produit, identification des messages clés et KPI.",
+        aiUpgrade: "Mindmap IA pour clarifier les parcours utilisateurs et objections.",
+      },
+      {
+        title: "Scénario & planning",
+        description: "Script, storyboard illustré, moodboard design et charte motion.",
+        aiUpgrade: "Animatics génératifs + voix témoin pour valider rythme.",
+      },
+      {
+        title: "Production",
+        description: "Animation 2D/3D, simulations data, intégration UI et avatars.",
+        aiUpgrade: "Textures génératives et avatars IA pilotés sur mesure.",
+      },
+      {
+        title: "Montage & révisions",
+        description: "Sound design, mixage multilingue, itérations ciblées.",
+        aiUpgrade: "Traductions et doublages IA validés par relecture humaine.",
+      },
+      {
+        title: "Activation",
+        description: "Exports webinaire, landing page, réseaux sociaux + toolkit brand.",
+        aiUpgrade: "Check-list accessibilité + QA automatique des contrastes.",
+      },
+    ],
+    signatureMove: "Version multilingue (FR/EN/ES) incluse grâce au pipeline de doublage IA.",
+    metrics: [
+      { label: "Preuve", value: "+32%", note: "de taux de complétion" },
+      { label: "Délais", value: "2–4 sem.", note: "selon complexité" },
+      { label: "Formats", value: "3", note: "durées livrées (90/30/15 s)" },
+    ],
+  },
+];

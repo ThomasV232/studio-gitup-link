@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
+
 import { servicesData } from "@/lib/services";
 
 const heroHighlights = [
@@ -208,7 +209,7 @@ const Services = () => {
           </div>
         </header>
 
-        {/* REASONS + NAV SELECT */}
+        {/* REASONS + NAV SELECT + CARDS */}
         <section className="mt-20 space-y-12">
           <div className="flex flex-col gap-10 rounded-[3rem] border border-white/10 bg-white/[0.05] p-12 shadow-[0_30px_120px_rgba(236,72,153,0.22)]">
             <header className="max-w-3xl space-y-4">
