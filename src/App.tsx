@@ -77,22 +77,3 @@ const App = () => (
 );
 
 export default App;
-
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <SiteFooter />
-        </BrowserRouter>
-      </StudioProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
-
-export default App;

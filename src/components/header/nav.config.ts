@@ -44,16 +44,3 @@ export const MAIN_NAV = [
 
 export const CTA = { label: "Demander un devis", href: "/contact" } as const;
 
-export const ANNOUNCEMENT = {
-  message: "Septembre 2025 : 2 créneaux tournage restants",
-  linkLabel: "Bloquer un créneau",
-  href: "/contact",
-  dismissible: true,
-} as const;
-
-export const TRUST_BADGES = [
-  { label: "Clients 2025", value: "Helia · Nova · Urbania" },
-  { label: "Zone", value: "Paris · France / Europe" },
-  { label: "Assurances", value: "RC Pro + drone DGAC" },
-  { label: "Délais", value: "72h – 4 semaines" },
-] as const;

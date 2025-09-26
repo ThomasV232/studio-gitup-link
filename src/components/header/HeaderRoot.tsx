@@ -38,14 +38,7 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-import {
-  ANNOUNCEMENT,
-  CTA,
-  CATEGORIES,
-  MAIN_NAV,
-  TRUST_BADGES,
-  type CategorySlug,
-} from "./nav.config";
+import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
 
 const progressStyles =
   "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
@@ -69,10 +62,6 @@ export function HeaderRoot() {
       ? window.matchMedia("(prefers-color-scheme: dark)").matches
       : false;
     return prefersDark ? "dark" : "light";
-  });
-  const [announcementDismissed, setAnnouncementDismissed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("studio-announcement-dismissed") === "true";
   });
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -120,13 +109,6 @@ export function HeaderRoot() {
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
     return () => window.removeEventListener("scroll", updateProgress);
-  }, []);
-
-  const handleDismissAnnouncement = useCallback(() => {
-    setAnnouncementDismissed(true);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("studio-announcement-dismissed", "true");
-    }
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -179,8 +161,6 @@ export function HeaderRoot() {
 
   const activeSubnavSlug = location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
 
-  const showAnnouncement = Boolean(ANNOUNCEMENT.message) && !announcementDismissed;
-
   return (
     <Fragment>
       <span className={progressStyles} aria-hidden>
@@ -189,50 +169,7 @@ export function HeaderRoot() {
           style={{ transform: `scaleX(${scrollProgress})` }}
         />
       </span>
-
-      {showAnnouncement && (
-        <div className="relative z-50 flex items-center justify-center bg-gradient-to-r from-cyan-500/20 via-slate-900 to-fuchsia-600/20 px-3 py-2 text-xs text-white">
-          <div className="flex items-center gap-3">
-            <span className="uppercase tracking-[0.3em] text-white/70">News</span>
-            <span className="font-medium text-white/90">{ANNOUNCEMENT.message}</span>
-            {ANNOUNCEMENT.href && (
-              <Link
-                to={ANNOUNCEMENT.href}
-                className="inline-flex items-center gap-1 rounded-full border border-white/30 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/80 transition hover:bg-white/10"
-              >
-                {ANNOUNCEMENT.linkLabel}
-                <ArrowUpRight className="h-3 w-3" />
-              </Link>
-            )}
-          </div>
-          {ANNOUNCEMENT.dismissible && (
-            <button
-              type="button"
-              onClick={handleDismissAnnouncement}
-              className="ml-4 rounded-full px-2 py-1 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
-              aria-label="Fermer l’annonce"
-            >
-              Fermer
-            </button>
-          )}
-        </div>
-      )}
-
       <header className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl">
-        {TRUST_BADGES.length > 0 && (
-          <div className="border-b border-white/10 bg-white/5">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-4 px-4 py-2 text-[0.7rem] uppercase tracking-[0.35em] text-white/50">
-              {TRUST_BADGES.map((badge) => (
-                <div key={badge.label} className="flex items-center gap-2 text-white/60">
-                  <span className="font-semibold text-white/70">{badge.label}</span>
-                  <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:inline-flex" aria-hidden />
-                  <span>{badge.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -404,7 +341,10 @@ export function HeaderRoot() {
                 if (item.children?.length) {
                   return (
                     <NavigationMenuItem key={item.label}>
-                      <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white">
+                      <NavigationMenuTrigger
+                        variant="ghost"
+                        className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white"
+                      >
                         {item.label}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/95 p-3 text-white shadow-xl">
@@ -436,7 +376,10 @@ export function HeaderRoot() {
 
                 return (
                   <NavigationMenuItem key={item.label}>
-                    <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:text-white">
+                    <NavigationMenuTrigger
+                      variant="ghost"
+                      className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white"
+                    >
                       {item.label}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl">
