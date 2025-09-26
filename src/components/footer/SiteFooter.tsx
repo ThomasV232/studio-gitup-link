@@ -35,12 +35,20 @@ export function SiteFooter() {
             {FOOTER_CONTACT.phone}
           </a>
           <p className="text-sm text-white/60">{FOOTER_CONTACT.location}</p>
-          <Link
-            to={CTA.href}
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
-          >
-            {CTA.label}
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
+            >
+              Contact & Devis
+            </Link>
+            <Link
+              to={CTA.href}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+              {CTA.label}
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-3 text-sm text-white/70">

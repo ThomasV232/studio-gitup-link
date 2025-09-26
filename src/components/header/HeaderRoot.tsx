@@ -124,9 +124,7 @@ export function HeaderRoot() {
       setScrollProgress(Math.min(scrollTop / max, 1));
     };
     updateProgress();
-    window.addEventListener("scroll", updateProgress, {
-      passive: true,
-    });
+    window.addEventListener("scroll", updateProgress, { passive: true });
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
 
