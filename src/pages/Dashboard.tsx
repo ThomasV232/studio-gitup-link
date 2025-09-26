@@ -139,7 +139,7 @@ const Dashboard = () => {
     [chats, myValidatedQuoteIds],
   );
 
-  const [newProject, setNewProject] = useState<PortfolioDraft>(() => getDefaultProject(serviceCategories));
+  const [newProject, setNewProject] = useState<PortfolioDraft>(() => getDefaultProject([...serviceCategories]));
   const [chatInput, setChatInput] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(() => chats[0]?.quoteId ?? "");
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -244,7 +244,7 @@ const Dashboard = () => {
   };
 
   const resetNewProject = () => {
-    setNewProject(getDefaultProject(serviceCategories));
+    setNewProject(getDefaultProject([...serviceCategories]));
     setYoutubeUrl("");
     setMetadataError(null);
   };

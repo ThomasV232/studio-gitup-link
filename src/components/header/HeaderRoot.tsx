@@ -178,7 +178,10 @@ export function HeaderRoot() {
                 <div className="flex h-full flex-col gap-8 px-6 py-8">
                   <nav className="space-y-4 text-sm font-medium text-white/85">
                     {MAIN_NAV.map((item) => {
-                      const hasNested = Boolean(item.children?.length || item.mega?.length);
+                      const hasNested = Boolean(
+                        ('children' in item && item.children?.length) || 
+                        ('mega' in item && item.mega?.length)
+                      );
 
                       if (!hasNested) {
                         return (
@@ -193,7 +196,7 @@ export function HeaderRoot() {
                         );
                       }
 
-                      const nestedLinks = item.children ?? item.mega ?? [];
+                      const nestedLinks = ('children' in item && item.children) || ('mega' in item && item.mega) || [];
                       return (
                         <Accordion
                           key={item.label}
@@ -223,9 +226,9 @@ export function HeaderRoot() {
                                     className="block rounded-xl border border-white/5 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/15 hover:text-white"
                                   >
                                     <div>{link.label}</div>
-                                    {"excerpt" in link && link.excerpt && (
-                                      <p className="pt-1 text-[0.65rem] normal-case text-white/60">{link.excerpt}</p>
-                                    )}
+                                     {"excerpt" in link && link.excerpt && (
+                                       <p className="pt-1 text-[0.65rem] normal-case text-white/60">{String(link.excerpt)}</p>
+                                     )}
                                   </Link>
                                 </SheetClose>
                               ))}
@@ -302,7 +305,10 @@ export function HeaderRoot() {
           <NavigationMenu className="hidden flex-1 justify-center lg:flex">
             <NavigationMenuList className="flex items-center gap-6">
               {MAIN_NAV.map((item) => {
-                const hasNested = Boolean(item.children?.length || item.mega?.length);
+                const hasNested = Boolean(
+                  ('children' in item && item.children?.length) || 
+                  ('mega' in item && item.mega?.length)
+                );
 
                 if (!hasNested) {
                   return (
@@ -335,7 +341,7 @@ export function HeaderRoot() {
                   );
                 }
 
-                if (item.children?.length) {
+                if ('children' in item && item.children?.length) {
                   return (
                     <NavigationMenuItem key={item.label}>
                       <NavigationMenuTrigger
@@ -343,7 +349,7 @@ export function HeaderRoot() {
                       >
                         {item.label}
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/95 p-3 text-white shadow-xl">
+                      <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/70 backdrop-blur-lg p-3 text-white shadow-xl">
                         <NavigationMenuLink asChild>
                           <Link
                             to={item.href ?? "#"}
@@ -388,7 +394,7 @@ export function HeaderRoot() {
                         </Link>
                       </NavigationMenuLink>
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {item.mega?.map((entry) => (
+                        {('mega' in item && item.mega) ? item.mega.map((entry) => (
                           <Link
                             key={entry.href}
                             to={entry.href}
@@ -403,7 +409,7 @@ export function HeaderRoot() {
                               <ArrowUpRight className="h-3.5 w-3.5" />
                             </span>
                           </Link>
-                        ))}
+                        )) : null}
                       </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>

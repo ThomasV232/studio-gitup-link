@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useStudio } from "@/context/StudioContext";
 import { cn } from "@/lib/utils";
-import { CATEGORIES } from "@/components/header/nav.config";
+import { CATEGORIES, type CategorySlug } from "@/components/header/nav.config";
 
 const ALL_CATEGORY = "Tous les projets";
 
@@ -71,7 +71,7 @@ const Portfolio = () => {
       new Set(
         portfolioItems
           .map((item) => item.category)
-          .filter((label) => label && !ordered.includes(label))
+          .filter((label): label is string => Boolean(label) && !ordered.some(o => o === label))
       )
     );
 

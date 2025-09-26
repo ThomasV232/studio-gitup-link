@@ -359,7 +359,7 @@ const Index = () => {
                 >
                   <div className="space-y-2">
                     <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
-                      {service.slug.replaceAll("-", " ")}
+                      {service.slug.replace(/-/g, " ")}
                     </p>
                     <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
                     <p className="text-sm text-white/70">{service.subtitle}</p>
@@ -548,7 +548,7 @@ const Index = () => {
                           value={option.value}
                           checked={isActive}
                           onChange={(event) =>
-                            setForm((current) => ({ ...current, urgency: event.target.value }))
+                            setForm((current) => ({ ...current, urgency: event.target.value as "cette-semaine" }))
                           }
                           className="hidden"
                         />
