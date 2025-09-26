@@ -1,19 +1,6 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import {
-  ArrowUpRight,
-  Languages,
-  Menu,
-  MoonStar,
-  Search,
-  SunMedium,
-} from "lucide-react";
+import { ArrowUpRight, Languages, Menu, MoonStar, Search, SunMedium } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +24,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
 import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
 
 const progressStyles =
@@ -58,21 +44,18 @@ export function HeaderRoot() {
     if (typeof window === "undefined") return "dark";
     const stored = window.localStorage.getItem("studio-theme");
     if (stored === "light" || stored === "dark") return stored;
-    const prefersDark = typeof window.matchMedia === "function"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-      : false;
+    const prefersDark =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     return prefersDark ? "dark" : "light";
   });
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  const applyTheme = useCallback(
-    (value: "light" | "dark") => {
-      if (typeof document === "undefined") return;
-      document.documentElement.classList.toggle("dark", value === "dark");
-      document.documentElement.style.colorScheme = value;
-    },
-    [],
-  );
+  const applyTheme = useCallback((value: "light" | "dark") => {
+    if (typeof document === "undefined") return;
+    document.documentElement.classList.toggle("dark", value === "dark");
+    document.documentElement.style.colorScheme = value;
+  }, []);
 
   useEffect(() => {
     applyTheme(theme);
@@ -93,7 +76,6 @@ export function HeaderRoot() {
         setCommandOpen(true);
       }
     };
-
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
@@ -105,19 +87,20 @@ export function HeaderRoot() {
       const max = Math.max(scrollHeight - clientHeight, 1);
       setScrollProgress(Math.min(scrollTop / max, 1));
     };
-
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === "dark" ? "light" : "dark"));
-  }, []);
+  const toggleTheme = useCallback(
+    () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+    [],
+  );
 
-  const toggleLanguage = useCallback(() => {
-    setLanguage((current) => (current === "FR" ? "EN" : "FR"));
-  }, []);
+  const toggleLanguage = useCallback(
+    () => setLanguage((current) => (current === "FR" ? "EN" : "FR")),
+    [],
+  );
 
   const commandGroups = useMemo(() => {
     const primary = MAIN_NAV.map((item) => ({ label: item.label, href: item.href }));
@@ -129,15 +112,12 @@ export function HeaderRoot() {
       label: `Réalisations · ${category.label}`,
       href: `/realisations/${category.slug}`,
     }));
-
-    return {
-      primary,
-      services,
-      works,
-    };
+    return { primary, services, works };
   }, []);
 
-  const serviceSlugFromPath = location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
+  const serviceSlugFromPath = location.pathname.match(
+    /^\/services\/(?<slug>[^/]+)/,
+  )?.groups?.slug;
   const serviceSlugFromQuery = new URLSearchParams(location.search).get("service");
   const activeService = useMemo(() => {
     const preferred = (serviceSlugFromPath || serviceSlugFromQuery) as CategorySlug | null;
@@ -159,19 +139,24 @@ export function HeaderRoot() {
     }));
   }, [isRealisations, isServices]);
 
-  const activeSubnavSlug = location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
+  const activeSubnavSlug =
+    location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
 
   return (
     <Fragment>
+      {/* Top progress bar */}
       <span className={progressStyles} aria-hidden>
         <span
           className="block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 transition-transform duration-150 ease-out"
           style={{ transform: `scaleX(${scrollProgress})` }}
         />
       </span>
+
       <header className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+          {/* Left: mobile menu + brand */}
           <div className="flex items-center gap-3">
+            {/* Mobile drawer */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <button
@@ -209,9 +194,13 @@ export function HeaderRoot() {
                       }
 
                       const nestedLinks = item.children ?? item.mega ?? [];
-
                       return (
-                        <Accordion key={item.label} type="single" collapsible className="rounded-2xl border border-white/10 bg-white/5">
+                        <Accordion
+                          key={item.label}
+                          type="single"
+                          collapsible
+                          className="rounded-2xl border border-white/10 bg-white/5"
+                        >
                           <AccordionItem value={item.href ?? item.label}>
                             <AccordionTrigger className="px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-white">
                               {item.label}
@@ -266,12 +255,18 @@ export function HeaderRoot() {
                         {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
                       </button>
                     </div>
+
                     <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs uppercase tracking-[0.3em] text-white/70">
                       <span>Langue</span>
-                      <button type="button" onClick={toggleLanguage} className="rounded-full border border-white/10 px-3 py-1 text-white/90 transition hover:bg-white/10">
+                      <button
+                        type="button"
+                        onClick={toggleLanguage}
+                        className="rounded-full border border-white/10 px-3 py-1 text-white/90 transition hover:bg-white/10"
+                      >
                         {language}
                       </button>
                     </div>
+
                     <SheetClose asChild>
                       <Link
                         to={ctaHref}
@@ -293,6 +288,7 @@ export function HeaderRoot() {
               </SheetContent>
             </Sheet>
 
+            {/* Brand */}
             <Link
               to="/"
               className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white transition hover:bg-white/10"
@@ -302,6 +298,7 @@ export function HeaderRoot() {
             </Link>
           </div>
 
+          {/* Desktop nav */}
           <NavigationMenu className="hidden flex-1 justify-center lg:flex">
             <NavigationMenuList className="flex items-center gap-6">
               {MAIN_NAV.map((item) => {
@@ -342,7 +339,6 @@ export function HeaderRoot() {
                   return (
                     <NavigationMenuItem key={item.label}>
                       <NavigationMenuTrigger
-                        variant="ghost"
                         className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white"
                       >
                         {item.label}
@@ -377,7 +373,6 @@ export function HeaderRoot() {
                 return (
                   <NavigationMenuItem key={item.label}>
                     <NavigationMenuTrigger
-                      variant="ghost"
                       className="border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/30 data-[state=open]:bg-white/10 data-[state=open]:text-white"
                     >
                       {item.label}
@@ -399,7 +394,9 @@ export function HeaderRoot() {
                             to={entry.href}
                             className="group flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30 hover:bg-white/10"
                           >
-                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">{entry.label}</span>
+                            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">
+                              {entry.label}
+                            </span>
                             <p className="text-sm text-white/70">{entry.excerpt}</p>
                             <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition group-hover:translate-x-1">
                               Explorer
@@ -415,6 +412,7 @@ export function HeaderRoot() {
             </NavigationMenuList>
           </NavigationMenu>
 
+          {/* Right: actions */}
           <div className="ml-auto hidden items-center gap-2 lg:flex">
             <button
               type="button"
@@ -441,12 +439,16 @@ export function HeaderRoot() {
               <Languages className="h-4 w-4" />
               {language}
             </button>
-            <Button asChild className="rounded-full bg-white px-5 text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 hover:bg-white/90">
+            <Button
+              asChild
+              className="rounded-full bg-white px-5 text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 hover:bg-white/90"
+            >
               <Link to={ctaHref}>{ctaLabel}</Link>
             </Button>
           </div>
         </div>
 
+        {/* Secondary subnav */}
         {subNavItems.length > 0 && (
           <div className="border-t border-white/10 bg-slate-950/80">
             <div className="mx-auto max-w-6xl px-4">
@@ -474,10 +476,12 @@ export function HeaderRoot() {
         )}
       </header>
 
+      {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
           <CommandEmpty>Aucun résultat pour cette recherche.</CommandEmpty>
+
           <CommandGroup heading="Navigation">
             {commandGroups.primary.map((item) => (
               <CommandItem
@@ -493,7 +497,9 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
+
           <CommandSeparator />
+
           <CommandGroup heading="Services">
             {commandGroups.services.map((item) => (
               <CommandItem
@@ -508,6 +514,7 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
+
           <CommandGroup heading="Réalisations">
             {commandGroups.works.map((item) => (
               <CommandItem

@@ -1,18 +1,26 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useStudio } from "@/context/StudioContext";
 
-const ADMIN_EMAIL = "volberg.thomas@gmail.com";
+const ADMIN_EMAILS = new Set(["volberg.thomas@gmail.com"]);
 
-export const ProtectedRoute = ({ children, requireAdmin = false }: { children: ReactNode; requireAdmin?: boolean }) => {
+type ProtectedRouteProps = {
+  children: ReactNode;
+  /** Require the currently authenticated user to match the admin allowlist. */
+  requireAdmin?: boolean;
+  /** Custom path to redirect visitors who are not authenticated. */
+  redirectTo?: string;
+};
+
+export const ProtectedRoute = ({ children, requireAdmin = false, redirectTo = "/auth" }: ProtectedRouteProps) => {
   const { user } = useStudio();
   const location = useLocation();
 
   if (!user) {
-    return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
+    return <Navigate to={redirectTo} state={{ from: location.pathname }} replace />;
   }
 
-  if (requireAdmin && user.email !== ADMIN_EMAIL) {
+  if (requireAdmin && !ADMIN_EMAILS.has(user.email)) {
     return <Navigate to="/" replace />;
   }
 
