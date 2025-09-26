@@ -37,6 +37,7 @@ const Index = () => {
   });
 
   const heroProject = portfolioItems[0];
+  const heroTools = heroProject?.aiTools?.slice(0, 3) ?? [];
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -192,7 +193,7 @@ const Index = () => {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
-                  {heroProject?.aiTools.map((tool) => (
+                  {heroTools.map((tool) => (
                     <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
                       {tool}
                     </span>
