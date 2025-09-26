@@ -275,7 +275,7 @@ export function HeaderRoot() {
 
                       return (
                         <Accordion key={item.label} type="single" collapsible className="rounded-2xl border border-white/10 bg-white/5">
-                          <AccordionItem value="open">
+                          <AccordionItem value={item.href ?? item.label}>
                             <AccordionTrigger className="px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-white">
                               {item.label}
                             </AccordionTrigger>
