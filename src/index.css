@@ -53,6 +53,7 @@ All colors MUST be HSL.
     --visual-tertiary: 251 96% 72%;
     --visual-accent-foreground: 190 100% 92%;
     --visual-border: 188 86% 64%;
+    --wave-menu-height: 5.5rem;
   }
 
   .dark {
@@ -96,7 +97,7 @@ All colors MUST be HSL.
 
 .hero-ribbon {
   position: sticky;
-  top: 0.75rem;
+  top: calc(var(--wave-menu-height) + 0.75rem);
   z-index: 40;
   display: flex;
   justify-content: center;
@@ -195,7 +196,7 @@ All colors MUST be HSL.
 
 @media (max-width: 768px) {
   .hero-ribbon {
-    top: 0.5rem;
+    top: calc(var(--wave-menu-height) + 0.5rem);
     padding: 0 1rem;
   }
 
