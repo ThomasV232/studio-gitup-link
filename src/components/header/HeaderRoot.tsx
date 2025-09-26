@@ -280,6 +280,16 @@ export function HeaderRoot() {
                               {item.label}
                             </AccordionTrigger>
                             <AccordionContent className="space-y-2 px-4 pb-4">
+                              {item.href && (
+                                <SheetClose asChild>
+                                  <Link
+                                    to={item.href}
+                                    className="block rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/15 hover:text-white"
+                                  >
+                                    Voir tout
+                                  </Link>
+                                </SheetClose>
+                              )}
                               {nestedLinks.map((link) => (
                                 <SheetClose asChild key={link.href}>
                                   <Link
@@ -398,6 +408,15 @@ export function HeaderRoot() {
                         {item.label}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="mt-2 w-80 rounded-3xl border border-white/10 bg-slate-950/95 p-3 text-white shadow-xl">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to={item.href ?? "#"}
+                            className="mb-2 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                          >
+                            Voir tout
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                          </Link>
+                        </NavigationMenuLink>
                         <ul className="grid gap-2">
                           {item.children.map((child) => (
                             <li key={child.href}>
@@ -421,6 +440,15 @@ export function HeaderRoot() {
                       {item.label}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="mt-3 w-[720px] rounded-[2rem] border border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to={item.href ?? "#"}
+                          className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                        >
+                          Voir tout
+                          <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </NavigationMenuLink>
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {item.mega?.map((entry) => (
                           <Link
