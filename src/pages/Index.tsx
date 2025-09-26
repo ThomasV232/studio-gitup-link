@@ -48,11 +48,10 @@ const Index = () => {
 
   const heroProject = portfolioItems[0];
   const heroHookCount = heroHooks.length;
+  const heroTools = heroProject?.aiTools?.slice(0, 3) ?? [];
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    if (typeof window === "undefined") return;
 
     let ticking = false;
 
@@ -61,10 +60,7 @@ const Index = () => {
     };
 
     const handleScroll = () => {
-      if (ticking) {
-        return;
-      }
-
+      if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(() => {
         updateVisibility();
@@ -74,24 +70,15 @@ const Index = () => {
 
     updateVisibility();
     window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (heroHookCount <= 1 || typeof window === "undefined") {
-      return;
-    }
-
+    if (heroHookCount <= 1 || typeof window === "undefined") return;
     const timer = window.setInterval(() => {
       setHookIndex((index) => (index + 1) % heroHookCount);
     }, 6000);
-
-    return () => {
-      window.clearInterval(timer);
-    };
+    return () => window.clearInterval(timer);
   }, [heroHookCount]);
 
   useEffect(() => {
@@ -102,20 +89,20 @@ const Index = () => {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
       <HeroRibbon visible={isRibbonVisible} />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 15% 25%, hsla(var(--visual-secondary) / 0.32), transparent 55%), radial-gradient(circle at 82% 65%, hsla(var(--visual-accent) / 0.24), transparent 60%), linear-gradient(160deg, hsl(266 65% 11% / 0.9), hsl(335 70% 12% / 0.78))",
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-45"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06), transparent 70%), linear-gradient(120deg, rgba(15,118,110,0.08), transparent 55%)",
-          }}
-        />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 15% 25%, hsla(var(--visual-secondary) / 0.32), transparent 55%), radial-gradient(circle at 82% 65%, hsla(var(--visual-accent) / 0.24), transparent 60%), linear-gradient(160deg, hsl(266 65% 11% / 0.9), hsl(335 70% 12% / 0.78))",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-45"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06), transparent 70%), linear-gradient(120deg, rgba(15,118,110,0.08), transparent 55%)",
+        }}
+      />
       <div className="relative">
         <header className="relative isolate overflow-hidden">
           <div
@@ -168,6 +155,7 @@ const Index = () => {
                   <span>{heroHooks[hookIndex]}</span>
                 </div>
               </div>
+
               <div className="relative">
                 <div className="absolute -inset-10 rounded-[3.5rem] bg-gradient-to-br from-fuchsia-500/25 via-transparent to-purple-500/25 blur-3xl" />
                 <div className="relative overflow-hidden rounded-[3rem] border border-white/15 bg-white/10 shadow-[0_40px_140px_rgba(236,72,153,0.35)] backdrop-blur">
@@ -200,9 +188,11 @@ const Index = () => {
                       )}
                       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0b0617]/90 via-[#0b0617]/35 to-transparent" />
                     </div>
+
                     <div className="absolute left-8 top-8 inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/40 px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/75 backdrop-blur">
                       {heroProject?.category ?? "Featured"}
                     </div>
+
                     <div className="absolute inset-x-0 bottom-0 rounded-b-[3rem] bg-gradient-to-t from-[#0b0617]/95 via-[#0b0617]/55 to-transparent px-8 pb-10 pt-16">
                       <div className="flex flex-wrap items-end justify-between gap-6">
                         <div className="space-y-3">
@@ -233,6 +223,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
+
             <div className="mt-20 space-y-8">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
                 <nav className="flex flex-wrap gap-x-8 gap-y-3 text-[0.65rem] font-semibold uppercase tracking-[0.4em]">
@@ -248,6 +239,15 @@ const Index = () => {
                     </span>
                   ))}
                 </nav>
+
+                <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
+                  {heroTools.map((tool) => (
+                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+
                 <Link
                   to="/portfolio"
                   className="inline-flex items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/60 transition-colors duration-300 hover:text-white"
@@ -255,6 +255,7 @@ const Index = () => {
                   Voir le portfolio <span className="text-base">➜</span>
                 </Link>
               </div>
+
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
                 {portfolioItems.slice(0, 4).map((project) => (
                   <Link
