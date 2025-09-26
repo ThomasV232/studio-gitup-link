@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Play } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useStudio } from "@/context/StudioContext";
 import { cn } from "@/lib/utils";
+import { CATEGORIES } from "@/components/header/nav.config";
 
 const ALL_CATEGORY = "Tous les projets";
 
@@ -47,25 +49,73 @@ const getEmbedUrl = (url: string): string | null => {
 };
 
 const Portfolio = () => {
-  const { portfolioItems, serviceCategories } = useStudio();
+  const { portfolioItems } = useStudio();
+  const navigate = useNavigate();
+  const { category: categorySlug } = useParams<{ category?: string }>();
+
+  const slugToLabel = useMemo(() => {
+    const map = new Map<string, string>();
+    CATEGORIES.forEach((category) => map.set(category.slug, category.label));
+    return map;
+  }, []);
+
+  const labelToSlug = useMemo(() => {
+    const map = new Map<string, string>();
+    CATEGORIES.forEach((category) => map.set(category.label, category.slug));
+    return map;
+  }, []);
 
   const categories = useMemo(() => {
-    const unique = new Set<string>([...serviceCategories]);
-    portfolioItems.forEach((item) => unique.add(item.category));
-    return [ALL_CATEGORY, ...unique];
-  }, [portfolioItems, serviceCategories]);
+    const ordered = CATEGORIES.map((category) => category.label);
+    const extras = Array.from(
+      new Set(
+        portfolioItems
+          .map((item) => item.category)
+          .filter((label) => label && !ordered.includes(label))
+      )
+    );
 
-  const [activeCategory, setActiveCategory] = useState(() => categories[0] ?? ALL_CATEGORY);
+    return [ALL_CATEGORY, ...ordered, ...extras];
+  }, [portfolioItems]);
+
+  const [activeCategory, setActiveCategory] = useState(() => {
+    if (categorySlug) {
+      return slugToLabel.get(categorySlug) ?? ALL_CATEGORY;
+    }
+    return ALL_CATEGORY;
+  });
 
   useEffect(() => {
-    if (!categories.length) {
+    if (!categorySlug) {
+      setActiveCategory(ALL_CATEGORY);
       return;
     }
 
+    const label = slugToLabel.get(categorySlug);
+    if (!label) {
+      navigate("/realisations", { replace: true });
+      return;
+    }
+
+    setActiveCategory(label);
+  }, [categorySlug, navigate, slugToLabel]);
+
+  useEffect(() => {
     if (!categories.includes(activeCategory)) {
-      setActiveCategory(categories[0]);
+      setActiveCategory(ALL_CATEGORY);
     }
   }, [categories, activeCategory]);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    if (category === ALL_CATEGORY) {
+      navigate("/realisations");
+      return;
+    }
+
+    const slug = labelToSlug.get(category);
+    navigate(slug ? `/realisations/${slug}` : "/realisations");
+  };
 
   const filteredItems = useMemo(() => {
     if (activeCategory === ALL_CATEGORY) {
@@ -81,11 +131,13 @@ const Portfolio = () => {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
       />
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-20 sm:px-10 lg:py-24">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-20 pt-16 sm:px-10 lg:pb-24">
         <header className="space-y-6">
           <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Films génératifs orchestrés pour vos lancements stratégiques
+            {activeCategory === ALL_CATEGORY
+              ? "Films génératifs orchestrés pour vos lancements stratégiques"
+              : `Études de cas ${activeCategory}`}
           </h1>
           <p className="max-w-3xl text-base text-slate-300">
             Chaque projet conjugue direction artistique, IA générative et diffusion multicanale. Explorez nos études
@@ -102,7 +154,7 @@ const Portfolio = () => {
                   <button
                     key={category}
                     type="button"
-                    onClick={() => setActiveCategory(category)}
+                    onClick={() => handleCategoryChange(category)}
                     className={cn(
                       "portfolio-filter-trigger shrink-0",
                       isActive ? "portfolio-filter-active" : "portfolio-filter-idle"

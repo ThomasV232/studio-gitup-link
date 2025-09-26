@@ -13,9 +13,14 @@ import Process from "./pages/Process";
 import QuoteBuilder from "./pages/QuoteBuilder";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Legal from "./pages/Legal";
+import Privacy from "./pages/Privacy";
 import { StudioProvider } from "./context/StudioContext";
-import { WaveMenu } from "./components/WaveMenu";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { HeaderRoot } from "./components/header/HeaderRoot";
+import { SiteFooter } from "./components/footer/SiteFooter";
 
 const queryClient = new QueryClient();
 
@@ -26,16 +31,23 @@ const App = () => (
       <Sonner />
       <StudioProvider>
         <BrowserRouter>
-          <WaveMenu />
+          <HeaderRoot />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
             <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/playground" element={<Playground />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/realisations" element={<Portfolio />} />
+            <Route path="/realisations/:category" element={<Portfolio />} />
             <Route path="/process" element={<Process />} />
             <Route path="/quote" element={<QuoteBuilder />} />
+            <Route path="/a-propos" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/connexion" element={<Auth />} />
+            <Route path="/mentions-legales" element={<Legal />} />
+            <Route path="/politique-confidentialite" element={<Privacy />} />
             <Route
               path="/dashboard"
               element={
@@ -47,6 +59,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <SiteFooter />
         </BrowserRouter>
       </StudioProvider>
     </TooltipProvider>
