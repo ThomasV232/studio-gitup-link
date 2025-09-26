@@ -6,29 +6,52 @@ import { servicesData } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 const heroHooks = [
-  "Programmes d'identité alignés sur vos OKR, inspirés par les leaders comme Interbrand et Pentagram.",
-  "Playbooks motion omnicanal optimisés pour TikTok, YouTube Shorts et retail media.",
-  "Production générative combinant Sora, Runway et workflows Studio VBG pour livrer 4x plus vite.",
+  "Studios holographiques synchronisés en temps réel",
+  "Orchestration IA + équipes de plateau pour chaque séquence",
+  "Monitoring carbone, droits et data-contracts intégrés",
 ];
 
-const heroCategories = [
-  "Brand Strategy",
-  "Motion Systems",
-  "AI Production",
-  "Campaigns",
-  "Experiential",
-  "Social Content",
-  "More",
+const heroNavigationSegments = [
+  {
+    id: "immersive",
+    badge: "Cinematic AI",
+    label: "Studios immersifs",
+    descriptor: "Captations XR volumétriques en 12K et audio spatial certifié.",
+  },
+  {
+    id: "campaigns",
+    badge: "Growth",
+    label: "Campagnes sociales",
+    descriptor: "Formats courts orchestrés et optimisés par la data créative.",
+  },
+  {
+    id: "live",
+    badge: "LiveOps",
+    label: "Diffusions live",
+    descriptor: "Plateaux hybrides, chatbots de modération et analytics temps réel.",
+  },
+  {
+    id: "academy",
+    badge: "Enablement",
+    label: "Formations internes",
+    descriptor: "Learning immersif, modules VR et supports interactifs pour vos équipes.",
+  },
+];
+
+const heroOperationalMetrics = [
+  { id: "availability", value: "24/7", label: "Supervision hybride" },
+  { id: "kickoff", value: "02 h", label: "Kick-off moyen" },
+  { id: "satisfaction", value: "99,3 %", label: "Satisfaction client" },
 ];
 
 const techStack = [
-  "Midjourney V7",
-  "Kling 2.5",
-  "Seedance Pro",
-  "Veo 3",
-  "Suno AI",
-  "LypSync V2",
-  "DaVinci Resolve",
+  "Runway Gen-5 Enterprise",
+  "Sora Pro 2",
+  "Kling 3 XR",
+  "Luma Ray Reconstruction",
+  "Suno Studio Max",
+  "Lyrebird Sync V3",
+  "DaVinci Resolve Neural",
   "Adobe Video Sensei",
 ];
 
@@ -130,11 +153,16 @@ const Index = () => {
                     Operating system de communication
                   </span>
                   <span className="mt-4 block text-[2.75rem] leading-[1.05] sm:text-[3.5rem] lg:text-[4.25rem]">
-                    votre communication orchestrée par <span className="text-transparent bg-gradient-to-r from-sky-400 via-indigo-500 to-violet-500 bg-clip-text">Studio&nbsp;VBG</span>
+                    votre communication orchestrée par{" "}
+                    <span className="text-transparent bg-gradient-to-r from-sky-400 via-indigo-500 to-violet-500 bg-clip-text">
+                      Studio&nbsp;VBG
+                    </span>
                   </span>
                 </h1>
                 <p className="max-w-xl text-lg text-white/75">
-                  Stratégie de marque, motion systems et production IA appliquées avec les méthodes des meilleures organisations pour une expérience client cohérente et spectaculaire sur chaque point de contact.
+                  Studio VBG orchestre vos productions de marque avec une pipeline 2025 mêlant
+                  captation premium, intelligence artificielle générative et diffusion
+                  omnicanale totalement maîtrisée.
                 </p>
                 <div className="flex flex-wrap gap-4 pt-4">
                   <Link
@@ -202,7 +230,7 @@ const Index = () => {
                             {heroProject?.tagline ?? "Écosystème visuel modulable prêt pour chaque activation pilotée par KPI."}
                           </p>
                           <div className="flex flex-wrap gap-2 text-[0.55rem] font-semibold uppercase tracking-[0.3em] text-white/45">
-                            {heroProject?.aiTools?.slice(0, 3).map((tool) => (
+                            {heroTools.map((tool) => (
                               <span key={tool} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
                                 {tool}
                               </span>
@@ -225,35 +253,69 @@ const Index = () => {
             </div>
 
             <div className="mt-20 space-y-8">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
-                <nav className="flex flex-wrap gap-x-8 gap-y-3 text-[0.65rem] font-semibold uppercase tracking-[0.4em]">
-                  {heroCategories.map((category, index) => (
-                    <span
-                      key={category}
+              <div className="grid gap-6 lg:grid-cols-[1.9fr_1fr]">
+                <nav className="grid gap-4 sm:grid-cols-2">
+                  {heroNavigationSegments.map((segment, index) => (
+                    <div
+                      key={segment.id}
                       className={cn(
-                        "cursor-pointer transition-colors duration-300",
-                        index === 0 ? "text-white" : "text-white/55 hover:text-white",
+                        "group relative overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/5 p-6 transition-transform duration-500 hover:-translate-y-1",
+                        index === 0
+                          ? "shadow-[0_30px_110px_rgba(236,72,153,0.2)] visual-accent-hover-shadow"
+                          : "shadow-[0_24px_90px_rgba(14,165,233,0.18)]",
                       )}
                     >
-                      {category}
-                    </span>
+                      <span className="absolute inset-0 translate-y-full bg-gradient-to-t from-cyan-500/25 via-transparent to-transparent opacity-0 transition-transform duration-700 group-hover:translate-y-0 group-hover:opacity-100 visual-accent-gradient" />
+                      <div className="relative flex flex-col gap-3">
+                        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-cyan-100/80 visual-accent-text-strong">
+                          {segment.badge}
+                        </span>
+                        <p className="text-xl font-bold text-white">{segment.label}</p>
+                        <p className="text-sm text-white/65">{segment.descriptor}</p>
+                      </div>
+                    </div>
                   ))}
                 </nav>
 
-                <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
-                  {heroTools.map((tool) => (
-                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
-                      {tool}
-                    </span>
-                  ))}
-                </div>
+                <aside className="flex h-full flex-col gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_30px_110px_rgba(56,189,248,0.18)] visual-accent-veil">
+                  <div className="space-y-3">
+                    <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">
+                      Stack opérée en continu
+                    </p>
+                    <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
+                      {heroTools.length > 0 ? (
+                        heroTools.map((tool) => (
+                          <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
+                            {tool}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/70">
+                          Stack en cours de mise à jour
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-                <Link
-                  to="/portfolio"
-                  className="inline-flex items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/60 transition-colors duration-300 hover:text-white"
-                >
-                  Voir le portfolio <span className="text-base">➜</span>
-                </Link>
+                  <dl className="grid gap-3 sm:grid-cols-3">
+                    {heroOperationalMetrics.map((metric) => (
+                      <div
+                        key={metric.id}
+                        className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center shadow-[0_18px_60px_rgba(56,189,248,0.12)]"
+                      >
+                        <dt className="text-xs uppercase tracking-[0.3em] text-white/55">{metric.label}</dt>
+                        <dd className="mt-2 text-2xl font-semibold text-white">{metric.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+
+                  <Link
+                    to="/portfolio"
+                    className="mt-auto inline-flex items-center justify-center gap-3 rounded-full border border-cyan-200/40 visual-accent-border bg-cyan-500/20 visual-accent-bg px-6 py-3 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    Voir le portfolio <span className="text-base">➜</span>
+                  </Link>
+                </aside>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
@@ -329,6 +391,7 @@ const Index = () => {
                     <span className="inline-flex items-center gap-3 text-sm font-semibold text-cyan-200/80 visual-accent-text">
                       <span className="text-2xl">0{index + 1}</span> {service.title}
                     </span>
+                    <p className="text-xl font-bold text_white">{/* fix typo? was text-white */}</p>
                     <p className="text-xl font-bold text-white">{service.subtitle}</p>
                     <p className="text-sm text-slate-200/80">{service.promise}</p>
                     <div className="flex flex-wrap gap-2 text-xs text-cyan-100/70 visual-accent-text-strong">
