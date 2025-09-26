@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useStudio } from "@/context/StudioContext";
+import { isSupabaseConfigured } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 
 const membershipTiers = [
@@ -54,10 +55,21 @@ const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const redirectPath = (location.state as { from?: string })?.from ?? "/dashboard";
+  const supabaseConfigured = isSupabaseConfigured;
+  const supabaseSetupMessage =
+    "L'authentification nécessite la configuration de Supabase (VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY).";
+  const formDisabled = !supabaseConfigured;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const view = params.get("mode");
+
+    if (view === "forgot" && !supabaseConfigured) {
+      setMode("login");
+      setError(supabaseSetupMessage);
+      setSuccess(null);
+      return;
+    }
 
     if (view === "login" || view === "register" || view === "forgot") {
       setMode(view);
@@ -67,9 +79,15 @@ const Auth = () => {
 
     setError(null);
     setSuccess(null);
-  }, [location.search]);
+  }, [location.search, supabaseConfigured, supabaseSetupMessage]);
 
   const changeMode = (nextMode: AuthMode) => {
+    if (nextMode === "forgot" && !supabaseConfigured) {
+      setError(supabaseSetupMessage);
+      setSuccess(null);
+      return;
+    }
+
     setMode(nextMode);
     setError(null);
     setSuccess(null);
@@ -123,6 +141,12 @@ const Auth = () => {
     event.preventDefault();
     setError(null);
     setSuccess(null);
+
+    if (!supabaseConfigured) {
+      setError(supabaseSetupMessage);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -218,6 +242,12 @@ const Auth = () => {
           className="space-y-6 rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(236,72,153,0.2)] visual-secondary-veil"
           onSubmit={handleSubmit}
         >
+          {!supabaseConfigured && (
+            <div className="rounded-2xl border border-amber-300/40 bg-amber-500/10 px-4 py-3 text-[0.75rem] text-amber-100">
+              Pour activer l'inscription, la connexion et la récupération de mot de passe, configurez Supabase dans vos
+              variables d'environnement.
+            </div>
+          )}
           <div className="flex flex-wrap items-center justify-between gap-3 text-[0.65rem] uppercase tracking-[0.3em] text-slate-200/70">
             <span>
               {mode === "register" ? "Créer un compte" : mode === "login" ? "Connexion" : "Mot de passe oublié"}
@@ -263,38 +293,50 @@ const Auth = () => {
 
           {mode === "register" && (
             <div className="space-y-4">
-              <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom complet</label>
-                <input
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                  value={form.name}
-                  onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                  placeholder="Nom et prénom"
-                  required
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Entreprise</label>
+                  <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Nom complet</label>
                   <input
-                    className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    value={form.company}
-                    onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
-                    placeholder="Nom de l'entreprise"
+                    className={cn(
+                      "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
+                      formDisabled && "cursor-not-allowed opacity-60",
+                    )}
+                    value={form.name}
+                    onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                    placeholder="Nom et prénom"
                     required
+                    disabled={formDisabled}
                   />
                 </div>
-                <div>
-                  <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Secteur</label>
-                  <input
-                    className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                    value={form.industry}
-                    onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
-                    placeholder="Secteur d'activité"
-                    required
-                  />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Entreprise</label>
+                    <input
+                      className={cn(
+                        "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
+                        formDisabled && "cursor-not-allowed opacity-60",
+                      )}
+                      value={form.company}
+                      onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
+                      placeholder="Nom de l'entreprise"
+                      required
+                      disabled={formDisabled}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Secteur</label>
+                    <input
+                      className={cn(
+                        "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
+                        formDisabled && "cursor-not-allowed opacity-60",
+                      )}
+                      value={form.industry}
+                      onChange={(event) => setForm((prev) => ({ ...prev, industry: event.target.value }))}
+                      placeholder="Secteur d'activité"
+                      required
+                      disabled={formDisabled}
+                    />
+                  </div>
                 </div>
-              </div>
 
               {/* Sélecteur de formule compatible avec StudioContext */}
               <div>
@@ -311,9 +353,11 @@ const Auth = () => {
                           "rounded-2xl border bg-white/5 px-4 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300",
                           isActive
                             ? "border-cyan-300/80 bg-cyan-500/20 text-white shadow-[0_10px_40px_rgba(56,189,248,0.25)]"
-                            : "border-white/10 text-slate-100/80 hover:border-cyan-200/40 hover:bg-white/10"
+                            : "border-white/10 text-slate-100/80 hover:border-cyan-200/40 hover:bg-white/10",
+                          formDisabled && "cursor-not-allowed opacity-60"
                         )}
                         aria-pressed={isActive}
+                        disabled={formDisabled}
                       >
                         <span className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-100/80 visual-accent-text-strong">
                           {tier.label}
@@ -332,41 +376,54 @@ const Auth = () => {
           )}
 
           <div className="space-y-4">
-            <div>
-              <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Adresse email</label>
-              <input
-                type="email"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
-                value={form.email}
-                onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-                placeholder="vous@futurebrand.com"
-                required
-              />
-            </div>
+              <div>
+                <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Adresse email</label>
+                <input
+                  type="email"
+                  className={cn(
+                    "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
+                    formDisabled && "cursor-not-allowed opacity-60",
+                  )}
+                  value={form.email}
+                  onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                  placeholder="vous@futurebrand.com"
+                  required
+                  disabled={formDisabled}
+                />
+              </div>
             {mode !== "forgot" ? (
               <div>
                 <label className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Mot de passe</label>
                 <input
                   type="password"
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none"
+                  className={cn(
+                    "mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-cyan-400 visual-accent-border focus:outline-none",
+                    formDisabled && "cursor-not-allowed opacity-60",
+                  )}
                   value={form.password}
                   onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
                   placeholder={mode === "register" ? "Créer un mot de passe sécurisé" : "Votre mot de passe"}
+                  disabled={formDisabled}
                 />
                 {mode === "register" && (
                   <p className="mt-2 text-[0.7rem] text-slate-300/70">
                     Au moins 8 caractères, une majuscule et un chiffre pour sécuriser votre espace client.
                   </p>
                 )}
-                {mode === "login" && (
-                  <button
-                    type="button"
-                    onClick={() => changeMode("forgot")}
-                    className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-200/70 transition hover:text-white"
-                  >
-                    Mot de passe oublié ?
-                  </button>
-                )}
+                  {mode === "login" &&
+                    (supabaseConfigured ? (
+                      <button
+                        type="button"
+                        onClick={() => changeMode("forgot")}
+                        className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-200/70 transition hover:text-white"
+                      >
+                        Mot de passe oublié ?
+                      </button>
+                    ) : (
+                      <p className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-400/50">
+                        Configurez Supabase pour activer la récupération de mot de passe.
+                      </p>
+                    ))}
               </div>
             ) : (
               <div className="rounded-2xl border border-white/15 bg-white/10 p-4 text-[0.75rem] text-slate-200/80">
@@ -387,10 +444,10 @@ const Auth = () => {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !supabaseConfigured}
             className={cn(
               "group relative w-full overflow-hidden rounded-full border border-cyan-200/40 bg-cyan-500/20 px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition",
-              isSubmitting && "cursor-not-allowed opacity-70"
+              (isSubmitting || !supabaseConfigured) && "cursor-not-allowed opacity-70"
             )}
           >
             <span className="relative z-10">
