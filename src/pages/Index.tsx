@@ -391,7 +391,6 @@ const Index = () => {
                     <span className="inline-flex items-center gap-3 text-sm font-semibold text-cyan-200/80 visual-accent-text">
                       <span className="text-2xl">0{index + 1}</span> {service.title}
                     </span>
-                    <p className="text-xl font-bold text_white">{/* fix typo? was text-white */}</p>
                     <p className="text-xl font-bold text-white">{service.subtitle}</p>
                     <p className="text-sm text-slate-200/80">{service.promise}</p>
                     <div className="flex flex-wrap gap-2 text-xs text-cyan-100/70 visual-accent-text-strong">
