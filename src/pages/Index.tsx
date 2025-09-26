@@ -12,13 +12,7 @@ const heroStats = [
   { label: "Lead time", value: "10 j", note: "du tournage à la diffusion" },
 ];
 
-const partnerBadges = [
-  "Station F",
-  "Bpifrance",
-  "WeAre600",
-  "LVMH DARE",
-  "French Tech",
-];
+const partnerBadges = ["Station F", "Bpifrance", "WeAre600", "LVMH DARE", "French Tech"];
 
 const craftPillars = [
   {
@@ -41,19 +35,23 @@ const craftPillars = [
 const stackModules = [
   {
     title: "Capture cinématique",
-    description: "Sony Burano 8K, FX6 duo, DJI Inspire 3, optiques G Master, set audio Sennheiser 6000.",
+    description:
+      "Sony Burano 8K, FX6 duo, DJI Inspire 3, optiques G Master, set audio Sennheiser 6000.",
   },
   {
     title: "IA créative",
-    description: "Runway Gen-5 Enterprise, Sora Color Suite, Luma Ray Reconstruction, ElevenLabs Dubbing.",
+    description:
+      "Runway Gen-5 Enterprise, Sora Color Suite, Luma Ray Reconstruction, ElevenLabs Dubbing.",
   },
   {
     title: "Montage & finishing",
-    description: "DaVinci Resolve 19 Neural, Adobe Premiere Pro Sensei, mixage Dolby Atmos ready.",
+    description:
+      "DaVinci Resolve 19 Neural, Adobe Premiere Pro Sensei, mixage Dolby Atmos ready.",
   },
   {
     title: "Pilotage projet",
-    description: "Notion OS 2025, automations Zapier AI et dashboards KPI personnalisés.",
+    description:
+      "Notion OS 2025, automations Zapier AI et dashboards KPI personnalisés.",
   },
 ];
 
@@ -157,20 +155,32 @@ const Index = () => {
       />
       <HeroRibbon />
       <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-32 pt-32 sm:px-10 lg:gap-28">
+        {/* HERO */}
         <section className={cn(glassPanel, "relative overflow-hidden p-10 sm:p-12 lg:p-16")}>
-          <div className="absolute -top-32 right-12 hidden h-72 w-72 rounded-full bg-sky-500/35 blur-3xl lg:block" aria-hidden />
-          <div className="absolute -bottom-40 left-16 hidden h-80 w-80 rounded-full bg-fuchsia-500/25 blur-3xl lg:block" aria-hidden />
+          <div
+            className="absolute -top-32 right-12 hidden h-72 w-72 rounded-full bg-sky-500/35 blur-3xl lg:block"
+            aria-hidden
+          />
+          <div
+            className="absolute -bottom-40 left-16 hidden h-80 w-80 rounded-full bg-fuchsia-500/25 blur-3xl lg:block"
+            aria-hidden
+          />
           <div className="relative grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-8">
               <span className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/70">
                 Alex VBG · Vidéaste freelance nouvelle génération
               </span>
               <h1 className="text-4xl font-black uppercase leading-tight sm:text-5xl lg:text-[3.8rem]">
-                <span className="block text-xs font-semibold uppercase tracking-[0.6em] text-white/50">Films, contenus & expériences vidéo</span>
-                <span className="mt-4 block">Votre marque mérite une mise en scène cinématique et un plan de diffusion calibré 2025.</span>
+                <span className="block text-xs font-semibold uppercase tracking-[0.6em] text-white/50">
+                  Films, contenus & expériences vidéo
+                </span>
+                <span className="mt-4 block">
+                  Votre marque mérite une mise en scène cinématique et un plan de diffusion calibré 2025.
+                </span>
               </h1>
               <p className="max-w-2xl text-lg text-white/75">
-                J'accompagne marques, scale-ups et institutions avec une stack mêlant tournages haut de gamme, IA créative et stratégies social media pour délivrer des films qui performent.
+                J'accompagne marques, scale-ups et institutions avec une stack mêlant tournages haut de gamme, IA créative
+                et stratégies social media pour délivrer des films qui performent.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
@@ -186,6 +196,7 @@ const Index = () => {
                   Explorer les offres
                 </Link>
               </div>
+
               <div className="grid gap-5 pt-6 sm:grid-cols-3">
                 {heroStats.map((metric) => (
                   <div key={metric.label} className={cn(darkPanel, "p-5")}>
@@ -195,6 +206,7 @@ const Index = () => {
                   </div>
                 ))}
               </div>
+
               <div className="flex flex-wrap items-center gap-3 text-[0.6rem] uppercase tracking-[0.45em] text-white/45">
                 {partnerBadges.map((badge) => (
                   <span key={badge} className="rounded-full border border-white/10 px-3 py-2 text-white/60">
@@ -203,17 +215,36 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
             <div className="relative">
-              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-sky-500/25 via-transparent to-fuchsia-500/25 blur-3xl" aria-hidden />
-              <article className={cn(darkPanel, "relative overflow-hidden shadow-[0_40px_160px_rgba(56,189,248,0.25)]")}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 opacity-60" aria-hidden />
+              <div
+                className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-sky-500/25 via-transparent to-fuchsia-500/25 blur-3xl"
+                aria-hidden
+              />
+              <article
+                className={cn(
+                  darkPanel,
+                  "relative overflow-hidden shadow-[0_40px_160px_rgba(56,189,248,0.25)]"
+                )}
+              >
+                <div
+                  className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 opacity-60"
+                  aria-hidden
+                />
                 <div className="relative aspect-[4/5] sm:aspect-[4/4.6]">
                   {heroProject?.thumbnail ? (
-                    <img src={heroProject.thumbnail} alt={heroProject.title} className="h-full w-full object-cover" loading="lazy" />
+                    <img
+                      src={heroProject.thumbnail}
+                      alt={heroProject.title}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
                   ) : (
                     <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-sky-500/30 to-indigo-500/30 text-center">
                       <p className="text-sm font-semibold uppercase tracking-[0.45em] text-white/70">Showreel 2025</p>
-                      <p className="mt-3 max-w-xs text-xs text-white/70">Sélection de projets corporate, événementiels et social media.</p>
+                      <p className="mt-3 max-w-xs text-xs text-white/70">
+                        Sélection de projets corporate, événementiels et social media.
+                      </p>
                     </div>
                   )}
                   {heroProject && (
@@ -221,7 +252,9 @@ const Index = () => {
                       <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
                         {heroProject.category} · {heroProject.year}
                       </p>
-                      <h2 className="text-2xl font-semibold leading-tight text-white">{heroProject.title}</h2>
+                      <h2 className="text-2xl font-semibold leading-tight text-white">
+                        {heroProject.title}
+                      </h2>
                       <p className="text-sm text-white/70">{heroProject.tagline}</p>
                     </div>
                   )}
@@ -231,9 +264,12 @@ const Index = () => {
           </div>
         </section>
 
+        {/* SIGNATURE */}
         <section className={cn(glassPanel, "p-10 sm:p-12 lg:p-16")}>
           <p className="text-xs font-semibold uppercase tracking-[0.5em] text-white/60">Signature</p>
-          <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">Une méthode créative pensée pour les ambitions des marques 2025</h2>
+          <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
+            Une méthode créative pensée pour les ambitions des marques 2025
+          </h2>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {craftPillars.map((pillar) => (
               <div key={pillar.title} className={cn(darkPanel, "p-6")}>
@@ -244,6 +280,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* RÉALISATIONS */}
         <section className="space-y-10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -257,12 +294,18 @@ const Index = () => {
               Voir toutes les réalisations
             </Link>
           </div>
+
           <div className="grid gap-10 lg:grid-cols-2">
             {featuredProjects.slice(0, 4).map((project) => (
               <article key={project.id} className={cn(darkPanel, "group overflow-hidden")}>
                 <div className="relative h-72 overflow-hidden">
                   {project.thumbnail ? (
-                    <img src={project.thumbnail} alt={project.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <img
+                      src={project.thumbnail}
+                      alt={project.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                   ) : (
                     <div className={cn("h-full w-full bg-gradient-to-br", project.gradient)} aria-hidden />
                   )}
@@ -289,6 +332,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* SERVICES + STACK */}
         <section className="grid gap-12 lg:grid-cols-[1.3fr_0.9fr]">
           <div className="space-y-10">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -303,11 +347,20 @@ const Index = () => {
                 Voir toutes les offres
               </Link>
             </div>
+
             <div className="grid gap-8 lg:grid-cols-3">
               {serviceHighlights.map((service) => (
-                <article key={service.slug} className={cn(darkPanel, "flex flex-col gap-6 p-6 shadow-[0_18px_80px_rgba(59,130,246,0.18)]")}>
+                <article
+                  key={service.slug}
+                  className={cn(
+                    darkPanel,
+                    "flex flex-col gap-6 p-6 shadow-[0_18px_80px_rgba(59,130,246,0.18)]"
+                  )}
+                >
                   <div className="space-y-2">
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">{service.slug.replaceAll("-", " ")}</p>
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
+                      {service.slug.replaceAll("-", " ")}
+                    </p>
                     <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
                     <p className="text-sm text-white/70">{service.subtitle}</p>
                   </div>
@@ -327,9 +380,17 @@ const Index = () => {
               ))}
             </div>
           </div>
-          <aside className={cn(darkPanel, "flex h-full flex-col justify-between gap-6 bg-gradient-to-br from-sky-500/10 via-slate-950/80 to-indigo-500/10 p-8")}>
+
+          <aside
+            className={cn(
+              darkPanel,
+              "flex h-full flex-col justify-between gap-6 bg-gradient-to-br from-sky-500/10 via-slate-950/80 to-indigo-500/10 p-8"
+            )}
+          >
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.45em] text-white/60">Technologie & craft</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.45em] text-white/60">
+                Technologie & craft
+              </p>
               <h2 className="text-3xl font-extrabold text-white">Stack 2025</h2>
               <p className="text-sm text-white/70">
                 Chaque projet bénéficie d'un setup modulable. Voici les briques que j'assemble selon vos enjeux.
@@ -337,7 +398,10 @@ const Index = () => {
             </div>
             <ul className="space-y-4 text-sm text-white/75">
               {stackModules.map((item) => (
-                <li key={item.title} className={cn(darkPanel, "border-white/15 bg-slate-900/80 p-5")}>
+                <li
+                  key={item.title}
+                  className={cn(darkPanel, "border-white/15 bg-slate-900/80 p-5")}
+                >
                   <p className="text-base font-semibold text-white">{item.title}</p>
                   <p className="mt-2 text-sm text-white/70">{item.description}</p>
                 </li>
@@ -352,11 +416,14 @@ const Index = () => {
           </aside>
         </section>
 
+        {/* PROCESS */}
         <section className={cn(glassPanel, "p-10 sm:p-12 lg:p-16")}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.5em] text-white/60">Process</p>
-              <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">Un accompagnement clair de l'idée à la diffusion</h2>
+              <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+                Un accompagnement clair de l'idée à la diffusion
+              </h2>
             </div>
             <Link
               to="/process"
@@ -368,7 +435,9 @@ const Index = () => {
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
             {processSteps.map((step) => (
               <div key={step.id} className={cn(darkPanel, "flex flex-col gap-4 p-6")}>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">Phase {step.id}</p>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
+                  Phase {step.id}
+                </p>
                 <h3 className="text-xl font-semibold text-white">{step.title}</h3>
                 <p className="text-sm text-white/70">{step.description}</p>
               </div>
@@ -376,6 +445,7 @@ const Index = () => {
           </div>
         </section>
 
+        {/* TESTIMONIALS */}
         <section className={cn(glassPanel, "p-10 sm:p-12 lg:p-16")}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -402,13 +472,15 @@ const Index = () => {
           </div>
         </section>
 
+        {/* BRIEF EXPRESS */}
         <section className={cn(glassPanel, "p-10 sm:p-12 lg:p-16")}>
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-6">
               <p className="text-xs font-semibold uppercase tracking-[0.45em] text-white/60">Brief express</p>
               <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Parlons de votre prochain film</h2>
               <p className="max-w-xl text-sm text-white/70">
-                Partagez vos objectifs : je reviens vers vous sous 24 h avec un plan d'action, un budget indicatif et mes prochaines disponibilités de tournage.
+                Partagez vos objectifs : je reviens vers vous sous 24 h avec un plan d'action, un budget indicatif et mes
+                prochaines disponibilités de tournage.
               </p>
               <div className={cn(darkPanel, "p-6 text-sm text-white/70")}>
                 <p className="text-xs uppercase tracking-[0.35em] text-white/60">Slots ouverts</p>
@@ -419,6 +491,7 @@ const Index = () => {
                 </ul>
               </div>
             </div>
+
             <form className="space-y-4" onSubmit={onSubmit}>
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="flex flex-col gap-2 text-sm text-white/70">
@@ -444,6 +517,7 @@ const Index = () => {
                   />
                 </label>
               </div>
+
               <label className="flex flex-col gap-2 text-sm text-white/70">
                 Projet
                 <textarea
@@ -454,6 +528,7 @@ const Index = () => {
                   required
                 />
               </label>
+
               <fieldset className="space-y-3 text-sm text-white/70">
                 <legend className="text-xs uppercase tracking-[0.35em] text-white/60">Urgence</legend>
                 <div className="grid gap-2 sm:grid-cols-3">
@@ -472,7 +547,9 @@ const Index = () => {
                           name="urgency"
                           value={option.value}
                           checked={isActive}
-                          onChange={(event) => setForm((current) => ({ ...current, urgency: event.target.value }))}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, urgency: event.target.value }))
+                          }
                           className="hidden"
                         />
                         {option.label}
@@ -481,6 +558,7 @@ const Index = () => {
                   })}
                 </div>
               </fieldset>
+
               <button
                 type="submit"
                 className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white shadow-[0_18px_80px_rgba(59,130,246,0.4)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -492,10 +570,14 @@ const Index = () => {
           </div>
         </section>
 
+        {/* CTA */}
         <section className={cn(glassPanel, "p-10 text-center sm:p-12 lg:p-16")}>
-          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Prêt à écrire la prochaine scène ?</h2>
+          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+            Prêt à écrire la prochaine scène ?
+          </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-white/70">
-            Je vous accompagne de l'idée à la diffusion. Recevez un plan d'action personnalisé, un calendrier et un budget sous 24 h.
+            Je vous accompagne de l'idée à la diffusion. Recevez un plan d'action personnalisé, un calendrier et un budget
+            sous 24 h.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link

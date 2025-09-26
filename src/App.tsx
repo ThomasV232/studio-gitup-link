@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
 import { StudioProvider } from "./context/StudioContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { HeaderRoot } from "./components/header/HeaderRoot";
@@ -46,20 +47,36 @@ const App = () => (
           <Suspense fallback={<PageFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
+
+              {/* Services */}
               <Route path="/services" element={<Services />} />
               <Route path="/services/:slug" element={<ServiceDetail />} />
+
+              {/* Playground */}
               <Route path="/playground" element={<Playground />} />
+
+              {/* Portfolio + alias SEO */}
               <Route path="/portfolio" element={<Navigate to="/realisations" replace />} />
               <Route path="/realisations" element={<Portfolio />} />
               <Route path="/realisations/:category" element={<Portfolio />} />
+
+              {/* Process & Devis */}
               <Route path="/process" element={<Process />} />
               <Route path="/quote" element={<QuoteBuilder />} />
+
+              {/* À propos & Contact */}
               <Route path="/a-propos" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+
+              {/* Auth + alias */}
               <Route path="/auth" element={<Auth />} />
               <Route path="/connexion" element={<Navigate to="/auth" replace />} />
+
+              {/* Légal */}
               <Route path="/mentions-legales" element={<Legal />} />
               <Route path="/politique-confidentialite" element={<Privacy />} />
+
+              {/* Dashboard protégé */}
               <Route
                 path="/dashboard"
                 element={
@@ -68,7 +85,8 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+              {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
