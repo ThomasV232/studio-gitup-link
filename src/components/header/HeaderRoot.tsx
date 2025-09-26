@@ -291,8 +291,8 @@ export function HeaderRoot() {
             
             
             
-            <Button asChild className="rounded-full bg-white px-5 text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 hover:bg-white/90">
-              <Link to={ctaHref}>{ctaLabel}</Link>
+            <Button asChild className="rounded-full border border-white/10 bg-white/5 px-5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80 hover:bg-white/10 hover:text-white">
+              <Link to="/connexion">Connexion</Link>
             </Button>
           </div>
         </div>
