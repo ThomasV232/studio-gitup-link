@@ -6,9 +6,19 @@ import { servicesData } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 const heroHooks = [
-  "Votre direction attend des résultats tangibles : nous concevons des productions qui les démontrent.",
-  "Les plateformes privilégient les contenus cohérents. Chaque format est calibré pour sa diffusion.",
-  "Les échéances serrées exigent une organisation impeccable. Notre équipe reste mobilisée du brief au delivery.",
+  "Premières exclusives chaque semaine",
+  "Séances immersives calibrées pour votre salon",
+  "Recommandations propulsées par l'IA curatoriale",
+];
+
+const heroCategories = [
+  "Action",
+  "Romance",
+  "Comedy",
+  "Horror",
+  "Animation",
+  "Sci-Fi",
+  "More",
 ];
 
 const techStack = [
@@ -37,6 +47,7 @@ const Index = () => {
   });
 
   const heroProject = portfolioItems[0];
+  const heroHookCount = heroHooks.length;
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -70,6 +81,20 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    if (heroHookCount <= 1 || typeof window === "undefined") {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setHookIndex((index) => (index + 1) % heroHookCount);
+    }, 6000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [heroHookCount]);
+
+  useEffect(() => {
     setHeroImageLoaded(false);
     setHeroImageError(false);
   }, [heroProject?.thumbnail]);
@@ -77,173 +102,194 @@ const Index = () => {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
       <HeroRibbon visible={isRibbonVisible} />
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 10% 10%, hsl(var(--visual-accent) / 0.22), transparent 60%), radial-gradient(circle at 90% 90%, hsl(var(--visual-secondary) / 0.22), transparent 60%)",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 animate-[spin_20s_linear_infinite]"
-        style={{
-          background:
-            "conic-gradient(from 45deg at 30% 30%, hsl(var(--visual-accent-soft) / 0.22), hsl(var(--visual-secondary) / 0.2), transparent 70%)",
-        }}
-      />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 15% 25%, hsla(var(--visual-secondary) / 0.32), transparent 55%), radial-gradient(circle at 82% 65%, hsla(var(--visual-accent) / 0.24), transparent 60%), linear-gradient(160deg, hsl(266 65% 11% / 0.9), hsl(335 70% 12% / 0.78))",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-45"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06), transparent 70%), linear-gradient(120deg, rgba(15,118,110,0.08), transparent 55%)",
+          }}
+        />
       <div className="relative">
-        <header className="mx-auto flex max-w-7xl flex-col gap-12 px-6 pt-20 pb-28 lg:flex-row lg:items-center">
-          <div className="flex-1 space-y-10">
-            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-slate-200 backdrop-blur">
-              Studio VBG · Agence vidéo 2025
-            </span>
-            <h1 className="text-4xl font-black leading-tight sm:text-6xl">
-              <span className="bg-gradient-to-r from-cyan-400 via-sky-200 to-fuchsia-400 bg-clip-text text-transparent visual-accent-gradient">
-                Studio VBG
-              </span>{" "}
-              orchestre vos contenus vidéo avec une précision cinématographique.
-            </h1>
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-lg leading-relaxed shadow-[0_0_60px_rgba(56,189,248,0.25)] visual-accent-shadow">
-              <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
-              <p className="font-semibold uppercase tracking-[0.2em] text-cyan-200/80 visual-accent-text">Message clé</p>
-              <p className="mt-4 text-2xl" onMouseEnter={() => setHookIndex((i) => (i + 1) % heroHooks.length)}>
-                {heroHooks[hookIndex]}
-              </p>
-              <p className="mt-6 text-sm text-slate-200/80">
-                Nous combinons conception éditoriale, pipeline IA et expertise plateau pour transformer chaque vidéo en actif durable.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/quote"
-                className="group relative overflow-hidden rounded-full border border-cyan-200/30 visual-accent-border bg-cyan-500/20 visual-accent-bg px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-cyan-100 visual-accent-text-strong shadow-[0_10px_40px_rgba(8,145,178,0.35)] visual-accent-shadow transition hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-3">
-                  <span className="text-xl">⚡</span> Demande de devis
+        <header className="relative isolate overflow-hidden">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(circle at 12% 18%, hsla(var(--visual-secondary) / 0.35), transparent 55%), radial-gradient(circle at 85% 35%, hsla(var(--visual-accent) / 0.28), transparent 60%), linear-gradient(160deg, hsla(326 66% 20% / 0.85), hsla(258 62% 14% / 0.8))",
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 opacity-50"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 80%, rgba(255,255,255,0.06), transparent 68%), linear-gradient(120deg, rgba(255,255,255,0.04), transparent 55%)",
+            }}
+          />
+          <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-28 sm:pt-36 lg:pb-32">
+            <div className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-8">
+                <span className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/75 backdrop-blur">
+                  Studio VBG Premiere
                 </span>
-                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-500 visual-accent-gradient transition-all duration-500 group-hover:translate-y-0 visual-accent-gradient" />
-              </Link>
-              <a
-                href="#contact"
-                className="group relative overflow-hidden rounded-full border border-white/20 px-8 py-4 text-sm font-bold uppercase tracking-[0.3em] text-white transition hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-3">
-                  <span className="text-xl">📞</span> Demande rapide
-                </span>
-                <span className="absolute inset-0 -z-0 translate-y-full bg-white/20 transition-all duration-500 group-hover:translate-y-0" />
-              </a>
-            </div>
-            <div className="grid gap-4 text-sm text-slate-300/80 sm:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/70 visual-accent-text">Chaîne IA</p>
-                <p className="mt-2 font-semibold text-white">Midjourney V7 · Kling 2.5 · Seedance Pro · Veo 3 · Suno AI · LypSync V2</p>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.3em] text-fuchsia-200/70">Résultats 2024</p>
-                <p className="mt-2 font-semibold text-white">+320% d'engagement moyen · 48h pour produire un bundle complet</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-1 flex-col gap-6">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 p-6 shadow-[0_30px_120px_rgba(236,72,153,0.2)] visual-accent-halo">
-              <div
-                className="absolute inset-0"
-                style={{ background: "radial-gradient(circle at 20% 20%, hsl(var(--visual-secondary) / 0.3), transparent 65%)" }}
-              />
-              <div className="relative space-y-6">
-                <p className="text-xs uppercase tracking-[0.4em] text-fuchsia-200/70">Cas phare</p>
-                <h2 className="text-2xl font-bold leading-tight">{heroProject?.title}</h2>
-                <p className="text-slate-200/80">{heroProject?.tagline}</p>
-                <div className="grid gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-200/70 sm:grid-cols-3">
-                  <div className="rounded-2xl bg-white/5 p-3 text-center">{heroProject?.category}</div>
-                  <div className="rounded-2xl bg-white/5 p-3 text-center">{heroProject?.duration}</div>
-                  <div className="rounded-2xl bg-white/5 p-3 text-center">{heroProject?.year}</div>
+                <h1 className="text-4xl font-black uppercase leading-[1.05] sm:text-5xl lg:text-[3.75rem]">
+                  <span className="block text-xs font-semibold uppercase tracking-[0.55em] text-white/55">
+                    Feel the sensation of
+                  </span>
+                  <span className="mt-4 block text-[2.75rem] leading-[1.05] sm:text-[3.5rem] lg:text-[4.25rem]">
+                    le <span className="text-transparent bg-gradient-to-r from-rose-400 via-fuchsia-500 to-purple-500 bg-clip-text">cinéma</span> chez vous
+                  </span>
+                </h1>
+                <p className="max-w-xl text-lg text-white/75">
+                  Wide selection of films with the best audio and visual quality.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <Link
+                    to="/quote"
+                    className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-purple-500 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white shadow-[0_18px_80px_rgba(236,72,153,0.4)] transition-transform duration-300 hover:translate-y-[-2px]"
+                  >
+                    Join now
+                  </Link>
+                  <Link
+                    to="/services"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/30 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white/70 transition-colors duration-300 hover:text-white"
+                  >
+                    Learn more
+                  </Link>
                 </div>
-                <div className="relative h-64 w-full overflow-hidden rounded-[2rem]">
-                  <div
-                    className={cn(
-                      "absolute inset-0 bg-gradient-to-br",
-                      heroProject?.gradient ?? "from-cyan-500 via-sky-500 to-indigo-600",
-                    )}
-                  />
-                  {!heroImageError && heroProject?.thumbnail ? (
-                    <img
-                      src={heroProject.thumbnail}
-                      alt={heroProject.title}
-                      onLoad={() => setHeroImageLoaded(true)}
-                      onError={() => setHeroImageError(true)}
-                      className={cn(
-                        "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700",
-                        heroImageLoaded ? "opacity-100" : "opacity-0",
+                <div className="flex items-center gap-3 pt-6 text-xs font-semibold uppercase tracking-[0.35em] text-white/60">
+                  <span className="inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-500 shadow-[0_0_0_6px_rgba(236,72,153,0.25)]" />
+                  <span>{heroHooks[hookIndex]}</span>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="absolute -inset-10 rounded-[3.5rem] bg-gradient-to-br from-fuchsia-500/25 via-transparent to-purple-500/25 blur-3xl" />
+                <div className="relative overflow-hidden rounded-[3rem] border border-white/15 bg-white/10 shadow-[0_40px_140px_rgba(236,72,153,0.35)] backdrop-blur">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 opacity-60" />
+                  <div className="relative">
+                    <div className="relative h-[420px] overflow-hidden rounded-[2.5rem]">
+                      <div
+                        className={cn(
+                          "absolute inset-0 bg-gradient-to-br opacity-70",
+                          heroProject?.gradient ?? "from-fuchsia-500 via-rose-500 to-purple-600",
+                        )}
+                      />
+                      {!heroImageError && heroProject?.thumbnail ? (
+                        <img
+                          src={heroProject.thumbnail}
+                          alt={heroProject.title}
+                          onLoad={() => setHeroImageLoaded(true)}
+                          onError={() => setHeroImageError(true)}
+                          className={cn(
+                            "absolute inset-0 h-full w-full object-cover object-center transition duration-700",
+                            heroImageLoaded ? "scale-100 opacity-100" : "scale-105 opacity-0",
+                          )}
+                        />
+                      ) : (
+                        <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-[#12061f] text-center">
+                          <span className="text-3xl">🎬</span>
+                          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">Aperçu en préparation</p>
+                          <p className="text-xs text-white/60">L'image du projet sera bientôt disponible.</p>
+                        </div>
                       )}
-                    />
-                  ) : (
-                    <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-slate-950/40 text-center">
-                      <span className="text-3xl">🎬</span>
-                      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
-                        Aperçu en cours de préparation
-                      </p>
-                      <p className="text-xs text-white/60">
-                        L'image du projet se charge avec un rendu dégradé artistique en attendant.
-                      </p>
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0b0617]/90 via-[#0b0617]/35 to-transparent" />
                     </div>
-                  )}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
+                    <div className="absolute left-8 top-8 inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/40 px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/75 backdrop-blur">
+                      {heroProject?.category ?? "Featured"}
+                    </div>
+                    <div className="absolute inset-x-0 bottom-0 rounded-b-[3rem] bg-gradient-to-t from-[#0b0617]/95 via-[#0b0617]/55 to-transparent px-8 pb-10 pt-16">
+                      <div className="flex flex-wrap items-end justify-between gap-6">
+                        <div className="space-y-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/45">Now streaming</p>
+                          <p className="text-2xl font-bold text-white">{heroProject?.title ?? "Votre prochain film"}</p>
+                          <p className="text-sm text-white/70">
+                            {heroProject?.tagline ?? "Immersion totale dans notre univers narratif."}
+                          </p>
+                          <div className="flex flex-wrap gap-2 text-[0.55rem] font-semibold uppercase tracking-[0.3em] text-white/45">
+                            {heroProject?.aiTools?.slice(0, 3).map((tool) => (
+                              <span key={tool} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
+                                {tool}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/55">
+                          {heroProject?.duration ? (
+                            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1">{heroProject.duration}</span>
+                          ) : null}
+                          {heroProject?.year ? (
+                            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1">{heroProject.year}</span>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2 text-xs text-cyan-100/80 visual-accent-text-strong">
-                  {heroProject?.aiTools.map((tool) => (
-                    <span key={tool} className="rounded-full bg-cyan-500/20 visual-accent-bg px-3 py-1">
-                      {tool}
+              </div>
+            </div>
+            <div className="mt-20 space-y-8">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+                <nav className="flex flex-wrap gap-x-8 gap-y-3 text-[0.65rem] font-semibold uppercase tracking-[0.4em]">
+                  {heroCategories.map((category, index) => (
+                    <span
+                      key={category}
+                      className={cn(
+                        "cursor-pointer transition-colors duration-300",
+                        index === 0 ? "text-white" : "text-white/55 hover:text-white",
+                      )}
+                    >
+                      {category}
                     </span>
                   ))}
-                </div>
+                </nav>
+                <Link
+                  to="/portfolio"
+                  className="inline-flex items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/60 transition-colors duration-300 hover:text-white"
+                >
+                  Voir le portfolio <span className="text-base">➜</span>
+                </Link>
               </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {techStack.slice(0, 4).map((tool) => (
-                <div key={tool} className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-200/70">Stack</p>
-                  <p className="mt-2 text-lg font-bold text-white">{tool}</p>
-                  <p className="text-[0.75rem] text-slate-200/70">Automatisé, documenté, prêt pour vos contenus.</p>
-                </div>
-              ))}
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                {portfolioItems.slice(0, 4).map((project) => (
+                  <Link
+                    key={project.id}
+                    to="/portfolio"
+                    className="group relative block overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 shadow-[0_30px_110px_rgba(236,72,153,0.18)] transition-transform duration-500 hover:-translate-y-2"
+                    aria-label={`Voir le projet ${project.title} dans le portfolio`}
+                  >
+                    {project.thumbnail ? (
+                      <img
+                        src={project.thumbnail}
+                        alt={`Aperçu du projet ${project.title}`}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-fuchsia-500/30 via-purple-500/20 to-slate-900/40 text-sm uppercase tracking-[0.3em] text-white/70">
+                        Aperçu en attente
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b0617]/30 to-[#0b0617]/90" />
+                    <div className="absolute left-6 top-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-white/70">
+                      {project.category}
+                    </div>
+                    <div className="relative flex h-full flex-col justify-end gap-2 p-6">
+                      <h3 className="text-lg font-bold text-white">{project.title}</h3>
+                      <p className="text-[0.65rem] uppercase tracking-[0.35em] text-white/60">
+                        {project.duration} · {project.year}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </header>
-
-        <section className="homepage-filmstrip" aria-label="Extraits du portfolio Studio VBG">
-          <div className="filmstrip-track">
-            {portfolioItems.slice(0, 4).map((project) => (
-              <Link
-                key={project.id}
-                to="/portfolio"
-                className="filmstrip-card"
-                aria-label={`Voir le projet ${project.title} dans le portfolio`}
-              >
-                <span className="filmstrip-card-category">{project.category}</span>
-                <img
-                  src={project.thumbnail}
-                  alt={`Aperçu du projet ${project.title}`}
-                  className="filmstrip-card-thumb"
-                />
-                <div className="filmstrip-card-meta">
-                  <h3>{project.title}</h3>
-                  <p>
-                    {project.duration} · {project.year}
-                  </p>
-                </div>
-                <span className="filmstrip-card-arrow" aria-hidden>↗</span>
-              </Link>
-            ))}
-          </div>
-          <div className="filmstrip-action">
-            <Link to="/portfolio" className="filmstrip-action-link">
-              Voir le portfolio
-            </Link>
-          </div>
-        </section>
 
         <section className="relative mx-auto max-w-6xl px-6 pb-24">
           <div
