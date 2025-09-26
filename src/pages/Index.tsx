@@ -12,13 +12,10 @@ const heroHooks = [
 ];
 
 const heroCategories = [
-  "Action",
-  "Romance",
-  "Comedy",
-  "Horror",
-  "Animation",
-  "Sci-Fi",
-  "More",
+  "Stratégie",
+  "Branding",
+  "Motion Design",
+  "Production IA",
 ];
 
 const techStack = [
@@ -226,12 +223,12 @@ const Index = () => {
 
             <div className="mt-20 space-y-8">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
-                <nav className="flex flex-wrap gap-x-8 gap-y-3 text-[0.65rem] font-semibold uppercase tracking-[0.4em]">
+                <nav className="flex flex-wrap gap-x-7 gap-y-3 text-[0.65rem] font-semibold uppercase tracking-[0.28em]">
                   {heroCategories.map((category, index) => (
                     <span
                       key={category}
                       className={cn(
-                        "cursor-pointer transition-colors duration-300",
+                        "cursor-pointer whitespace-nowrap transition-colors duration-300",
                         index === 0 ? "text-white" : "text-white/55 hover:text-white",
                       )}
                     >
