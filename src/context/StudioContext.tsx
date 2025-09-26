@@ -493,7 +493,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       return;
     }
 
@@ -593,7 +593,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     const { password, ...profile } = payload;
     const avatarHue = Math.floor(Math.random() * 360);
 
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       return {
         success: false,
         message: "Supabase n'est pas configuré. Ajoutez les variables VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY.",
@@ -643,7 +643,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login: StudioContextValue["login"] = async (email, password) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       return {
         success: false,
         message: "Supabase n'est pas configuré. Impossible de se connecter.",
@@ -672,7 +672,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const requestPasswordReset: StudioContextValue["requestPasswordReset"] = async (email) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       return {
         success: false,
         message: "Supabase n'est pas configuré. Impossible d'envoyer un lien de réinitialisation.",
@@ -704,7 +704,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       supabase.auth.signOut().catch((error) => {
         console.error("Erreur lors de la déconnexion Supabase", error);
       });
