@@ -1,6 +1,16 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight, Menu, MoonStar, Search, SunMedium } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+
 import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
@@ -35,85 +45,58 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+
 import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
-import { AnimatePresence, motion } from "framer-motion";
 
-const progressStyles =
-  "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
+type Theme = "light" | "dark";
+type Language = "FR" | "EN";
 
-const progressTransition = {
+const easing = [0.22, 1, 0.36, 1] as const;
+
+const indicatorTransition = {
   type: "spring",
-  stiffness: 210,
-  damping: 32,
-  mass: 0.8,
+  stiffness: 420,
+  damping: 36,
+  mass: 0.65,
 };
 
-const navUnderlineTransition = {
-  type: "spring",
-  stiffness: 360,
-  damping: 32,
-};
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
 
-const subnavHighlightTransition = {
-  type: "spring",
-  stiffness: 320,
-  damping: 34,
-};
+  useEffect(() => {
+    const update = () => {
+      if (typeof document === "undefined") return;
+      const { scrollTop, scrollHeight, clientHeight } =
+        document.documentElement;
+      const max = Math.max(scrollHeight - clientHeight, 1);
+      setProgress(Math.min(scrollTop / max, 1));
+    };
 
-const dropdownTransition = {
-  duration: 0.48,
-  ease: [0.16, 1, 0.3, 1],
-};
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
 
-const dropdownVariants = {
-  closed: {
-    opacity: 0,
-    y: 28,
-    scale: 0.92,
-    rotateX: -14,
-    filter: "blur(12px)",
-  },
-  open: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    rotateX: 0,
-    filter: "blur(0px)",
-  },
-};
+  return progress;
+}
 
-const dropdownGlowVariants = {
-  closed: { opacity: 0, scale: 0.9, rotate: -4 },
-  open: { opacity: 0.9, scale: 1.05, rotate: 0 },
-};
-
-const dropdownSheenVariants = {
-  closed: { opacity: 0, x: "-35%" },
-  open: {
-    opacity: 0.75,
-    x: "105%",
-    transition: {
-      duration: 0.9,
-      ease: [0.22, 1, 0.36, 1],
-      delay: 0.06,
-    },
-  },
-};
-
-export function HeaderRoot() {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [commandOpen, setCommandOpen] = useState(false);
-
-  const [language, setLanguage] = useState<"FR" | "EN">(() => {
+function useLanguage(): [Language, Dispatch<SetStateAction<Language>>] {
+  const [language, setLanguage] = useState<Language>(() => {
     if (typeof window === "undefined") return "FR";
     const stored = window.localStorage.getItem("studio-lang");
     return stored === "EN" ? "EN" : "FR";
   });
 
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("studio-lang", language);
+  }, [language]);
+
+  return [language, setLanguage];
+}
+
+function useTheme(): [Theme, Dispatch<SetStateAction<Theme>>] {
+  const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "dark";
     const stored = window.localStorage.getItem("studio-theme");
     if (stored === "light" || stored === "dark") return stored;
@@ -123,26 +106,27 @@ export function HeaderRoot() {
     return prefersDark ? "dark" : "light";
   });
 
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [navReady, setNavReady] = useState(false);
-
-  const applyTheme = useCallback((value: "light" | "dark") => {
+  useEffect(() => {
     if (typeof document === "undefined") return;
-    document.documentElement.classList.toggle("dark", value === "dark");
-    document.documentElement.style.colorScheme = value;
-  }, []);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem("studio-theme", theme);
+  }, [theme]);
 
-  useEffect(() => {
-    applyTheme(theme);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("studio-theme", theme);
-    }
-  }, [applyTheme, theme]);
+  return [theme, setTheme];
+}
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("studio-lang", language);
-  }, [language]);
+export function HeaderRoot() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [language, setLanguage] = useLanguage();
+  const [theme, setTheme] = useTheme();
+
+  const scrollProgress = useScrollProgress();
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -151,61 +135,34 @@ export function HeaderRoot() {
         setCommandOpen(true);
       }
     };
+
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
-
-  useEffect(() => {
-    const updateProgress = () => {
-      if (typeof document === "undefined") return;
-      const { scrollTop, scrollHeight, clientHeight } =
-        document.documentElement;
-      const max = Math.max(scrollHeight - clientHeight, 1);
-      setScrollProgress(Math.min(scrollTop / max, 1));
-    };
-    updateProgress();
-    window.addEventListener("scroll", updateProgress, { passive: true });
-    return () => window.removeEventListener("scroll", updateProgress);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      setNavReady(true);
-      return;
-    }
-    const id = window.requestAnimationFrame(() => setNavReady(true));
-    return () => window.cancelAnimationFrame(id);
-  }, []);
-
-  const toggleTheme = useCallback(
-    () => setTheme((current) => (current === "dark" ? "light" : "dark")),
-    []
-  );
-  const toggleLanguage = useCallback(
-    () => setLanguage((current) => (current === "FR" ? "EN" : "FR")),
-    []
-  );
 
   const commandGroups = useMemo(() => {
     const primary = MAIN_NAV.map((item) => ({
       label: item.label,
       href: item.href,
     }));
+
     const services = CATEGORIES.map((category) => ({
       label: `Service · ${category.label}`,
       href: `/services/${category.slug}`,
     }));
+
     const works = CATEGORIES.map((category) => ({
       label: `Réalisations · ${category.label}`,
       href: `/realisations/${category.slug}`,
     }));
+
     return { primary, services, works };
   }, []);
 
   const serviceSlugFromPath =
     location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
   const serviceSlugFromQuery = new URLSearchParams(location.search).get(
-    "service"
+    "service",
   );
 
   const activeService = useMemo(() => {
@@ -223,8 +180,7 @@ export function HeaderRoot() {
   const isServices = location.pathname.startsWith("/services");
 
   const subNavItems = useMemo(() => {
-    if (!isRealisations && !isServices)
-      return [] as { label: string; href: string }[];
+    if (!isRealisations && !isServices) return [] as { label: string; href: string }[];
     const base = isRealisations ? "/realisations" : "/services";
     return CATEGORIES.map((category) => ({
       label: category.label,
@@ -234,57 +190,73 @@ export function HeaderRoot() {
 
   const activeSubnavSlug =
     location.pathname.match(
-      /^\/(?:services|realisations)\/(?<slug>[^/]+)/
+      /^\/(?:services|realisations)\/(?<slug>[^/]+)/,
     )?.groups?.slug ?? "";
+
+  const dropdownMotion = {
+    initial: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 8,
+      scale: prefersReducedMotion ? 1 : 0.98,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.24, ease: easing },
+    },
+    exit: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 4,
+      scale: prefersReducedMotion ? 1 : 0.98,
+      transition: { duration: 0.18, ease: easing },
+    },
+  };
+
+  const toggleTheme = useCallback(() => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  }, [setTheme]);
+
+  const toggleLanguage = useCallback(() => {
+    setLanguage((current) => (current === "FR" ? "EN" : "FR"));
+  }, [setLanguage]);
+
+  const handleCommandSelect = useCallback(
+    (value: string) => {
+      setCommandOpen(false);
+      navigate(value);
+    },
+    [navigate],
+  );
 
   return (
     <Fragment>
-      {/* Top progress bar */}
-      <span className={progressStyles} aria-hidden>
+      <span
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 bg-transparent"
+      >
         <motion.span
-          className="block h-full w-full origin-left rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-500"
+          className="block h-full w-full origin-left rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500"
           initial={false}
           animate={{ scaleX: Math.max(scrollProgress, 0.001) }}
-          transition={progressTransition}
+          transition={{
+            type: "spring",
+            stiffness: 200,
+            damping: 32,
+            mass: 0.7,
+          }}
           style={{ transformOrigin: "left" }}
         />
       </span>
 
-      <header className="relative sticky top-0 z-50 overflow-hidden border-b border-white/10 bg-slate-950/80 shadow-[0_0_35px_rgba(15,23,42,0.65)] backdrop-blur-xl">
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <motion.div
-            className="absolute -inset-x-32 -top-24 h-48 bg-gradient-to-r from-cyan-400/30 via-fuchsia-400/15 to-transparent blur-3xl"
-            animate={{ x: [0, 60, -40, 0] }}
-            transition={{
-              repeat: Infinity,
-              repeatType: "mirror",
-              duration: 18,
-              ease: "linear",
-            }}
-          />
-          <motion.div
-            className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </motion.div>
-
-        <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
-          {/* Left: mobile menu + brand */}
-          <div className="flex items-center gap-3">
-            {/* Mobile drawer */}
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+          <div className="flex flex-1 items-center gap-3">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:hidden"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 lg:hidden"
                   aria-label="Ouvrir la navigation"
                 >
                   <Menu className="h-5 w-5" />
@@ -292,13 +264,13 @@ export function HeaderRoot() {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-full max-w-sm border-white/10 bg-slate-950/95 p-0 text-white"
+                className="w-full max-w-sm border-white/10 bg-slate-950/90 p-0 text-white"
               >
                 <SheetHeader className="space-y-2 border-b border-white/10 px-6 pb-4 pt-6 text-left">
-                  <SheetTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.35em] text-white/60">
+                  <SheetTitle className="text-xs font-semibold uppercase tracking-[0.28em] text-white/70">
                     Studio VBG
                   </SheetTitle>
-                  <p className="text-xs text-white/50">Navigation principale</p>
+                  <p className="text-sm text-white/50">Navigation principale</p>
                 </SheetHeader>
 
                 <div className="flex h-full flex-col gap-8 px-6 py-8">
@@ -306,33 +278,36 @@ export function HeaderRoot() {
                     {MAIN_NAV.map((item) => {
                       const hasNested = Boolean(
                         ("children" in item && item.children?.length) ||
-                          ("mega" in item && item.mega?.length)
+                          ("mega" in item && item.mega?.length),
                       );
+
                       if (!hasNested) {
                         return (
                           <SheetClose asChild key={item.href}>
                             <Link
                               to={item.href}
-                              className="block rounded-2xl border border-white/10 bg-white/5 px-4 py-3 uppercase tracking-[0.3em] text-white transition hover:bg-white/10"
+                              className="block rounded-xl border border-white/15 bg-white/5 px-4 py-3 uppercase tracking-[0.28em] text-white transition hover:bg-white/10"
                             >
                               {item.label}
                             </Link>
                           </SheetClose>
                         );
                       }
+
                       const nestedLinks =
                         ("children" in item && item.children) ||
                         ("mega" in item && item.mega) ||
                         [];
+
                       return (
                         <Accordion
                           key={item.label}
                           type="single"
                           collapsible
-                          className="rounded-2xl border border-white/10 bg-white/5"
+                          className="rounded-xl border border-white/15 bg-white/[0.04]"
                         >
                           <AccordionItem value={item.href ?? item.label}>
-                            <AccordionTrigger className="px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-white">
+                            <AccordionTrigger className="px-4 py-3 text-left text-xs uppercase tracking-[0.28em] text-white">
                               {item.label}
                             </AccordionTrigger>
                             <AccordionContent className="space-y-2 px-4 pb-4">
@@ -340,7 +315,7 @@ export function HeaderRoot() {
                                 <SheetClose asChild>
                                   <Link
                                     to={item.href}
-                                    className="block rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/15 hover:text-white"
+                                    className="block rounded-lg border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-white/80 transition hover:bg-white/15 hover:text-white"
                                   >
                                     Voir tout
                                   </Link>
@@ -350,15 +325,14 @@ export function HeaderRoot() {
                                 <SheetClose asChild key={link.href}>
                                   <Link
                                     to={link.href}
-                                    className="block rounded-xl border border-white/5 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/15 hover:text-white"
+                                    className="block rounded-lg border border-white/5 bg-white/[0.08] px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-white/75 transition hover:bg-white/12 hover:text-white"
                                   >
                                     <div>{link.label}</div>
-                                    {"excerpt" in link &&
-                                      link.excerpt && (
-                                        <p className="pt-1 text-[0.65rem] normal-case text-white/60">
-                                          {String(link.excerpt)}
-                                        </p>
-                                      )}
+                                    {"excerpt" in link && link.excerpt ? (
+                                      <p className="pt-1 text-[0.7rem] normal-case text-white/60">
+                                        {String(link.excerpt)}
+                                      </p>
+                                    ) : null}
                                   </Link>
                                 </SheetClose>
                               ))}
@@ -370,11 +344,11 @@ export function HeaderRoot() {
                   </nav>
 
                   <div className="mt-auto space-y-4">
-                    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-xs uppercase tracking-[0.28em] text-white/70">
                       <button
                         type="button"
                         onClick={() => setCommandOpen(true)}
-                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:text-white"
+                        className="inline-flex items-center gap-2 text-white/80 transition hover:text-white"
                       >
                         <Search className="h-4 w-4" />
                         Rechercher (⌘K)
@@ -382,7 +356,7 @@ export function HeaderRoot() {
                       <button
                         type="button"
                         onClick={toggleTheme}
-                        className="rounded-full border border-white/10 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+                        className="rounded-full border border-white/10 p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
                         aria-label="Changer de thème"
                       >
                         {theme === "dark" ? (
@@ -393,7 +367,7 @@ export function HeaderRoot() {
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs uppercase tracking-[0.3em] text-white/70">
+                    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-xs uppercase tracking-[0.28em] text-white/70">
                       <span>Langue</span>
                       <button
                         type="button"
@@ -407,7 +381,7 @@ export function HeaderRoot() {
                     <SheetClose asChild>
                       <Link
                         to={ctaHref}
-                        className="block rounded-full border border-white/20 bg-white px-6 py-3 text-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 transition hover:bg-white/90"
+                        className="block rounded-full border border-white/20 bg-white px-6 py-3 text-center text-xs font-semibold uppercase tracking-[0.3em] text-slate-950 transition hover:bg-white/90"
                       >
                         {ctaLabel}
                       </Link>
@@ -415,7 +389,7 @@ export function HeaderRoot() {
                     <SheetClose asChild>
                       <Link
                         to="/connexion"
-                        className="block rounded-full border border-white/10 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                        className="block rounded-full border border-white/15 bg-white/[0.08] px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.28em] text-white/80 transition hover:bg-white/12 hover:text-white"
                       >
                         Connexion
                       </Link>
@@ -425,431 +399,278 @@ export function HeaderRoot() {
               </SheetContent>
             </Sheet>
 
-            {/* Brand */}
             <Link
               to="/"
-              className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white transition hover:border-white/30 hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/30 hover:bg-white/10"
             >
-              <span className="relative hidden sm:inline">
-                <AnimatePresence>
-                  {navReady && (
-                    <motion.span
-                      className="absolute -inset-y-1 -inset-x-2 rounded-full bg-white/40 opacity-0 blur-md"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 0.45, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-                    />
-                  )}
-                </AnimatePresence>
-                <span className="relative">Studio VBG</span>
-              </span>
+              Studio VBG
             </Link>
           </div>
 
-          {/* Desktop nav */}
-          <NavigationMenu className="hidden flex-1 justify-center lg:flex">
-            <NavigationMenuList className="flex items-center gap-6">
-              {MAIN_NAV.map((item) => {
-                const hasNested = Boolean(
-                  ("children" in item && item.children?.length) ||
-                    ("mega" in item && item.mega?.length)
-                );
-                if (!hasNested) {
-                  return (
-                    <NavigationMenuItem key={item.href}>
-                      <NavigationMenuLink asChild>
-                        <NavLink
-                          to={item.href}
-                          className={({ isActive }) =>
-                            cn(
-                              "group relative inline-flex flex-col items-center gap-2 text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition-colors duration-300",
-                              isActive && "text-white"
-                            )
-                          }
-                        >
-                          {({ isActive }) => (
-                            <motion.span
-                              className="relative inline-flex flex-col items-center gap-2"
-                              initial="inactive"
-                              animate={isActive ? "active" : "inactive"}
-                              whileHover="hover"
-                              variants={{
-                                inactive: { opacity: 1 },
-                                hover: { opacity: 1 },
-                                active: { opacity: 1 },
-                              }}
-                            >
-                              <span className="relative px-2 py-1">
-                                <AnimatePresence>
-                                  {isActive && (
-                                    <motion.span
-                                      layoutId="nav-label-glow"
-                                      className="absolute inset-0 rounded-full bg-white/10 blur-md"
-                                      initial={{ opacity: 0, scale: 0.85 }}
-                                      animate={{ opacity: 0.45, scale: 1 }}
-                                      exit={{ opacity: 0, scale: 0.9 }}
-                                      transition={navUnderlineTransition}
-                                    />
-                                  )}
-                                </AnimatePresence>
-                                <span className="relative z-10">
-                                  {item.label}
-                                </span>
-                              </span>
-                              <motion.span
-                                aria-hidden
-                                className="h-[2px] w-full rounded-full bg-gradient-to-r from-cyan-400/80 via-fuchsia-400/80 to-purple-500/80"
-                                variants={{
-                                  inactive: { scaleX: 0, opacity: 0 },
-                                  hover: { scaleX: 1, opacity: 0.4 },
-                                  active: { scaleX: 1, opacity: 1 },
-                                }}
-                                transition={navUnderlineTransition}
-                                style={{ transformOrigin: "center" }}
-                              />
-                            </motion.span>
-                          )}
-                        </NavLink>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  );
-                }
+          <DesktopNavigation
+            dropdownMotion={dropdownMotion}
+            indicatorTransition={indicatorTransition}
+          />
 
-                if ("children" in item && item.children?.length) {
-                  return (
-                    <NavigationMenuItem key={item.label}>
-                      <NavigationMenuTrigger className="group border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/40 data-[state=open]:bg-white/10 data-[state=open]:text-white">
-                        <span className="relative inline-flex items-center gap-2 px-2 py-1">
-                          <AnimatePresence>
-                            {navReady && (
-                              <motion.span
-                                className="absolute inset-0 rounded-full bg-white/5"
-                                initial={{ opacity: 0, scale: 0.85 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{
-                                  duration: 0.45,
-                                  ease: [0.25, 1, 0.5, 1],
-                                }}
-                              />
-                            )}
-                          </AnimatePresence>
-                          <span className="relative z-10">{item.label}</span>
-                        </span>
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent
-                        asChild
-                        key={`dropdown-${item.label}`}
-                        className="mt-3 overflow-visible"
-                      >
-                        <motion.div
-                          className="relative w-80 overflow-hidden rounded-[1.85rem] border border-white/15 bg-slate-950/90 p-4 text-white shadow-[0_36px_90px_rgba(15,23,42,0.65)] backdrop-blur-2xl will-change-transform"
-                          variants={dropdownVariants}
-                          initial="closed"
-                          animate="open"
-                          exit="closed"
-                          transition={dropdownTransition}
-                          style={{
-                            transformOrigin: "top center",
-                            transformPerspective: "1600px",
-                          }}
-                        >
-                          <motion.span
-                            aria-hidden
-                            className="pointer-events-none absolute -inset-[1.2px] rounded-[2rem] bg-gradient-to-br from-cyan-400/20 via-fuchsia-400/10 to-indigo-500/20 opacity-60 blur-2xl"
-                            variants={dropdownGlowVariants}
-                            initial="closed"
-                            animate="open"
-                            exit="closed"
-                            transition={{
-                              duration: 0.6,
-                              ease: [0.18, 1, 0.32, 1],
-                            }}
-                          />
-                          <motion.span
-                            aria-hidden
-                            className="pointer-events-none absolute inset-y-6 -left-1 h-[70%] w-1/3 rounded-full bg-gradient-to-r from-white/25 via-white/5 to-transparent blur-xl"
-                            variants={dropdownSheenVariants}
-                            initial="closed"
-                            animate="open"
-                            exit="closed"
-                          />
-                          <motion.div
-                            aria-hidden
-                            className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                            initial={{ scaleX: 0, opacity: 0 }}
-                            animate={{ scaleX: 1, opacity: 0.8 }}
-                            exit={{ scaleX: 0.6, opacity: 0 }}
-                            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-                          />
-                          <div className="relative z-10 space-y-3">
-                            <NavigationMenuLink asChild>
-                              <Link
-                                to={item.href ?? "#"}
-                                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
-                              >
-                                Voir tout
-                                <ArrowUpRight className="h-3.5 w-3.5" />
-                              </Link>
-                            </NavigationMenuLink>
-                            <motion.ul className="grid gap-2">
-                              {item.children.map((child, index) => (
-                                <motion.li
-                                  key={child.href}
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{
-                                    duration: 0.35,
-                                    ease: [0.16, 1, 0.3, 1],
-                                    delay: index * 0.05,
-                                  }}
-                                >
-                                  <Link
-                                    to={child.href}
-                                    className="block rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
-                                  >
-                                    {child.label}
-                                  </Link>
-                                </motion.li>
-                              ))}
-                            </motion.ul>
-                          </div>
-                        </motion.div>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  );
-                }
-
-                return (
-                  <NavigationMenuItem key={item.label}>
-                    <NavigationMenuTrigger className="group border border-white/10 bg-transparent text-sm font-medium uppercase tracking-[0.3em] text-white/70 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white data-[state=open]:border-white/40 data-[state=open]:bg-white/10 data-[state=open]:text-white">
-                      <span className="relative inline-flex items-center gap-2 px-2 py-1">
-                        <AnimatePresence>
-                          {navReady && (
-                            <motion.span
-                              className="absolute inset-0 rounded-full bg-white/5"
-                              initial={{ opacity: 0, scale: 0.85 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{
-                                duration: 0.45,
-                                ease: [0.25, 1, 0.5, 1],
-                              }}
-                            />
-                          )}
-                        </AnimatePresence>
-                        <span className="relative z-10">{item.label}</span>
-                      </span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent
-                      asChild
-                      key={`mega-${item.label}`}
-                      className="mt-4 overflow-visible"
-                    >
-                      <motion.div
-                        className="relative w-[720px] overflow-hidden rounded-[2.35rem] border border-white/15 bg-slate-950/95 p-6 text-white shadow-[0_42px_110px_rgba(15,23,42,0.6)] backdrop-blur-2xl will-change-transform"
-                        variants={dropdownVariants}
-                        initial="closed"
-                        animate="open"
-                        exit="closed"
-                        transition={dropdownTransition}
-                        style={{
-                          transformOrigin: "top center",
-                          transformPerspective: "1800px",
-                        }}
-                      >
-                        <motion.span
-                          aria-hidden
-                          className="pointer-events-none absolute -inset-[1px] rounded-[2.5rem] bg-[conic-gradient(at_top_left,_theme(colors.cyan.400/22),_transparent_35%,_theme(colors.fuchsia.400/14),_transparent_70%,_theme(colors.sky.400/24))] opacity-70 blur-3xl"
-                          variants={dropdownGlowVariants}
-                          initial="closed"
-                          animate="open"
-                          exit="closed"
-                          transition={{ duration: 0.7, ease: [0.18, 1, 0.32, 1] }}
-                        />
-                        <motion.span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-y-8 -left-2 h-[72%] w-1/3 rounded-full bg-gradient-to-r from-white/30 via-white/10 to-transparent blur-2xl"
-                          variants={dropdownSheenVariants}
-                          initial="closed"
-                          animate="open"
-                          exit="closed"
-                        />
-                        <motion.div
-                          aria-hidden
-                          className="pointer-events-none absolute inset-x-8 bottom-3 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                          initial={{ scaleX: 0, opacity: 0 }}
-                          animate={{ scaleX: 1, opacity: 0.9 }}
-                          exit={{ scaleX: 0.6, opacity: 0 }}
-                          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                        />
-                        <div className="relative z-10 space-y-4">
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to={item.href ?? "#"}
-                              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
-                            >
-                              Voir tout
-                              <ArrowUpRight className="h-3.5 w-3.5" />
-                            </Link>
-                          </NavigationMenuLink>
-                          <motion.div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                            {"mega" in item && item.mega
-                              ? item.mega.map((entry, index) => (
-                                  <motion.div
-                                    key={entry.href}
-                                    initial={{ opacity: 0, y: 12 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                      duration: 0.4,
-                                      ease: [0.16, 1, 0.3, 1],
-                                      delay: index * 0.05,
-                                    }}
-                                  >
-                                    <Link
-                                      to={entry.href}
-                                      className="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-white/40 hover:bg-white/10"
-                                    >
-                                      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">
-                                        {entry.label}
-                                      </span>
-                                      <p className="text-sm text-white/70">
-                                        {entry.excerpt}
-                                      </p>
-                                      <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-white/60 transition group-hover:translate-x-1">
-                                        Explorer
-                                        <ArrowUpRight className="h-3.5 w-3.5" />
-                                      </span>
-                                    </Link>
-                                  </motion.div>
-                                ))
-                              : null}
-                          </motion.div>
-                        </div>
-                      </motion.div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                );
-              })}
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          {/* Right: actions */}
-          <div className="ml-auto hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex">
+            <button
+              type="button"
+              onClick={() => setCommandOpen(true)}
+              className="inline-flex h-10 items-center gap-2 rounded-full border border-white/10 px-4 text-xs font-semibold uppercase tracking-[0.28em] text-white/70 transition hover:text-white"
+            >
+              <Search className="h-4 w-4" />
+              Rechercher
+            </button>
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="inline-flex h-10 items-center rounded-full border border-white/10 px-3 text-xs font-semibold uppercase tracking-[0.28em] text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              {language}
+            </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="inline-flex h-10 items-center justify-center rounded-full border border-white/10 px-3 text-white/70 transition hover:bg-white/10 hover:text-white"
+              aria-label="Changer de thème"
+            >
+              {theme === "dark" ? (
+                <SunMedium className="h-4 w-4" />
+              ) : (
+                <MoonStar className="h-4 w-4" />
+              )}
+            </button>
             <Button
               asChild
-              className="rounded-full border border-white/10 bg-white/5 px-5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80 hover:bg-white/10 hover:text-white"
+              className="rounded-full border border-transparent bg-white px-5 text-xs font-semibold uppercase tracking-[0.3em] text-slate-950 hover:bg-white/90"
             >
-              <Link to="/connexion">Connexion</Link>
+              <Link to={ctaHref}>{ctaLabel}</Link>
             </Button>
           </div>
         </div>
 
-        {/* Secondary subnav */}
         {subNavItems.length > 0 && (
-          <div className="relative z-10 border-t border-white/10 bg-slate-950/80">
+          <div className="border-t border-white/10 bg-slate-950/75">
             <div className="mx-auto max-w-6xl px-4">
               <nav className="flex gap-3 overflow-x-auto py-3">
-                {subNavItems.map((item) => {
-                  const isActive = item.href.endsWith(`/${activeSubnavSlug}`);
-                  return (
-                    <NavLink
-                      key={item.href}
-                      to={item.href}
-                      className="group relative inline-flex focus:outline-none"
-                    >
-                      {({ isActive: routeActive }) => {
-                        const active = isActive || routeActive;
-                        return (
-                          <span
-                            className={cn(
-                              "relative inline-flex items-center justify-center overflow-hidden rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition-colors duration-300 group-focus-visible:ring-2 group-focus-visible:ring-white/40 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-slate-950",
-                              active
-                                ? "border-white/40 text-white"
-                                : "border-white/10 text-white/60 hover:border-white/20 hover:text-white"
-                            )}
-                          >
-                            <AnimatePresence>
-                              {active && (
-                                <motion.span
-                                  layoutId="subnav-highlight"
-                                  className="absolute inset-0 rounded-full bg-white/10"
-                                  initial={{ opacity: 0, scale: 0.9 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  exit={{ opacity: 0, scale: 0.95 }}
-                                  transition={subnavHighlightTransition}
-                                />
-                              )}
-                            </AnimatePresence>
-                            <span className="relative z-10">{item.label}</span>
-                          </span>
-                        );
-                      }}
-                    </NavLink>
-                  );
-                })}
+                {subNavItems.map((item) => (
+                  <NavLink
+                    key={item.href}
+                    to={item.href}
+                    className="group relative inline-flex focus:outline-none"
+                  >
+                    {({ isActive }) => {
+                      const active =
+                        isActive || item.href.endsWith(`/${activeSubnavSlug}`);
+
+                      return (
+                        <span
+                          className={cn(
+                            "relative inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] transition",
+                            active
+                              ? "border-white/40 text-white"
+                              : "border-white/15 text-white/60 hover:border-white/25 hover:text-white",
+                          )}
+                        >
+                          <AnimatePresence>
+                            {active ? (
+                              <motion.span
+                                layoutId="subnav-indicator"
+                                className="absolute inset-0 rounded-full bg-white/10"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={indicatorTransition}
+                              />
+                            ) : null}
+                          </AnimatePresence>
+                          <span className="relative z-10">{item.label}</span>
+                        </span>
+                      );
+                    }}
+                  </NavLink>
+                ))}
               </nav>
             </div>
           </div>
         )}
       </header>
 
-      {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
-          <CommandEmpty>Aucun résultat pour cette recherche.</CommandEmpty>
-
+          <CommandEmpty>Aucun résultat</CommandEmpty>
           <CommandGroup heading="Navigation">
             {commandGroups.primary.map((item) => (
               <CommandItem
                 key={item.href}
-                value={item.label}
-                onSelect={() => {
-                  navigate(item.href);
-                  setCommandOpen(false);
-                }}
+                value={item.href}
+                onSelect={handleCommandSelect}
               >
                 {item.label}
                 <CommandShortcut>↵</CommandShortcut>
               </CommandItem>
             ))}
           </CommandGroup>
-
           <CommandSeparator />
-
           <CommandGroup heading="Services">
             {commandGroups.services.map((item) => (
               <CommandItem
                 key={item.href}
-                value={item.label}
-                onSelect={() => {
-                  navigate(item.href);
-                  setCommandOpen(false);
-                }}
+                value={item.href}
+                onSelect={handleCommandSelect}
               >
                 {item.label}
+                <CommandShortcut>↵</CommandShortcut>
               </CommandItem>
             ))}
           </CommandGroup>
-
           <CommandGroup heading="Réalisations">
             {commandGroups.works.map((item) => (
               <CommandItem
                 key={item.href}
-                value={item.label}
-                onSelect={() => {
-                  navigate(item.href);
-                  setCommandOpen(false);
-                }}
+                value={item.href}
+                onSelect={handleCommandSelect}
               >
                 {item.label}
+                <CommandShortcut>↵</CommandShortcut>
               </CommandItem>
             ))}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
     </Fragment>
+  );
+}
+
+type DesktopNavigationProps = {
+  dropdownMotion: {
+    initial: Record<string, unknown>;
+    animate: Record<string, unknown>;
+    exit: Record<string, unknown>;
+  };
+  indicatorTransition: typeof indicatorTransition;
+};
+
+function DesktopNavigation({
+  dropdownMotion,
+  indicatorTransition,
+}: DesktopNavigationProps) {
+  const location = useLocation();
+
+  return (
+    <NavigationMenu className="hidden flex-1 justify-center lg:flex">
+      <NavigationMenuList className="flex items-center gap-6">
+        {MAIN_NAV.map((item) => {
+          const hasNested = Boolean(
+            ("children" in item && item.children?.length) ||
+              ("mega" in item && item.mega?.length),
+          );
+
+          if (!hasNested) {
+            return (
+              <NavigationMenuItem key={item.href}>
+                <NavigationMenuLink asChild>
+                  <NavLink
+                    to={item.href}
+                    className="relative inline-flex flex-col items-center gap-1 text-sm font-semibold uppercase tracking-[0.26em] text-white/70 transition hover:text-white"
+                  >
+                    {({ isActive }) => (
+                      <span className="relative">
+                        {item.label}
+                        <AnimatePresence>
+                          {isActive ? (
+                            <motion.span
+                              layoutId="nav-indicator"
+                              className="absolute -bottom-1 left-1/2 h-0.5 w-full -translate-x-1/2 rounded-full bg-white"
+                              initial={{ opacity: 0, scaleX: 0.6 }}
+                              animate={{ opacity: 1, scaleX: 1 }}
+                              exit={{ opacity: 0, scaleX: 0.6 }}
+                              transition={indicatorTransition}
+                              style={{ transformOrigin: "center" }}
+                            />
+                          ) : null}
+                        </AnimatePresence>
+                      </span>
+                    )}
+                  </NavLink>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            );
+          }
+
+          const nestedLinks =
+            ("children" in item && item.children) ||
+            ("mega" in item && item.mega) ||
+            [];
+
+          return (
+            <NavigationMenuItem key={item.label}>
+              <NavigationMenuTrigger className="inline-flex flex-col items-center gap-1 rounded-full border border-transparent bg-transparent px-3 py-2 text-sm font-semibold uppercase tracking-[0.26em] text-white/70 transition hover:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white">
+                <span>{item.label}</span>
+                <AnimatePresence>
+                  {typeof item.href === "string" &&
+                  location.pathname.startsWith(item.href) ? (
+                    <motion.span
+                      layoutId="nav-indicator"
+                      className="h-0.5 w-full rounded-full bg-white"
+                      initial={{ opacity: 0, scaleX: 0.6 }}
+                      animate={{ opacity: 1, scaleX: 1 }}
+                      exit={{ opacity: 0, scaleX: 0.6 }}
+                      transition={indicatorTransition}
+                      style={{ transformOrigin: "center" }}
+                    />
+                  ) : null}
+                </AnimatePresence>
+              </NavigationMenuTrigger>
+              <NavigationMenuContent asChild>
+                <motion.div
+                  {...dropdownMotion}
+                  className="mt-3 w-[min(28rem,90vw)] rounded-2xl border border-white/10 bg-slate-950/95 p-5 shadow-lg backdrop-blur"
+                >
+                  <div className="flex flex-col gap-4">
+                    {item.href ? (
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to={item.href}
+                          className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.26em] text-white/80 transition hover:text-white"
+                        >
+                          Tout voir
+                          <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </NavigationMenuLink>
+                    ) : null}
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {nestedLinks.map((link) => (
+                        <NavigationMenuLink asChild key={link.href}>
+                          <Link
+                            to={link.href}
+                            className="group flex h-full flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-white/25 hover:bg-white/10"
+                          >
+                            <span className="text-xs font-semibold uppercase tracking-[0.26em] text-cyan-200/70">
+                              {link.label}
+                            </span>
+                            {"excerpt" in link && link.excerpt ? (
+                              <p className="text-sm text-white/70">
+                                {link.excerpt}
+                              </p>
+                            ) : null}
+                            <span className="inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.26em] text-white/60 transition group-hover:text-white">
+                              Explorer
+                              <ArrowUpRight className="h-3 w-3" />
+                            </span>
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          );
+        })}
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }
