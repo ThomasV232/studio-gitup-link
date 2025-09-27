@@ -394,7 +394,6 @@ const Portfolio = () => {
                   </span>
                   <p className="text-sm text-white">{phase.title}</p>
                   <p>{phase.description}</p>
-                  <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
                 </div>
               ))}
             </div>

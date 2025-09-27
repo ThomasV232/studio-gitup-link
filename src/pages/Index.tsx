@@ -322,7 +322,7 @@ export function HeaderRoot() {
     [],
   );
 
-  // Dynamic CTA (keep from main)
+  // CTA dynamique
   const serviceSlugFromPath =
     location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
   const serviceSlugFromQuery = new URLSearchParams(location.search).get(
@@ -680,6 +680,7 @@ export function HeaderRoot() {
                     ("mega" in item && item.mega?.length),
                 );
                 const itemKey = item.href ?? item.label;
+
                 const routeActive = Boolean(
                   item.href &&
                     (item.href === "/"
@@ -720,9 +721,9 @@ export function HeaderRoot() {
                   return (
                     <NavigationMenuItem key={item.label} value={itemKey}>
                       <NavigationMenuTrigger
-                        hideChevron
                         className={cn(
                           navButtonBaseClass,
+                          "[&>svg]:hidden",
                           (isOpen || routeActive) && navButtonActiveClass,
                         )}
                       >
@@ -805,9 +806,9 @@ export function HeaderRoot() {
                 return (
                   <NavigationMenuItem key={item.label} value={itemKey}>
                     <NavigationMenuTrigger
-                      hideChevron
                       className={cn(
                         navButtonBaseClass,
+                        "[&>svg]:hidden",
                         (isOpen || routeActive) && navButtonActiveClass,
                       )}
                     >

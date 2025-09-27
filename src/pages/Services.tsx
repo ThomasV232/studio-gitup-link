@@ -72,8 +72,8 @@ const Portfolio = () => {
       new Set(
         portfolioItems
           .map((item) => item.category)
-          .filter((label): label is string => Boolean(label) && !ordered.some((o) => o === label))
-      )
+          .filter((label): label is string => Boolean(label) && !ordered.some((o) => o === label)),
+      ),
     );
 
     return [ALL_CATEGORY, ...ordered, ...extras];
@@ -161,7 +161,7 @@ const Portfolio = () => {
                     onClick={() => handleCategoryChange(category)}
                     className={cn(
                       "portfolio-filter-trigger shrink-0",
-                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
+                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle",
                     )}
                   >
                     {category}
@@ -394,7 +394,9 @@ const Portfolio = () => {
                   </span>
                   <p className="text-sm text-white">{phase.title}</p>
                   <p>{phase.description}</p>
-                  <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
+                  {phase.aiUpgrade && (
+                    <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
+                  )}
                 </div>
               ))}
             </div>
