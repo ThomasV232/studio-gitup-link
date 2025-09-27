@@ -1,7 +1,8 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { CLIENT_TYPES, useStudio } from "@/context/StudioContext";
 import type { ClientType, QuoteRequest } from "@/context/StudioContext";
+import { BrandMark } from "@/components/branding/BrandMark";
 
 /* ----------------------------- NAV / STATUS UI ---------------------------- */
 
@@ -109,6 +110,7 @@ const Dashboard = () => {
     contactRequests,
     chats,
     serviceCategories,
+    brandAssets,
     addPortfolioItem,
     updatePortfolioItem,
     removePortfolioItem,
@@ -116,6 +118,8 @@ const Dashboard = () => {
     advanceQuoteStatus,
     appendChatMessage,
     updateAccount,
+    updateBrandAsset,
+    resetBrandAssets,
   } = useStudio();
 
   const isAdmin = user?.email === ADMIN_EMAIL;
@@ -145,6 +149,9 @@ const Dashboard = () => {
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [isImportingMetadata, setIsImportingMetadata] = useState(false);
   const [metadataError, setMetadataError] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
+  const [logoTarget, setLogoTarget] = useState<"solstice" | "nebula">("solstice");
+  const [brandFeedback, setBrandFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [editDraft, setEditDraft] = useState<(PortfolioDraft & { id: string }) | null>(null);
   const [accountDraft, setAccountDraft] = useState<AccountDraft>(() => ({
     name: user?.name ?? "",
@@ -162,6 +169,8 @@ const Dashboard = () => {
   const [clientSelectedQuoteId, setClientSelectedQuoteId] = useState(() => myQuotes[0]?.id ?? "");
   const [clientSelectedChatId, setClientSelectedChatId] = useState(() => myChats[0]?.quoteId ?? "");
   const [clientChatInput, setClientChatInput] = useState("");
+  const isCustomSolstice = useMemo(() => brandAssets.solstice.startsWith("data:"), [brandAssets.solstice]);
+  const isCustomNebula = useMemo(() => brandAssets.nebula.startsWith("data:"), [brandAssets.nebula]);
 
   useEffect(() => {
     setClientSelectedQuoteId((current) => {
@@ -234,6 +243,62 @@ const Dashboard = () => {
       lastProject: user.lastProject ?? "",
     });
     setAccountFeedback(null);
+  };
+
+  const handleOpenLogoPicker = (target: "solstice" | "nebula") => {
+    setLogoTarget(target);
+    setBrandFeedback(null);
+    requestAnimationFrame(() => {
+      logoInputRef.current?.click();
+    });
+  };
+
+  const handleLogoFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const isSupported =
+      file.type === "image/svg+xml" ||
+      file.type === "image/png" ||
+      file.type === "image/webp" ||
+      file.type === "image/jpeg" ||
+      file.type === "image/gif";
+
+    if (!isSupported) {
+      setBrandFeedback({
+        type: "error",
+        message: "Format non pris en charge. Utilisez un SVG, PNG ou WebP.",
+      });
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      updateBrandAsset(logoTarget, result);
+      setBrandFeedback({
+        type: "success",
+        message:
+          logoTarget === "solstice"
+            ? "Logo Solstice mis à jour avec succès."
+            : "Logo Nebula mis à jour avec succès.",
+      });
+      event.target.value = "";
+    };
+    reader.onerror = () => {
+      setBrandFeedback({
+        type: "error",
+        message: "Lecture du fichier impossible. Réessayez avec un autre visuel.",
+      });
+      event.target.value = "";
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleResetBrandAssets = () => {
+    resetBrandAssets();
+    setBrandFeedback({ type: "success", message: "Logos réinitialisés." });
   };
 
   const handleClientSendMessage = (event: FormEvent<HTMLFormElement>) => {
@@ -893,6 +958,75 @@ const Dashboard = () => {
         <section className="mt-16 grid gap-10 xl:grid-cols-[1.1fr_0.9fr]">
           {/* Portfolio Admin */}
           <div className="space-y-10">
+            <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.2)] visual-accent-veil">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                <div className="space-y-4">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/70">
+                    Identité visuelle
+                  </span>
+                  <div className="space-y-3">
+                    <h2 className="text-2xl font-bold">Logos Solstice & Nebula</h2>
+                    <p className="text-sm text-slate-200/70">
+                      Téléversez vos variantes claire (Solstice) et sombre (Nebula). Elles s'appliqueront instantanément sur le site et dans le header animé.
+                    </p>
+                    <div className="space-y-1 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
+                      <p>Solstice : {isCustomSolstice ? "personnalisé" : "logo par défaut"}</p>
+                      <p>Nebula : {isCustomNebula ? "personnalisé" : "logo par défaut"}</p>
+                    </div>
+                  </div>
+                </div>
+                <BrandMark dual className="w-full max-w-xs" />
+              </div>
+
+              {brandFeedback && (
+                <p
+                  className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${
+                    brandFeedback.type === "success"
+                      ? "border-emerald-300/40 bg-emerald-500/10 text-emerald-100"
+                      : "border-rose-300/50 bg-rose-500/10 text-rose-100"
+                  }`}
+                >
+                  {brandFeedback.message}
+                </p>
+              )}
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => handleOpenLogoPicker("solstice")}
+                  className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
+                >
+                  Mettre à jour Solstice
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenLogoPicker("nebula")}
+                  className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
+                >
+                  Mettre à jour Nebula
+                </button>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
+                <button
+                  type="button"
+                  onClick={handleResetBrandAssets}
+                  className="rounded-full border border-white/20 bg-transparent px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white/70 transition hover:text-white"
+                >
+                  Réinitialiser logos
+                </button>
+                <span>Formats acceptés : SVG, PNG, WebP</span>
+              </div>
+
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept="image/svg+xml,image/png,image/webp,image/jpeg,image/gif"
+                className="hidden"
+                onChange={handleLogoFileChange}
+              />
+            </div>
+
             <div className="rounded-[3rem] border border-white/10 bg-white/10 p-10 shadow-[0_20px_100px_rgba(56,189,248,0.18)] visual-accent-veil">
               <h2 className="text-2xl font-bold">Ajouter un projet au portfolio</h2>
               <p className="mt-2 text-sm text-slate-200/70">Ajoutez, modifiez, supprimez librement les projets visibles côté vitrine.</p>

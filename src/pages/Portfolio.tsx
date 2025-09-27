@@ -6,45 +6,35 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
 import { cn } from "@/lib/utils";
-import { CATEGORIES, type CategorySlug } from "@/components/header/nav.config";
+import { CATEGORIES } from "@/components/header/nav.config";
 
 const ALL_CATEGORY = "Tous les projets";
 
 const getEmbedUrl = (url: string): string | null => {
-  if (!url) {
-    return null;
-  }
-
+  if (!url) return null;
   try {
     const parsed = new URL(url);
     const host = parsed.hostname.toLowerCase();
 
     if (host.includes("youtube.com")) {
       const videoId = parsed.searchParams.get("v");
-      if (!videoId) {
-        return url;
-      }
-
+      if (!videoId) return url;
       const params = new URLSearchParams(parsed.searchParams);
       params.delete("v");
       const query = params.toString();
-
       return `https://www.youtube.com/embed/${videoId}${query ? `?${query}` : ""}`;
     }
 
     if (host === "youtu.be") {
       const videoId = parsed.pathname.replace(/^\//, "");
-      if (!videoId) {
-        return url;
-      }
-
+      if (!videoId) return url;
       const params = parsed.search ? parsed.search.replace(/^\?/, "") : "";
       return `https://www.youtube.com/embed/${videoId}${params ? `?${params}` : ""}`;
     }
 
     return url;
-  } catch (error) {
-    console.warn("Unable to build embed url for portfolio video", error);
+  } catch {
+    console.warn("Unable to build embed url for portfolio video");
     return url;
   }
 };
@@ -65,6 +55,7 @@ const Portfolio = () => {
     CATEGORIES.forEach((category) => map.set(category.label, category.slug));
     return map;
   }, []);
+
   const slugToService = useMemo(() => {
     const map = new Map<string, (typeof servicesData)[number]>();
     servicesData.forEach((service) => map.set(service.slug, service));
@@ -77,17 +68,14 @@ const Portfolio = () => {
       new Set(
         portfolioItems
           .map((item) => item.category)
-          .filter((label): label is string => Boolean(label) && !ordered.some(o => o === label))
-      )
+          .filter((label): label is string => Boolean(label) && !ordered.some((o) => o === label)),
+      ),
     );
-
     return [ALL_CATEGORY, ...ordered, ...extras];
   }, [portfolioItems]);
 
   const [activeCategory, setActiveCategory] = useState(() => {
-    if (categorySlug) {
-      return slugToLabel.get(categorySlug) ?? ALL_CATEGORY;
-    }
+    if (categorySlug) return slugToLabel.get(categorySlug) ?? ALL_CATEGORY;
     return ALL_CATEGORY;
   });
 
@@ -96,20 +84,16 @@ const Portfolio = () => {
       setActiveCategory(ALL_CATEGORY);
       return;
     }
-
     const label = slugToLabel.get(categorySlug);
     if (!label) {
       navigate("/realisations", { replace: true });
       return;
     }
-
     setActiveCategory(label);
   }, [categorySlug, navigate, slugToLabel]);
 
   useEffect(() => {
-    if (!categories.includes(activeCategory)) {
-      setActiveCategory(ALL_CATEGORY);
-    }
+    if (!categories.includes(activeCategory)) setActiveCategory(ALL_CATEGORY);
   }, [categories, activeCategory]);
 
   const handleCategoryChange = (category: string) => {
@@ -118,18 +102,15 @@ const Portfolio = () => {
       navigate("/realisations");
       return;
     }
-
     const slug = labelToSlug.get(category);
     navigate(slug ? `/realisations/${slug}` : "/realisations");
   };
 
   const filteredItems = useMemo(() => {
-    if (activeCategory === ALL_CATEGORY) {
-      return portfolioItems;
-    }
-
+    if (activeCategory === ALL_CATEGORY) return portfolioItems;
     return portfolioItems.filter((item) => item.category === activeCategory);
   }, [activeCategory, portfolioItems]);
+
   const activeService = useMemo(() => {
     const slug = labelToSlug.get(activeCategory);
     if (!slug) return null;
@@ -138,10 +119,7 @@ const Portfolio = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]" />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 sm:px-10">
         <header className="space-y-6">
           <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
@@ -151,7 +129,8 @@ const Portfolio = () => {
               : `Réalisations ${activeCategory} — pipeline complet`}
           </h1>
           <p className="max-w-3xl text-base text-slate-300">
-            Films corporate, événements, immobilier, réseaux sociaux, mariage ou motion design : chaque projet est livré avec un plan de diffusion 2025, un pilotage IA supervisé et des indicateurs de performance.
+            Films corporate, événements, immobilier, réseaux sociaux, mariage ou motion design : chaque projet est livré
+            avec un plan de diffusion 2025, un pilotage IA supervisé et des indicateurs de performance.
           </p>
         </header>
 
@@ -167,7 +146,7 @@ const Portfolio = () => {
                     onClick={() => handleCategoryChange(category)}
                     className={cn(
                       "portfolio-filter-trigger shrink-0",
-                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
+                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle",
                     )}
                   >
                     {category}
@@ -205,11 +184,7 @@ const Portfolio = () => {
                         <p className="max-w-xl text-sm text-white/75 sm:text-base">{item.tagline}</p>
                       </div>
                       <DialogTrigger asChild>
-                        <button
-                          type="button"
-                          className="portfolio-card-cta"
-                          aria-label={`Visionner ${item.title}`}
-                        >
+                        <button type="button" className="portfolio-card-cta" aria-label={`Visionner ${item.title}`}>
                           <span className="portfolio-card-ctaLabel">
                             <Play className="h-4 w-4" aria-hidden />
                             Visionner
@@ -230,10 +205,7 @@ const Portfolio = () => {
                       {item.aiTools.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {item.aiTools.map((tool) => (
-                            <span
-                              key={tool}
-                              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80"
-                            >
+                            <span key={tool} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">
                               {tool}
                             </span>
                           ))}
@@ -249,11 +221,7 @@ const Portfolio = () => {
                     </div>
                   </article>
 
-                  <DialogContent
-                    className="portfolio-dialog"
-                    aria-labelledby={dialogTitleId}
-                    aria-describedby={ariaDescription || undefined}
-                  >
+                  <DialogContent className="portfolio-dialog" aria-labelledby={dialogTitleId} aria-describedby={ariaDescription || undefined}>
                     <div className="portfolio-dialog-aurora" aria-hidden />
                     <div className="portfolio-dialog-body">
                       <div className="portfolio-dialog-media">
@@ -340,21 +308,14 @@ const Portfolio = () => {
                               </div>
                             </div>
                           )}
+
                           <div className="portfolio-dialog-section portfolio-dialog-section--wide">
                             <span className="portfolio-dialog-section-label">Passer à l'action</span>
                             <div className="portfolio-dialog-chipRow">
-                              <Link
-                                to={`/contact?projet=${encodeURIComponent(item.title)}`}
-                                className="portfolio-dialog-chip"
-                                data-variant="primary"
-                              >
+                              <Link to={`/contact?projet=${encodeURIComponent(item.title)}`} className="portfolio-dialog-chip" data-variant="primary">
                                 Demander un brief similaire
                               </Link>
-                              <Link
-                                to={`/services/${labelToSlug.get(item.category) ?? ""}`}
-                                className="portfolio-dialog-chip"
-                                data-variant="soft"
-                              >
+                              <Link to={`/services/${labelToSlug.get(item.category) ?? ""}`} className="portfolio-dialog-chip" data-variant="soft">
                                 Voir le service associé
                               </Link>
                             </div>
@@ -383,7 +344,8 @@ const Portfolio = () => {
                 {activeService ? `Workflow ${activeService.name}` : "Une méthode fluide pour chaque catégorie"}
               </h2>
               <p className="text-sm text-white/70">
-                Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations.
+                Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé
+                et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations.
               </p>
             </div>
             <div className="space-y-4 rounded-[2.5rem] border border-white/10 bg-slate-950/60 p-6">
@@ -403,20 +365,15 @@ const Portfolio = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Contact & Devis</p>
             <h2 className="text-3xl font-bold text-white">Prêts pour un projet similaire ?</h2>
             <p className="max-w-3xl text-sm text-white/80">
-              Racontez-nous vos objectifs, les canaux de diffusion visés et votre deadline. Nous revenons sous 24 h avec un budget transparent, un plan de tournage et des idées de déclinaisons verticales.
+              Racontez-nous vos objectifs, les canaux de diffusion visés et votre deadline. Nous revenons sous 24 h avec
+              un budget transparent, un plan de tournage et des idées de déclinaisons verticales.
             </p>
           </div>
           <div className="mt-6 flex flex-wrap gap-4">
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
-            >
+            <Link to="/contact" className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15">
               Demander un devis
             </Link>
-            <Link
-              to="/services"
-              className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-transparent px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white/70 transition hover:text-white"
-            >
+            <Link to="/services" className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-transparent px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white/70 transition hover:text-white">
               Explorer les services
             </Link>
           </div>

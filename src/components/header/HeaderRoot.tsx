@@ -45,7 +45,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
 import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
 
 type Theme = "light" | "dark";
@@ -58,11 +57,10 @@ const indicatorTransition = {
   stiffness: 420,
   damping: 36,
   mass: 0.65,
-};
+} as const;
 
 function useScrollProgress() {
   const [progress, setProgress] = useState(0);
-
   useEffect(() => {
     const update = () => {
       if (typeof document === "undefined") return;
@@ -71,12 +69,10 @@ function useScrollProgress() {
       const max = Math.max(scrollHeight - clientHeight, 1);
       setProgress(Math.min(scrollTop / max, 1));
     };
-
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
   }, []);
-
   return progress;
 }
 
@@ -135,7 +131,6 @@ export function HeaderRoot() {
         setCommandOpen(true);
       }
     };
-
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
@@ -159,12 +154,12 @@ export function HeaderRoot() {
     return { primary, services, works };
   }, []);
 
+  // Dynamic CTA from active service (path or query)
   const serviceSlugFromPath =
     location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
   const serviceSlugFromQuery = new URLSearchParams(location.search).get(
     "service",
   );
-
   const activeService = useMemo(() => {
     const preferred = (serviceSlugFromPath ||
       serviceSlugFromQuery) as CategorySlug | null;
@@ -176,11 +171,13 @@ export function HeaderRoot() {
     ? `/contact?service=${activeService.slug}`
     : CTA.href;
 
+  // Subnav for Services / Réalisations pages
   const isRealisations = location.pathname.startsWith("/realisations");
   const isServices = location.pathname.startsWith("/services");
 
   const subNavItems = useMemo(() => {
-    if (!isRealisations && !isServices) return [] as { label: string; href: string }[];
+    if (!isRealisations && !isServices)
+      return [] as { label: string; href: string }[];
     const base = isRealisations ? "/realisations" : "/services";
     return CATEGORIES.map((category) => ({
       label: category.label,
@@ -231,6 +228,7 @@ export function HeaderRoot() {
 
   return (
     <Fragment>
+      {/* Top progress */}
       <span
         aria-hidden
         className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 bg-transparent"
@@ -239,19 +237,17 @@ export function HeaderRoot() {
           className="block h-full w-full origin-left rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500"
           initial={false}
           animate={{ scaleX: Math.max(scrollProgress, 0.001) }}
-          transition={{
-            type: "spring",
-            stiffness: 200,
-            damping: 32,
-            mass: 0.7,
-          }}
+          transition={{ type: "spring", stiffness: 200, damping: 32, mass: 0.7 }}
           style={{ transformOrigin: "left" }}
         />
       </span>
 
+      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+          {/* Left: mobile + brand */}
           <div className="flex flex-1 items-center gap-3">
+            {/* Mobile nav */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <button
@@ -295,9 +291,9 @@ export function HeaderRoot() {
                       }
 
                       const nestedLinks =
-                        ("children" in item && item.children) ||
-                        ("mega" in item && item.mega) ||
-                        [];
+                        (("children" in item && item.children) ||
+                          ("mega" in item && item.mega) ||
+                          []) as { href: string; label: string; excerpt?: string }[];
 
                       return (
                         <Accordion
@@ -399,6 +395,7 @@ export function HeaderRoot() {
               </SheetContent>
             </Sheet>
 
+            {/* Brand */}
             <Link
               to="/"
               className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/30 hover:bg-white/10"
@@ -407,11 +404,13 @@ export function HeaderRoot() {
             </Link>
           </div>
 
+          {/* Desktop nav */}
           <DesktopNavigation
             dropdownMotion={dropdownMotion}
             indicatorTransition={indicatorTransition}
           />
 
+          {/* Right actions */}
           <div className="hidden items-center gap-2 lg:flex">
             <button
               type="button"
@@ -434,11 +433,7 @@ export function HeaderRoot() {
               className="inline-flex h-10 items-center justify-center rounded-full border border-white/10 px-3 text-white/70 transition hover:bg-white/10 hover:text-white"
               aria-label="Changer de thème"
             >
-              {theme === "dark" ? (
-                <SunMedium className="h-4 w-4" />
-              ) : (
-                <MoonStar className="h-4 w-4" />
-              )}
+              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
             </button>
             <Button
               asChild
@@ -449,6 +444,7 @@ export function HeaderRoot() {
           </div>
         </div>
 
+        {/* Secondary subnav */}
         {subNavItems.length > 0 && (
           <div className="border-t border-white/10 bg-slate-950/75">
             <div className="mx-auto max-w-6xl px-4">
@@ -496,10 +492,12 @@ export function HeaderRoot() {
         )}
       </header>
 
+      {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
           <CommandEmpty>Aucun résultat</CommandEmpty>
+
           <CommandGroup heading="Navigation">
             {commandGroups.primary.map((item) => (
               <CommandItem
@@ -512,7 +510,9 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
+
           <CommandSeparator />
+
           <CommandGroup heading="Services">
             {commandGroups.services.map((item) => (
               <CommandItem
@@ -525,6 +525,7 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
+
           <CommandGroup heading="Réalisations">
             {commandGroups.works.map((item) => (
               <CommandItem
