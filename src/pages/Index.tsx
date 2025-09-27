@@ -81,8 +81,8 @@ const Index = () => {
     () =>
       servicesData.map((service) => ({
         slug: service.slug,
-        title: service.title,
-        hook: service.hook,
+        title: service.name,
+        intro: service.description,
         timeline: service.timeline,
         startingPrice: service.startingPrice,
         deliverables: service.deliverables.slice(0, 2),
@@ -283,7 +283,7 @@ const Index = () => {
                   <span>{service.startingPrice}</span>
                 </div>
                 <h3 className="text-xl font-semibold text-white">{service.title}</h3>
-                <p className="text-sm text-white/70">{service.hook}</p>
+                <p className="text-sm text-white/70">{service.intro}</p>
                 <ul className="space-y-2 text-sm text-white/60">
                   {service.deliverables.map((item) => (
                     <li key={item} className="flex items-start gap-2">
