@@ -8,12 +8,20 @@ export type ServiceDetail = {
   startingPrice: string;
   benefits: string[];
   formats: { title: string; description: string }[];
+  // Optional extras used by some UIs
+  workflow?: {
+    preprod: string[];
+    production: string[];
+    postprod: string[];
+    delivery: string[];
+  };
   process: { title: string; description: string }[];
   deliverables: string[];
   options?: string[];
   pricing: { name: string; price: string; description: string }[];
   ctaLabel: string;
   ctaSubcopy: string;
+  miniFaq?: { question: string; answer: string }[];
   faqs: { question: string; answer: string }[];
 };
 
@@ -38,6 +46,24 @@ export const servicesData: ServiceDetail[] = [
       { title: "Témoignage client", description: "Histoire, problème, solution, résultat" },
       { title: "Capsules social (15–30 s)", description: "Messages ciblés pour campagnes" },
     ],
+    workflow: {
+      preprod: [
+        "Brief & objectifs alignés (positionnement, audience, KPI)",
+        "Script + questions d’interview validés avec vos équipes",
+      ],
+      production: [
+        "Tournage 1/2 à 1 journée : interviews, plans d’illustration, ambiance",
+        "Son & lumière pro, prompteur si nécessaire",
+      ],
+      postprod: [
+        "Montage narratif sous 5–7 jours, habillage et mixage inclus",
+        "Sous-titres brandés et motion design léger pour clarifier l’offre",
+      ],
+      delivery: [
+        "Master 4K + déclinaisons 1080p",
+        "Capsules verticales optionnelles pour LinkedIn, Instagram, TikTok",
+      ],
+    },
     process: [
       { title: "Brief & objectifs", description: "Positionnement, audience, KPI" },
       { title: "Script & feuille de route", description: "Plan d’images, questions d’interview" },
@@ -52,33 +78,19 @@ export const servicesData: ServiceDetail[] = [
     ],
     options: ["Drone (selon zone)", "Motion design léger", "Voix-off", "Sound design", "Photos making-of"],
     pricing: [
-      {
-        name: "Pack Essentiel",
-        price: "950–1 400 € HT",
-        description: "1/2 journée, 1 interview, film 45–60 s",
-      },
-      {
-        name: "Pack Pro",
-        price: "1 800–2 600 € HT",
-        description: "1 journée, 2–3 interviews, film 60–90 s + 2 capsules",
-      },
-      {
-        name: "Sur-mesure",
-        price: "Devis rapide",
-        description: "Adapté au scénario et aux lieux",
-      },
+      { name: "Pack Essentiel", price: "950–1 400 € HT", description: "1/2 journée, 1 interview, film 45–60 s" },
+      { name: "Pack Pro", price: "1 800–2 600 € HT", description: "1 journée, 2–3 interviews, film 60–90 s + 2 capsules" },
+      { name: "Sur-mesure", price: "Devis rapide", description: "Adapté au scénario et aux lieux" },
     ],
     ctaLabel: "Parler de votre projet",
     ctaSubcopy: "Devis en 24 h, simple et sans jargon.",
+    miniFaq: [
+      { question: "Peut-on tourner dans vos locaux ?", answer: "Oui, j’apporte lumière et son compacts pour valoriser vos espaces sans les bloquer." },
+      { question: "Aidez-vous à écrire ?", answer: "Oui, script, questions d’interview et feuille de route sont inclus." },
+    ],
     faqs: [
-      {
-        question: "Peut-on tourner dans vos locaux ?",
-        answer: "Oui, le matériel lumière/son est compact et s’adapte à vos espaces de travail.",
-      },
-      {
-        question: "Aidez-vous à écrire ?",
-        answer: "Oui, le script et les questions d’interview sont inclus pour cadrer le message.",
-      },
+      { question: "Peut-on tourner dans vos locaux ?", answer: "Oui, le matériel lumière/son est compact et s’adapte à vos espaces de travail." },
+      { question: "Aidez-vous à écrire ?", answer: "Oui, le script et les questions d’interview sont inclus pour cadrer le message." },
     ],
   },
   {
@@ -89,7 +101,7 @@ export const servicesData: ServiceDetail[] = [
       "Du teaser d’avant à l’aftermovie qui prolonge l’émotion, je capture l’énergie de votre événement et vos messages clés (conférences, salons, séminaires, concerts, lancements).",
     description: "Aftermovie, teaser, captation conférences & salons.",
     timeline: "Livraison standard J+5 (option express J+2)",
-    startingPrice: "À partir de 1 500 € HT",
+    startingPrice: "À partir de 1 500 € HT",
     benefits: [
       "Réactivité terrain : équipe légère, discrète, multi-cam possible",
       "Storytelling : rythme + sound design pour un rendu dynamique",
@@ -101,6 +113,24 @@ export const servicesData: ServiceDetail[] = [
       { title: "Captation Talks", description: "Multi-cam possible" },
       { title: "Clips réseaux", description: "Verticals 10–20 s" },
     ],
+    workflow: {
+      preprod: [
+        "Repérage et cadrage des moments clés + interviews",
+        "Storyboard express & planning logistique avec vos équipes",
+      ],
+      production: [
+        "Couverture terrain en équipe légère (1 à 2 caméras + drone le cas échéant)",
+        "Interviews participants/speakers, captation son dédiée",
+      ],
+      postprod: [
+        "Montage express possible (J+2/J+3) avec sound design immersif",
+        "Habillage graphique sponsor / branding événement",
+      ],
+      delivery: [
+        "Aftermovie 4K + versions verticales, miniatures personnalisées",
+        "Clips réseaux optimisés + exports streaming",
+      ],
+    },
     process: [
       { title: "Repérage", description: "Analyse des flux et des moments forts" },
       { title: "Planning", description: "Coordination avec vos équipes" },
@@ -116,33 +146,15 @@ export const servicesData: ServiceDetail[] = [
       "Export J+5 (option express J+2)",
     ],
     pricing: [
-      {
-        name: "Pack Starter",
-        price: "1 200–1 600 € HT",
-        description: "1 caméra, 1 journée, aftermovie 60–90 s",
-      },
-      {
-        name: "Pack Plus",
-        price: "2 200–3 200 € HT",
-        description: "2 caméras, interviews, aftermovie 90–120 s + 3 clips",
-      },
-      {
-        name: "Captation conférence",
-        price: "Sur devis",
-        description: "Multi-cam + son régie",
-      },
+      { name: "Pack Starter", price: "1 200–1 600 € HT", description: "1 caméra, 1 journée, aftermovie 60–90 s" },
+      { name: "Pack Plus", price: "2 200–3 200 € HT", description: "2 caméras, interviews, aftermovie 90–120 s + 3 clips" },
+      { name: "Captation conférence", price: "Sur devis", description: "Multi-cam + son régie" },
     ],
     ctaLabel: "Planifier la captation",
     ctaSubcopy: "Verrouillez la date, devis en 24 h.",
     faqs: [
-      {
-        question: "Pouvez-vous livrer pendant l’événement ?",
-        answer: "Oui, une option montage express permet de publier des stories ou clips J+1.",
-      },
-      {
-        question: "Couvrez-vous les interviews participants ?",
-        answer: "Oui, les packs Plus intègrent interviews et micros dédiés pour capter les retours à chaud.",
-      },
+      { question: "Pouvez-vous livrer pendant l’événement ?", answer: "Oui, une option montage express permet de publier des stories ou clips J+1." },
+      { question: "Couvrez-vous les interviews participants ?", answer: "Oui, les packs Plus intègrent interviews et micros dédiés pour capter les retours à chaud." },
     ],
   },
   {
@@ -164,6 +176,24 @@ export const servicesData: ServiceDetail[] = [
       { title: "Visite Premium", description: "Tournage 2–3 h, montage 60–90 s + plan de quartier" },
       { title: "Option Drone", description: "+150–250 € HT selon zone" },
     ],
+    workflow: {
+      preprod: [
+        "Brief & check-list pour préparer le bien (rangement, lumières, détails)",
+        "Repérage rapide + validation autorisations drone le cas échéant",
+      ],
+      production: [
+        "Tournage stabilisé 4K + plans slider, drone selon zone",
+        "Prises de vues complémentaires (quartier, équipements, vues extérieures)",
+      ],
+      postprod: [
+        "Montage rythmique, bandeau infos (surface, pièces, atouts)",
+        "Étalonnage lumineux + musique sous licence",
+      ],
+      delivery: [
+        "Vidéo 4K + version verticale 9:16",
+        "Miniature et pack visuels pour portail immo et réseaux",
+      ],
+    },
     process: [
       { title: "Brief & check-list", description: "Arguments clés et préparation du bien" },
       { title: "Repérage & planning", description: "Créneau lumière idéal" },
@@ -179,33 +209,19 @@ export const servicesData: ServiceDetail[] = [
     ],
     options: ["Drone", "5 photos HDR", "Plan de quartier"],
     pricing: [
-      {
-        name: "Visite Essentielle",
-        price: "450–600 € HT",
-        description: "Tournage 1–2 h, montage 45–60 s",
-      },
-      {
-        name: "Visite Premium",
-        price: "650–750 € HT",
-        description: "Tournage 2–3 h, montage 60–90 s + plan de quartier + 5 photos",
-      },
-      {
-        name: "Option Drone",
-        price: "+150–250 € HT",
-        description: "Selon zone et autorisations",
-      },
+      { name: "Visite Essentielle", price: "450–600 € HT", description: "Tournage 1–2 h, montage 45–60 s" },
+      { name: "Visite Premium", price: "650–750 € HT", description: "Tournage 2–3 h, montage 60–90 s + plan de quartier + 5 photos" },
+      { name: "Option Drone", price: "+150–250 € HT", description: "Selon zone et autorisations" },
     ],
     ctaLabel: "Mettre votre bien en valeur",
     ctaSubcopy: "Créneau sous 72 h possible.",
+    miniFaq: [
+      { question: "Préparation du bien ?", answer: "Je fournis une check-list (rangement, lumières, détails) pour un rendu premium." },
+      { question: "Biens occupés ?", answer: "Oui, tournage discret et respectueux avec cadrage serré sur les atouts." },
+    ],
     faqs: [
-      {
-        question: "Fournissez-vous une check-list avant le tournage ?",
-        answer: "Oui, une check-list rangement/lumière vous est envoyée dès la confirmation.",
-      },
-      {
-        question: "Pouvez-vous filmer un bien occupé ?",
-        answer: "Oui, le tournage est discret et respectueux des occupants.",
-      },
+      { question: "Fournissez-vous une check-list avant le tournage ?", answer: "Oui, une check-list rangement/lumière vous est envoyée dès la confirmation." },
+      { question: "Pouvez-vous filmer un bien occupé ?", answer: "Oui, le tournage est discret et respectueux des occupants." },
     ],
   },
   {
@@ -216,7 +232,7 @@ export const servicesData: ServiceDetail[] = [
       "Je raconte votre journée avec discrétion : de vrais moments, des émotions sincères, une esthétique lumineuse et naturelle.",
     description: "Un film authentique, naturel et élégant de votre journée.",
     timeline: "1er montage sous 3–4 semaines",
-    startingPrice: "À partir de 1 600 € TTC",
+    startingPrice: "À partir de 1 600 € TTC",
     benefits: [
       "Style documentaire ciné, couleurs douces",
       "Prise de son des vœux & discours",
@@ -242,33 +258,15 @@ export const servicesData: ServiceDetail[] = [
     ],
     options: ["Second shooter", "Drone", "Discours intégral", "Livraison express", "Clé USB souvenir"],
     pricing: [
-      {
-        name: "Formule Cœur",
-        price: "1 600–2 600 € TTC",
-        description: "10–12 h de présence, film 4–6 min",
-      },
-      {
-        name: "Formule Signature",
-        price: "2 200–2 800 € TTC",
-        description: "Préparatifs → 1 h du matin, film 6–8 min + teaser",
-      },
-      {
-        name: "Options",
-        price: "Sur mesure",
-        description: "Second shooter, drone, discours intégral, clé USB souvenir",
-      },
+      { name: "Formule Cœur", price: "1 600–2 600 € TTC", description: "10–12 h de présence, film 4–6 min" },
+      { name: "Formule Signature", price: "2 200–2 800 € TTC", description: "Préparatifs → 1 h du matin, film 6–8 min + teaser" },
+      { name: "Options", price: "Sur mesure", description: "Second shooter, drone, discours intégral, clé USB souvenir" },
     ],
     ctaLabel: "Vérifier ma disponibilité",
     ctaSubcopy: "Réponse sous 24 h, acompte pour bloquer la date.",
     faqs: [
-      {
-        question: "Peut-on personnaliser la bande-son ?",
-        answer: "Oui, nous choisissons ensemble une musique sous licence qui correspond à votre ambiance.",
-      },
-      {
-        question: "Proposez-vous des livraisons express ?",
-        answer: "Oui, une option express permet de recevoir un teaser sous 72 h.",
-      },
+      { question: "Peut-on personnaliser la bande-son ?", answer: "Oui, nous choisissons ensemble une musique sous licence qui correspond à votre ambiance." },
+      { question: "Proposez-vous des livraisons express ?", answer: "Oui, une option express permet de recevoir un teaser sous 72 h." },
     ],
   },
 ];
@@ -282,12 +280,6 @@ export const methodSteps = [
 ];
 
 export const testimonials = [
-  {
-    quote: "Une vidéo qui a doublé notre taux de conversion sur la page d’accueil.",
-    author: "Client Entreprise",
-  },
-  {
-    quote: "Aftermovie livré en 72 h, parfait pour notre recap LinkedIn.",
-    author: "Organisateur de salon",
-  },
+  { quote: "Une vidéo qui a doublé notre taux de conversion sur la page d’accueil.", author: "Client Entreprise" },
+  { quote: "Aftermovie livré en 72 h, parfait pour notre recap LinkedIn.", author: "Organisateur de salon" },
 ];

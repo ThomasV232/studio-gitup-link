@@ -8,17 +8,20 @@ import { servicesData } from "@/lib/services";
 
 const testimonials = [
   {
-    quote: "Un partenaire stratégique sur nos lancements : vision, pédagogie, exécution sans friction.",
+    quote:
+      "Un partenaire stratégique sur nos lancements : vision, pédagogie, exécution sans friction.",
     author: "Emma R.",
     role: "CMO · Scale-up SaaS",
   },
   {
-    quote: "Capable d'orchestrer un tournage multi-sites en 48 h avec un rendu cinématique impeccable.",
+    quote:
+      "Capable d'orchestrer un tournage multi-sites en 48 h avec un rendu cinématique impeccable.",
     author: "Julien M.",
     role: "Responsable communication · Groupe industriel",
   },
   {
-    quote: "L'accompagnement mêle créativité et pilotage business. Reporting limpide, équipe réactive.",
+    quote:
+      "L'accompagnement mêle créativité et pilotage business. Reporting limpide, équipe réactive.",
     author: "Sarah D.",
     role: "Directrice événementiel · Agence premium",
   },
@@ -56,7 +59,12 @@ const About = () => {
         <header className="surface-panel grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="space-y-6">
             <BrandMark dual className="max-w-xs" />
-            <span className={cn("section-eyebrow", "border-white/25 bg-white/10 text-white/80")}>
+            <span
+              className={cn(
+                "section-eyebrow",
+                "border-white/25 bg-white/10 text-white/80",
+              )}
+            >
               À propos · Studio VBG
             </span>
             <h1 className="space-y-6 text-balance font-semibold">
@@ -68,14 +76,20 @@ const About = () => {
               </span>
             </h1>
             <p className="text-base text-white/75">
-              Diplômé en cinéma et passionné par l'innovation, j'accompagne depuis 2016 des marques, startups et
-              institutions pour créer des expériences vidéo impactantes. Basé à Paris, je déploie un studio mobile
-              (France & Europe) avec une stack Septembre 2025 mêlant captation haut de gamme, IA générative et outils de pilotage data.
+              Diplômé en cinéma et passionné par l'innovation, j'accompagne
+              depuis 2016 des marques, startups et institutions pour créer des
+              expériences vidéo impactantes. Basé à Paris, je déploie un studio
+              mobile (France & Europe) avec une stack Septembre 2025 mêlant
+              captation haut de gamme, IA générative et outils de pilotage
+              data.
             </p>
             <div className="grid gap-3 text-sm text-white/70">
               <p>• 140+ films livrés (corporate, événementiel, social, motion)</p>
               <p>• Clients : Station F, WeAre600, LVMH DARE, agences & scale-ups</p>
-              <p>• Stack : Sony Burano 8K, FX6, DJI Inspire 3, Runway Gen-5, Sora, DaVinci Neural 19</p>
+              <p>
+                • Stack : Sony Burano 8K, FX6, DJI Inspire 3, Runway Gen-5,
+                Sora, DaVinci Neural 19
+              </p>
             </div>
             <div className="flex flex-wrap gap-4">
               <Link
@@ -95,9 +109,14 @@ const About = () => {
 
           <div className="relative flex h-full items-center justify-center">
             <div className="relative h-[320px] w-[260px] overflow-hidden rounded-[2.75rem] border border-white/15 bg-white/10">
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-900/40" aria-hidden />
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-900/40"
+                aria-hidden
+              />
               <div className="absolute inset-0 flex flex-col items-center justify-end gap-3 p-6 text-center">
-                <span className="text-xs uppercase tracking-[0.4em] text-white/60">Directeur créatif</span>
+                <span className="text-xs uppercase tracking-[0.4em] text-white/60">
+                  Directeur créatif
+                </span>
                 <span className="text-2xl font-semibold text-white">Alex VBG</span>
               </div>
               <div
@@ -118,8 +137,12 @@ const About = () => {
           <div className="grid gap-6 lg:grid-cols-3">
             {processSummary.map((step, index) => (
               <div key={step.title} className="surface-card p-6">
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">Phase 0{index + 1}</p>
-                <h3 className="mt-3 text-xl font-semibold text-white">{step.title}</h3>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
+                  Phase 0{index + 1}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold text-white">
+                  {step.title}
+                </h3>
                 <p className="mt-3 text-sm text-white/70">{step.description}</p>
               </div>
             ))}
@@ -135,10 +158,15 @@ const About = () => {
           />
           <div className="grid gap-6 lg:grid-cols-3">
             {testimonials.map((t) => (
-              <blockquote key={t.author} className="surface-card flex h-full flex-col gap-4 p-6">
+              <blockquote
+                key={t.author}
+                className="surface-card flex h-full flex-col gap-4 p-6"
+              >
                 <p className="text-sm italic text-white/80">“{t.quote}”</p>
                 <footer className="mt-auto text-xs uppercase tracking-[0.35em] text-white/60">
-                  <span className="block font-semibold text-white">{t.author}</span>
+                  <span className="block font-semibold text-white">
+                    {t.author}
+                  </span>
                   <span className="text-white/60">{t.role}</span>
                 </footer>
               </blockquote>
@@ -159,7 +187,9 @@ const About = () => {
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">
                   {service.slug.replace(/-/g, " ")}
                 </p>
-                <h3 className="mt-3 text-2xl font-semibold text-white">{service.title}</h3>
+                <h3 className="mt-3 text-2xl font-semibold text-white">
+                  {service.title}
+                </h3>
                 <p className="mt-3 text-sm text-white/70">{service.subtitle}</p>
                 <Link
                   to={`/services/${service.slug}`}

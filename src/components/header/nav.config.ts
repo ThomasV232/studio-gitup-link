@@ -16,13 +16,12 @@ export type Category = (typeof CATEGORIES)[number];
 export type CategorySlug = Category["slug"];
 
 export const MAIN_NAV = [
-  { label: "Accueil", href: "/" },
   {
     label: "Réalisations",
-    href: "/realisations",
+    href: "/portfolio",
     children: CATEGORIES.map((category) => ({
       label: category.label,
-      href: `/realisations/${category.slug}`,
+      href: `/portfolio/${category.slug}`,
     })),
   },
   {
@@ -40,4 +39,3 @@ export const MAIN_NAV = [
 ] as const;
 
 export const CTA = { label: "Connexion", href: "/connexion" } as const;
-

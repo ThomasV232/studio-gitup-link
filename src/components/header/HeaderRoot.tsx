@@ -64,8 +64,7 @@ function useScrollProgress() {
   useEffect(() => {
     const update = () => {
       if (typeof document === "undefined") return;
-      const { scrollTop, scrollHeight, clientHeight } =
-        document.documentElement;
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       const max = Math.max(scrollHeight - clientHeight, 1);
       setProgress(Math.min(scrollTop / max, 1));
     };
@@ -82,12 +81,10 @@ function useLanguage(): [Language, Dispatch<SetStateAction<Language>>] {
     const stored = window.localStorage.getItem("studio-lang");
     return stored === "EN" ? "EN" : "FR";
   });
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("studio-lang", language);
   }, [language]);
-
   return [language, setLanguage];
 }
 
@@ -101,14 +98,12 @@ function useTheme(): [Theme, Dispatch<SetStateAction<Theme>>] {
       window.matchMedia("(prefers-color-scheme: dark)").matches;
     return prefersDark ? "dark" : "light";
   });
-
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.style.colorScheme = theme;
     window.localStorage.setItem("studio-theme", theme);
   }, [theme]);
-
   return [theme, setTheme];
 }
 
@@ -140,44 +135,35 @@ export function HeaderRoot() {
       label: item.label,
       href: item.href,
     }));
-
     const services = CATEGORIES.map((category) => ({
       label: `Service · ${category.label}`,
       href: `/services/${category.slug}`,
     }));
-
     const works = CATEGORIES.map((category) => ({
       label: `Réalisations · ${category.label}`,
       href: `/realisations/${category.slug}`,
     }));
-
     return { primary, services, works };
   }, []);
 
   // Dynamic CTA from active service (path or query)
   const serviceSlugFromPath =
     location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
-  const serviceSlugFromQuery = new URLSearchParams(location.search).get(
-    "service",
-  );
+  const serviceSlugFromQuery = new URLSearchParams(location.search).get("service");
   const activeService = useMemo(() => {
-    const preferred = (serviceSlugFromPath ||
-      serviceSlugFromQuery) as CategorySlug | null;
+    const preferred = (serviceSlugFromPath || serviceSlugFromQuery) as CategorySlug | null;
     return CATEGORIES.find((category) => category.slug === preferred);
   }, [serviceSlugFromPath, serviceSlugFromQuery]);
 
   const ctaLabel = activeService ? `Devis ${activeService.label}` : CTA.label;
-  const ctaHref = activeService
-    ? `/contact?service=${activeService.slug}`
-    : CTA.href;
+  const ctaHref = activeService ? `/contact?service=${activeService.slug}` : CTA.href;
 
   // Subnav for Services / Réalisations pages
   const isRealisations = location.pathname.startsWith("/realisations");
   const isServices = location.pathname.startsWith("/services");
 
   const subNavItems = useMemo(() => {
-    if (!isRealisations && !isServices)
-      return [] as { label: string; href: string }[];
+    if (!isRealisations && !isServices) return [] as { label: string; href: string }[];
     const base = isRealisations ? "/realisations" : "/services";
     return CATEGORIES.map((category) => ({
       label: category.label,
@@ -186,9 +172,7 @@ export function HeaderRoot() {
   }, [isRealisations, isServices]);
 
   const activeSubnavSlug =
-    location.pathname.match(
-      /^\/(?:services|realisations)\/(?<slug>[^/]+)/,
-    )?.groups?.slug ?? "";
+    location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
 
   const dropdownMotion = {
     initial: {
@@ -355,11 +339,7 @@ export function HeaderRoot() {
                         className="rounded-full border border-white/10 p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
                         aria-label="Changer de thème"
                       >
-                        {theme === "dark" ? (
-                          <SunMedium className="h-4 w-4" />
-                        ) : (
-                          <MoonStar className="h-4 w-4" />
-                        )}
+                        {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
                       </button>
                     </div>
 
@@ -395,7 +375,6 @@ export function HeaderRoot() {
               </SheetContent>
             </Sheet>
 
-            {/* Brand */}
             <Link
               to="/"
               className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/30 hover:bg-white/10"
@@ -444,7 +423,6 @@ export function HeaderRoot() {
           </div>
         </div>
 
-        {/* Secondary subnav */}
         {subNavItems.length > 0 && (
           <div className="border-t border-white/10 bg-slate-950/75">
             <div className="mx-auto max-w-6xl px-4">
@@ -492,7 +470,6 @@ export function HeaderRoot() {
         )}
       </header>
 
-      {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
@@ -510,9 +487,7 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
-
           <CommandSeparator />
-
           <CommandGroup heading="Services">
             {commandGroups.services.map((item) => (
               <CommandItem
@@ -525,7 +500,6 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
-
           <CommandGroup heading="Réalisations">
             {commandGroups.works.map((item) => (
               <CommandItem
@@ -653,9 +627,7 @@ function DesktopNavigation({
                               {link.label}
                             </span>
                             {"excerpt" in link && link.excerpt ? (
-                              <p className="text-sm text-white/70">
-                                {link.excerpt}
-                              </p>
+                              <p className="text-sm text-white/70">{link.excerpt}</p>
                             ) : null}
                             <span className="inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.26em] text-white/60 transition group-hover:text-white">
                               Explorer
