@@ -37,8 +37,7 @@ const getEmbedUrl = (url: string): string | null => {
     }
 
     return url;
-  } catch (error) {
-    console.warn("Unable to build embed url for portfolio video", error);
+  } catch {
     return url;
   }
 };
@@ -80,9 +79,7 @@ const Portfolio = () => {
   }, [portfolioItems]);
 
   const [activeCategory, setActiveCategory] = useState(() => {
-    if (categorySlug) {
-      return slugToLabel.get(categorySlug) ?? ALL_CATEGORY;
-    }
+    if (categorySlug) return slugToLabel.get(categorySlug) ?? ALL_CATEGORY;
     return ALL_CATEGORY;
   });
 
@@ -113,7 +110,6 @@ const Portfolio = () => {
       navigate("/realisations");
       return;
     }
-
     const slug = labelToSlug.get(category);
     navigate(slug ? `/realisations/${slug}` : "/realisations");
   };
@@ -394,9 +390,7 @@ const Portfolio = () => {
                   </span>
                   <p className="text-sm text-white">{phase.title}</p>
                   <p>{phase.description}</p>
-                  {phase.aiUpgrade && (
-                    <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
-                  )}
+                  {phase.aiUpgrade && <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>}
                 </div>
               ))}
             </div>
