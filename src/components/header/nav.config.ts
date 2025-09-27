@@ -1,8 +1,8 @@
 const excerptMap = {
-  entreprise: "Films de marque, interviews et témoignages cadrés conversion",
-  evenementiel: "Aftermovies dynamiques, teasers J-3 et captations conférences",
-  immobilier: "Visites 4K lumineuses, plans drone & bandeaux infos",
-  mariage: "Récits ciné lumineux + teaser vertical livré sous 72 h",
+  entreprise: "Film manifeste + preuves sociales prêtes pour vos RDV commerciaux",
+  evenementiel: "Aftermovie J+3 et capsules verticales pour sponsors & réseaux",
+  immobilier: "Visite 4K HDR + version verticale optimisée annonces premium",
+  mariage: "Film cinématique + bande-annonce émotions fortes 72 h",
 } as const;
 
 export const CATEGORIES = [
@@ -39,4 +39,3 @@ export const MAIN_NAV = [
 ] as const;
 
 export const CTA = { label: "Connexion", href: "/connexion" } as const;
-

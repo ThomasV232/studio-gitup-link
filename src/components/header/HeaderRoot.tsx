@@ -45,8 +45,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
-import { CTA, CATEGORIES, MAIN_NAV } from "./nav.config";
+import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
 
 type Theme = "light" | "dark";
 type Language = "FR" | "EN";
@@ -58,25 +57,21 @@ const indicatorTransition = {
   stiffness: 420,
   damping: 36,
   mass: 0.65,
-};
+} as const;
 
 function useScrollProgress() {
   const [progress, setProgress] = useState(0);
-
   useEffect(() => {
     const update = () => {
       if (typeof document === "undefined") return;
-      const { scrollTop, scrollHeight, clientHeight } =
-        document.documentElement;
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       const max = Math.max(scrollHeight - clientHeight, 1);
       setProgress(Math.min(scrollTop / max, 1));
     };
-
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
   }, []);
-
   return progress;
 }
 
@@ -86,12 +81,10 @@ function useLanguage(): [Language, Dispatch<SetStateAction<Language>>] {
     const stored = window.localStorage.getItem("studio-lang");
     return stored === "EN" ? "EN" : "FR";
   });
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("studio-lang", language);
   }, [language]);
-
   return [language, setLanguage];
 }
 
@@ -105,14 +98,12 @@ function useTheme(): [Theme, Dispatch<SetStateAction<Theme>>] {
       window.matchMedia("(prefers-color-scheme: dark)").matches;
     return prefersDark ? "dark" : "light";
   });
-
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.style.colorScheme = theme;
     window.localStorage.setItem("studio-theme", theme);
   }, [theme]);
-
   return [theme, setTheme];
 }
 
@@ -135,7 +126,6 @@ export function HeaderRoot() {
         setCommandOpen(true);
       }
     };
-
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
@@ -145,39 +135,44 @@ export function HeaderRoot() {
       label: item.label,
       href: item.href,
     }));
-
     const services = CATEGORIES.map((category) => ({
       label: `Service · ${category.label}`,
       href: `/services/${category.slug}`,
     }));
-
     const works = CATEGORIES.map((category) => ({
       label: `Réalisations · ${category.label}`,
-      href: `/portfolio/${category.slug}`,
+      href: `/realisations/${category.slug}`,
     }));
-
     return { primary, services, works };
   }, []);
 
-  const ctaLabel = CTA.label;
-  const ctaHref = CTA.href;
+  // Dynamic CTA from active service (path or query)
+  const serviceSlugFromPath =
+    location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
+  const serviceSlugFromQuery = new URLSearchParams(location.search).get("service");
+  const activeService = useMemo(() => {
+    const preferred = (serviceSlugFromPath || serviceSlugFromQuery) as CategorySlug | null;
+    return CATEGORIES.find((category) => category.slug === preferred);
+  }, [serviceSlugFromPath, serviceSlugFromQuery]);
 
-  const isPortfolio = location.pathname.startsWith("/portfolio");
+  const ctaLabel = activeService ? `Devis ${activeService.label}` : CTA.label;
+  const ctaHref = activeService ? `/contact?service=${activeService.slug}` : CTA.href;
+
+  // Subnav for Services / Réalisations pages
+  const isRealisations = location.pathname.startsWith("/realisations");
   const isServices = location.pathname.startsWith("/services");
 
   const subNavItems = useMemo(() => {
-    if (!isPortfolio && !isServices) return [] as { label: string; href: string }[];
-    const base = isPortfolio ? "/portfolio" : "/services";
+    if (!isRealisations && !isServices) return [] as { label: string; href: string }[];
+    const base = isRealisations ? "/realisations" : "/services";
     return CATEGORIES.map((category) => ({
       label: category.label,
       href: `${base}/${category.slug}`,
     }));
-  }, [isPortfolio, isServices]);
+  }, [isRealisations, isServices]);
 
   const activeSubnavSlug =
-    location.pathname.match(
-      /^\/(?:services|portfolio)\/(?<slug>[^/]+)/,
-    )?.groups?.slug ?? "";
+    location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
 
   const dropdownMotion = {
     initial: {
@@ -217,6 +212,7 @@ export function HeaderRoot() {
 
   return (
     <Fragment>
+      {/* Top progress */}
       <span
         aria-hidden
         className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 bg-transparent"
@@ -225,19 +221,17 @@ export function HeaderRoot() {
           className="block h-full w-full origin-left rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500"
           initial={false}
           animate={{ scaleX: Math.max(scrollProgress, 0.001) }}
-          transition={{
-            type: "spring",
-            stiffness: 200,
-            damping: 32,
-            mass: 0.7,
-          }}
+          transition={{ type: "spring", stiffness: 200, damping: 32, mass: 0.7 }}
           style={{ transformOrigin: "left" }}
         />
       </span>
 
+      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+          {/* Left: mobile + brand */}
           <div className="flex flex-1 items-center gap-3">
+            {/* Mobile nav */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <button
@@ -281,9 +275,9 @@ export function HeaderRoot() {
                       }
 
                       const nestedLinks =
-                        ("children" in item && item.children) ||
-                        ("mega" in item && item.mega) ||
-                        [];
+                        (("children" in item && item.children) ||
+                          ("mega" in item && item.mega) ||
+                          []) as { href: string; label: string; excerpt?: string }[];
 
                       return (
                         <Accordion
@@ -345,11 +339,7 @@ export function HeaderRoot() {
                         className="rounded-full border border-white/10 p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
                         aria-label="Changer de thème"
                       >
-                        {theme === "dark" ? (
-                          <SunMedium className="h-4 w-4" />
-                        ) : (
-                          <MoonStar className="h-4 w-4" />
-                        )}
+                        {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
                       </button>
                     </div>
 
@@ -372,6 +362,14 @@ export function HeaderRoot() {
                         {ctaLabel}
                       </Link>
                     </SheetClose>
+                    <SheetClose asChild>
+                      <Link
+                        to="/connexion"
+                        className="block rounded-full border border-white/15 bg-white/[0.08] px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.28em] text-white/80 transition hover:bg-white/12 hover:text-white"
+                      >
+                        Connexion
+                      </Link>
+                    </SheetClose>
                   </div>
                 </div>
               </SheetContent>
@@ -385,11 +383,13 @@ export function HeaderRoot() {
             </Link>
           </div>
 
+          {/* Desktop nav */}
           <DesktopNavigation
             dropdownMotion={dropdownMotion}
             indicatorTransition={indicatorTransition}
           />
 
+          {/* Right actions */}
           <div className="hidden items-center gap-2 lg:flex">
             <button
               type="button"
@@ -412,11 +412,7 @@ export function HeaderRoot() {
               className="inline-flex h-10 items-center justify-center rounded-full border border-white/10 px-3 text-white/70 transition hover:bg-white/10 hover:text-white"
               aria-label="Changer de thème"
             >
-              {theme === "dark" ? (
-                <SunMedium className="h-4 w-4" />
-              ) : (
-                <MoonStar className="h-4 w-4" />
-              )}
+              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
             </button>
             <Button
               asChild
@@ -478,6 +474,7 @@ export function HeaderRoot() {
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
           <CommandEmpty>Aucun résultat</CommandEmpty>
+
           <CommandGroup heading="Navigation">
             {commandGroups.primary.map((item) => (
               <CommandItem
@@ -604,16 +601,7 @@ function DesktopNavigation({
               <NavigationMenuContent asChild>
                 <motion.div
                   {...dropdownMotion}
-                  className={cn(
-                    "mt-3",
-                    "w-[min(28rem,90vw)]",
-                    "rounded-2xl",
-                    "border border-white/10",
-                    "bg-slate-950/95",
-                    "p-5",
-                    "shadow-lg",
-                    "backdrop-blur"
-                  )}
+                  className="mt-3 w-[min(28rem,90vw)] rounded-2xl border border-white/10 bg-slate-950/95 p-5 shadow-lg backdrop-blur"
                 >
                   <div className="flex flex-col gap-4">
                     {item.href ? (
@@ -639,9 +627,7 @@ function DesktopNavigation({
                               {link.label}
                             </span>
                             {"excerpt" in link && link.excerpt ? (
-                              <p className="text-sm text-white/70">
-                                {link.excerpt}
-                              </p>
+                              <p className="text-sm text-white/70">{link.excerpt}</p>
                             ) : null}
                             <span className="inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.26em] text-white/60 transition group-hover:text-white">
                               Explorer
