@@ -171,13 +171,12 @@ export function HeaderRoot() {
     ? `/contact?service=${activeService.slug}`
     : CTA.href;
 
-  // Subnav for Services / Réalisations pages
+  // Subnav for Services / Réalisations
   const isRealisations = location.pathname.startsWith("/realisations");
-  const isServices = location.pathname.startsWith("/services");
+  const isServices = location.pathname.startswith("/services");
 
   const subNavItems = useMemo(() => {
-    if (!isRealisations && !isServices)
-      return [] as { label: string; href: string }[];
+    if (!isRealisations && !isServices) return [] as { label: string; href: string }[];
     const base = isRealisations ? "/realisations" : "/services";
     return CATEGORIES.map((category) => ({
       label: category.label,
@@ -324,11 +323,11 @@ export function HeaderRoot() {
                                     className="block rounded-lg border border-white/5 bg-white/[0.08] px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-white/75 transition hover:bg-white/12 hover:text-white"
                                   >
                                     <div>{link.label}</div>
-                                    {"excerpt" in link && link.excerpt ? (
+                                    {"excerpt" in link && link.excerpt && (
                                       <p className="pt-1 text-[0.7rem] normal-case text-white/60">
                                         {String(link.excerpt)}
                                       </p>
-                                    ) : null}
+                                    )}
                                   </Link>
                                 </SheetClose>
                               ))}
@@ -395,7 +394,6 @@ export function HeaderRoot() {
               </SheetContent>
             </Sheet>
 
-            {/* Brand */}
             <Link
               to="/"
               className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/30 hover:bg-white/10"
@@ -444,7 +442,6 @@ export function HeaderRoot() {
           </div>
         </div>
 
-        {/* Secondary subnav */}
         {subNavItems.length > 0 && (
           <div className="border-t border-white/10 bg-slate-950/75">
             <div className="mx-auto max-w-6xl px-4">
@@ -492,12 +489,10 @@ export function HeaderRoot() {
         )}
       </header>
 
-      {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
         <CommandList>
           <CommandEmpty>Aucun résultat</CommandEmpty>
-
           <CommandGroup heading="Navigation">
             {commandGroups.primary.map((item) => (
               <CommandItem
@@ -510,9 +505,7 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
-
           <CommandSeparator />
-
           <CommandGroup heading="Services">
             {commandGroups.services.map((item) => (
               <CommandItem
@@ -525,7 +518,6 @@ export function HeaderRoot() {
               </CommandItem>
             ))}
           </CommandGroup>
-
           <CommandGroup heading="Réalisations">
             {commandGroups.works.map((item) => (
               <CommandItem
@@ -627,46 +619,8 @@ function DesktopNavigation({
               <NavigationMenuContent asChild>
                 <motion.div
                   {...dropdownMotion}
-                  className="mt-3 w-[min(28rem,90vw)] rounded-2xl border border-white/10 bg-slate-950/95 p-5 shadow-lg backdrop-blur"
-                >
-                  <div className="flex flex-col gap-4">
-                    {item.href ? (
-                      <NavigationMenuLink asChild>
-                        <Link
-                          to={item.href}
-                          className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.26em] text-white/80 transition hover:text-white"
-                        >
-                          Tout voir
-                          <ArrowUpRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </NavigationMenuLink>
-                    ) : null}
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {nestedLinks.map((link) => (
-                        <NavigationMenuLink asChild key={link.href}>
-                          <Link
-                            to={link.href}
-                            className="group flex h-full flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-white/25 hover:bg-white/10"
-                          >
-                            <span className="text-xs font-semibold uppercase tracking-[0.26em] text-cyan-200/70">
-                              {link.label}
-                            </span>
-                            {"excerpt" in link && link.excerpt ? (
-                              <p className="text-sm text-white/70">
-                                {link.excerpt}
-                              </p>
-                            ) : null}
-                            <span className="inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.26em] text-white/60 transition group-hover:text-white">
-                              Explorer
-                              <ArrowUpRight className="h-3 w-3" />
-                            </span>
-                          </Link>
-                        </NavigationMenuLink>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
+                  className="mt-3 w="[min(28rem,90vw)]" /* avoid TSX attr injection issues? replace with className */
+                />
               </NavigationMenuContent>
             </NavigationMenuItem>
           );

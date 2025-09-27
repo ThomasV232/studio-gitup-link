@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Play } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";

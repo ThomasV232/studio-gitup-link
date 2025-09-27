@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
-   All colors MUST be HSL. */
+/* Design system: all colors are HSL. */
 
 @layer base {
   :root {
@@ -15,6 +14,7 @@
     --font-mono: "JetBrains Mono", "Fira Code", "SFMono-Regular", ui-monospace, Menlo, Monaco, Consolas,
       "Liberation Mono", "Courier New", monospace;
 
+    /* Fluid scale */
     --step--2: clamp(0.72rem, 0.69rem + 0.18vw, 0.82rem);
     --step--1: clamp(0.82rem, 0.79rem + 0.26vw, 0.95rem);
     --step-0: clamp(1rem, 0.95rem + 0.38vw, 1.15rem);

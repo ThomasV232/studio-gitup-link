@@ -86,7 +86,7 @@ const Portfolio = () => {
     }
     const label = slugToLabel.get(categorySlug);
     if (!label) {
-      navigate("/realisations", { replace: true });
+      navigate("/portfolio", { replace: true });
       return;
     }
     setActiveCategory(label);
@@ -99,11 +99,11 @@ const Portfolio = () => {
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
     if (category === ALL_CATEGORY) {
-      navigate("/realisations");
+      navigate("/portfolio");
       return;
     }
     const slug = labelToSlug.get(category);
-    navigate(slug ? `/realisations/${slug}` : "/realisations");
+    navigate(slug ? `/portfolio/${slug}` : "/portfolio");
   };
 
   const filteredItems = useMemo(() => {
