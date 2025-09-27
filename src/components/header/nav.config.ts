@@ -1,32 +1,31 @@
 const excerptMap = {
-  entreprise: "Film manifeste + preuves sociales prêtes pour vos RDV commerciaux",
-  evenementiel: "Aftermovie J+3 et capsules verticales pour sponsors & réseaux",
-  immobilier: "Visite 4K HDR + version verticale optimisée annonces premium",
-  "reseaux-sociaux": "Séries mensuelles 9:16 montées avec scripts et sous-titres",
-  mariage: "Film cinématique + bande-annonce émotions fortes 72 h",
-  "motion-design-ia": "Motion narratif mêlant design & IA générative pour expliquer",
+  entreprise: "Films de marque, interviews et témoignages cadrés conversion",
+  evenementiel: "Aftermovies dynamiques, teasers J-3 et captations conférences",
+  immobilier: "Visites 4K lumineuses, plans drone & bandeaux infos",
+  mariage: "Récits ciné lumineux + teaser vertical livré sous 72 h",
+  "reseaux-sociaux": "Capsules verticales, formats ads et séries éditoriales",
+  "motion-ia": "Expériences hybrides : motion design, IA générative, volumétrique",
 } as const;
 
 export const CATEGORIES = [
   { label: "Entreprise", slug: "entreprise" },
   { label: "Événementiel", slug: "evenementiel" },
   { label: "Immobilier", slug: "immobilier" },
-  { label: "Réseaux sociaux", slug: "reseaux-sociaux" },
   { label: "Mariage", slug: "mariage" },
-  { label: "Motion design / IA", slug: "motion-design-ia" },
+  { label: "Réseaux sociaux", slug: "reseaux-sociaux" },
+  { label: "Motion Design / IA", slug: "motion-ia" },
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
 export type CategorySlug = Category["slug"];
 
 export const MAIN_NAV = [
-  { label: "Accueil", href: "/" },
   {
     label: "Réalisations",
-    href: "/realisations",
+    href: "/portfolio",
     children: CATEGORIES.map((category) => ({
       label: category.label,
-      href: `/realisations/${category.slug}`,
+      href: `/portfolio/${category.slug}`,
     })),
   },
   {

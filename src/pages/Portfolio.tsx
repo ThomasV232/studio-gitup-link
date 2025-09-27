@@ -99,7 +99,7 @@ const Portfolio = () => {
 
     const label = slugToLabel.get(categorySlug);
     if (!label) {
-      navigate("/realisations", { replace: true });
+      navigate("/portfolio", { replace: true });
       return;
     }
 
@@ -115,12 +115,12 @@ const Portfolio = () => {
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
     if (category === ALL_CATEGORY) {
-      navigate("/realisations");
+      navigate("/portfolio");
       return;
     }
 
     const slug = labelToSlug.get(category);
-    navigate(slug ? `/realisations/${slug}` : "/realisations");
+    navigate(slug ? `/portfolio/${slug}` : "/portfolio");
   };
 
   const filteredItems = useMemo(() => {
@@ -380,19 +380,18 @@ const Portfolio = () => {
             <div className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Processus / Méthode</p>
               <h2 className="text-3xl font-bold text-white">
-                {activeService ? `Workflow ${activeService.title}` : "Une méthode fluide pour chaque catégorie"}
+                {activeService ? `Workflow ${activeService.name}` : "Une méthode fluide pour chaque catégorie"}
               </h2>
               <p className="text-sm text-white/70">
                 Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations.
               </p>
             </div>
             <div className="space-y-4 rounded-[2.5rem] border border-white/10 bg-slate-950/60 p-6">
-              {(activeService?.phases ?? servicesData[0].phases).slice(0, 4).map((phase, index) => (
+              {(activeService?.process ?? servicesData[0].process).slice(0, 4).map((phase, index) => (
                 <div key={phase.title} className="flex flex-col gap-2 rounded-[2rem] border border-white/10 bg-white/5 p-4 text-sm text-white/70">
                   <span className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/50">Étape 0{index + 1}</span>
                   <p className="text-sm text-white">{phase.title}</p>
                   <p>{phase.description}</p>
-                  <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
                 </div>
               ))}
             </div>

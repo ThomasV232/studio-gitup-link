@@ -57,8 +57,9 @@ const App = () => (
               <Route path="/playground" element={<Playground />} />
 
               {/* Portfolio + alias SEO */}
-              <Route path="/portfolio" element={<Navigate to="/realisations" replace />} />
-              <Route path="/realisations" element={<Portfolio />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/portfolio/:category" element={<Portfolio />} />
+              <Route path="/realisations" element={<Navigate to="/portfolio" replace />} />
               <Route path="/realisations/:category" element={<Portfolio />} />
 
               {/* Process & Devis */}

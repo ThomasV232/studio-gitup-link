@@ -1,350 +1,481 @@
 export type ServiceDetail = {
   slug: string;
+  name: string;
   title: string;
   subtitle: string;
-  hook: string;
-  problem: string;
-  promise: string;
-  stack: string[];
-  deliverables: string[];
+  description: string;
   timeline: string;
   startingPrice: string;
-  proof: string;
+  benefits: string[];
+  formats: { title: string; description: string }[];
+  workflow: {
+    preprod: string[];
+    production: string[];
+    postprod: string[];
+    delivery: string[];
+  };
+  process: { title: string; description: string }[];
+  deliverables: string[];
+  options?: string[];
+  pricing: { name: string; price: string; description: string }[];
   ctaLabel: string;
-  phases: {
-    title: string;
-    description: string;
-    aiUpgrade: string;
-  }[];
-  signatureMove: string;
-  metrics: { label: string; value: string; note: string }[];
+  ctaSubcopy: string;
+  faqs?: { question: string; answer: string }[];
 };
 
 export const servicesData: ServiceDetail[] = [
-  /* -------------------------------------------------- */
-  /* 1) ENTREPRISE                                      */
-  /* -------------------------------------------------- */
   {
     slug: "entreprise",
-    title: "Vidéo d’entreprise — claire, crédible, utile",
-    subtitle: "Expliquez mieux, recrutez plus, vendez sans forcer.",
-    hook: "Expliquez, recrutez, vendez — avec des films clairs et crédibles.",
-    problem:
-      "Vous avez besoin d’un film qui clarifie votre proposition de valeur autant pour les prospects que pour les talents que vous ciblez.",
-    promise:
-      "Je construis un récit structuré autour de vos objectifs business, avec interviews guidées, preuves sociales et assets prêts à diffuser sur vos canaux clés.",
-    stack: ["Sony Burano 8K", "DaVinci Resolve Neural 19", "Notion Storyboard AI", "Runway Gen-3 Alpha"],
+    name: "Vidéo d’entreprise",
+    title: "Vidéo d’entreprise — film de marque, interviews et témoignages",
+    subtitle:
+      "Humanisez votre communication et clarifiez votre offre avec des vidéos brèves, percutantes et crédibles. Idéal pour pages d’accueil, campagnes Social Ads, recrutement et onboarding.",
+    description: "Film de marque, interviews, recrutement, témoignages clients.",
+    timeline: "Livraison 5 à 10 jours ouvrés après tournage",
+    startingPrice: "À partir de 950 € HT",
+    benefits: [
+      "Crédibilité immédiate grâce aux interviews & cas clients",
+      "Efficacité : scripts courts, message mémorisable, CTA clair",
+      "Polyvalence : versions horizontales/verticales pour site, LinkedIn, Instagram",
+    ],
+    formats: [
+      { title: "Film de marque (60–90 s)", description: "Manifeste vidéo + images métier" },
+      { title: "Interview(s) / Portrait(s)", description: "Dirigeant·e, collaborateurs, clients" },
+      { title: "Témoignage client", description: "Histoire, problème, solution, résultat" },
+      { title: "Capsules social (15–30 s)", description: "Messages ciblés pour campagnes" },
+    ],
+    workflow: {
+      preprod: [
+        "Brief & objectifs alignés (positionnement, audience, KPI)",
+        "Script + questions d’interview validés avec vos équipes",
+      ],
+      production: [
+        "Tournage 1/2 à 1 journée : interviews, plans d’illustration, ambiance",
+        "Son & lumière cinéma, prompteur ou téléprompteur si besoin",
+      ],
+      postprod: [
+        "Montage narratif sous 5–7 jours, habillage et mixage inclus",
+        "Sous-titres brandés et motion design léger pour clarifier l’offre",
+      ],
+      delivery: [
+        "Master 4K + déclinaisons 1080p pour site et présentations",
+        "Capsules verticales optionnelles pour LinkedIn, Instagram, TikTok",
+      ],
+    },
+    process: [
+      { title: "Brief & objectifs", description: "Positionnement, audience, KPI" },
+      { title: "Script & feuille de route", description: "Plan d’images, questions d’interview" },
+      { title: "Tournage (1/2 à 1 journée)", description: "Son et lumière pro, prompteur si nécessaire" },
+      { title: "Montage", description: "1ère version sous 5–7 jours" },
+      { title: "Allers-retours", description: "2 séries d’ajustements incluses" },
+    ],
     deliverables: [
-      "Film principal 60–90 s (16:9)",
-      "3 déclinaisons courtes 15–30 s (9:16 & 1:1)",
-      "Pack sous-titres FR/EN + miniatures brandées",
+      "1 master en 4K + déclinaisons 1080p",
+      "Sous-titres (.srt) + version incrustée",
+      "Couverture miniature optimisée (YouTube/LinkedIn)",
     ],
-    timeline: "10–15 jours ouvrés",
-    startingPrice: "À partir de 1 900 € HT",
-    proof: "+38 % d’inscriptions à un webinaire (cas client)",
-    ctaLabel: "Découvrir le service Entreprise",
-    phases: [
+    options: ["Drone (selon zone)", "Motion design léger", "Voix-off", "Sound design", "Photos making-of"],
+    pricing: [
       {
-        title: "Brief & objectifs",
-        description: "Session de cadrage 30 min pour prioriser vos messages, audiences et KPI.",
-        aiUpgrade: "Synthèse automatique des enjeux et moodboard instantané partagé à l’équipe.",
+        name: "Pack Journée",
+        price: "1 200–1 600 € HT",
+        description: "1 journée, 2 interviews, film 60–75 s + déclinaison verticale",
       },
       {
-        title: "Scénario & planning",
-        description: "Scripts interview, repérages, organisation plateau et validation direction.",
-        aiUpgrade: "Storyboard génératif + checklist logistique intelligente.",
+        name: "Pack Weekend",
+        price: "2 200–2 800 € HT",
+        description: "2 journées (tournage + B-roll), film 90 s + 3 capsules sociales",
       },
       {
-        title: "Tournage cinématique",
-        description: "Interviews multicam, B-roll immersif, captation audio double système.",
-        aiUpgrade: "Téléprompteur adaptatif et monitoring colorimétrique en direct.",
-      },
-      {
-        title: "Montage & révisions",
-        description: "Montage narratif, motion léger, habillage sonore, 2 allers-retours inclus.",
-        aiUpgrade: "Suggestions de cuts par IA vérifiées humainement pour accélérer les itérations.",
-      },
-      {
-        title: "Activation multicanale",
-        description: "Exports LinkedIn, YouTube, intranet + scripts de diffusion prêts à publier.",
-        aiUpgrade: "Assistant publication pour générer posts et thumbnails optimisés.",
+        name: "Pack Sur Demande",
+        price: "Sur devis rapide",
+        description: "Déploiement multi-sites, motion avancé, voix-off premium",
       },
     ],
-    signatureMove: "Teaser 45 s livré sous 72 h pour vos comités ou campagnes teasing.",
-    metrics: [
-      { label: "Preuve", value: "+38%", note: "d’inscriptions webinar (cas client 2025)" },
-      { label: "Délais", value: "10–15 j", note: "ouvrés selon agenda tournage" },
-      { label: "Itérations", value: "≤2", note: "grâce au script validé en amont" },
-    ],
+    ctaLabel: "Parler de votre projet",
+    ctaSubcopy: "Devis en 24 h, simple et sans jargon.",
   },
-
-  /* -------------------------------------------------- */
-  /* 2) ÉVÉNEMENTIEL                                    */
-  /* -------------------------------------------------- */
   {
     slug: "evenementiel",
-    title: "Aftermovie & contenus événementiels — l’énergie qui reste",
-    subtitle: "Faites revivre, vendez le prochain.",
-    hook: "Faites revivre votre événement, et donnez envie de venir au prochain.",
-    problem:
-      "Vous devez capitaliser à chaud sur l’émotion des participants et fournir des preuves tangibles à vos sponsors.",
-    promise:
-      "Je capte l’événement avec une équipe mobile, monte en flux tendu et livre un aftermovie vibrant accompagné de capsules verticales prêtes à poster.",
-    stack: ["Sony FX6 Duo", "DJI Inspire 3", "Veo Live Suite", "Suno Studio Max"],
-    deliverables: ["Aftermovie 60–90 s", "5 capsules verticales 10–15 s", "Galerie photo optionnelle"],
-    timeline: "J+3 à J+7",
-    startingPrice: "À partir de 1 400 € HT",
-    proof: "Taux de réinscription +24 %",
-    ctaLabel: "Voir le service Événementiel",
-    phases: [
+    name: "Vidéos événementielles",
+    title: "Aftermovie & captation — mettez votre événement en valeur",
+    subtitle:
+      "Du teaser d’avant à l’aftermovie qui prolonge l’émotion, je capture l’énergie de votre événement et vos messages clés (conférences, salons, séminaires, concerts, lancements).",
+    description: "Aftermovie, teaser, captation conférences & salons.",
+    timeline: "Livraison standard J+5 (option express J+2)",
+    startingPrice: "À partir de 1 500 € HT",
+    benefits: [
+      "Réactivité terrain : équipe légère, discrète, multi-cam possible",
+      "Storytelling : rythme + sound design pour un rendu dynamique",
+      "Livraison rapide pour vos remerciements et réseaux sociaux",
+    ],
+    formats: [
+      { title: "Teaser 20–40 s", description: "Pour annoncer l’événement" },
+      { title: "Aftermovie 60–120 s", description: "Résumé émotion + messages clés" },
+      { title: "Captation Talks", description: "Multi-cam possible" },
+      { title: "Clips réseaux", description: "Verticals 10–20 s" },
+    ],
+    workflow: {
+      preprod: [
+        "Repérage et cadrage des moments clés + interviews",
+        "Storyboard express & planning logistique avec vos équipes",
+      ],
+      production: [
+        "Couverture terrain en équipe légère (1 à 2 caméras + drone le cas échéant)",
+        "Interviews participants/speakers, captation son dédiée",
+      ],
+      postprod: [
+        "Montage express possible (J+2/J+3) avec sound design immersif",
+        "Habillage graphique sponsor / branding événement",
+      ],
+      delivery: [
+        "Aftermovie 4K + versions verticales, miniatures personnalisées",
+        "Clips réseaux optimisés + exports streaming (YouTube, Vimeo, Vercel)",
+      ],
+    },
+    process: [
+      { title: "Repérage", description: "Analyse des flux et des moments forts" },
+      { title: "Planning", description: "Coordination avec vos équipes" },
+      { title: "Tournage (1 à 2 caméras)", description: "Couverture terrain + interviews" },
+      { title: "Montage express possible", description: "J+2 / J+3 selon options" },
+      { title: "Livraison", description: "Exports aftermovie + clips" },
+    ],
+    deliverables: [
+      "Master 4K/1080p",
+      "Versions verticales",
+      "Sous-titres",
+      "Miniature optimisée",
+      "Export J+5 (option express J+2)",
+    ],
+    pricing: [
       {
-        title: "Brief & objectifs",
-        description: "30 min pour valider messages sponsor, moments forts et KPIs post-event.",
-        aiUpgrade: "Feuille de route dynamique + scénarisation des séquences à capturer.",
+        name: "Pack Journée",
+        price: "1 500–2 000 € HT",
+        description: "1 caméra, 1 journée, aftermovie 60–90 s",
       },
       {
-        title: "Scénario & planning",
-        description: "Run de production, repérages et coordination avec vos équipes scène et sécurité.",
-        aiUpgrade: "Alertes logistiques IA (météo, flux visiteurs) et gestion accréditations.",
+        name: "Pack Weekend",
+        price: "2 600–3 400 € HT",
+        description: "2 jours de tournage, interviews, aftermovie 90–120 s + 3 clips",
       },
       {
-        title: "Tournage terrain",
-        description: "Multi-cam, micro-trottoirs, drone FPV indoor, captation audio immersive.",
-        aiUpgrade: "Reconnaissance VIP + tagging automatique pour retrouver les moments clés.",
-      },
-      {
-        title: "Montage & révisions",
-        description: "Montage express, étalonnage, sous-titres multilingues, brand kit sponsors.",
-        aiUpgrade: "Templates IA pour générer hooks et variations verticales en temps réel.",
-      },
-      {
-        title: "Diffusion",
-        description: "Exports prêts LinkedIn, Insta, YouTube + kit médias pour vos partenaires.",
-        aiUpgrade: "Analyse performance 72 h avec recommandations de relance.",
+        name: "Pack Sur Demande",
+        price: "Sur devis",
+        description: "Captation conférence multi-cam, diffusion live, sous-titrage express",
       },
     ],
-    signatureMove: "Aftermovie livré en J+3 maximum, stories verticales pendant l’événement.",
-    metrics: [
-      { label: "Preuve", value: "+24%", note: "de réinscriptions early-bird" },
-      { label: "Délais", value: "J+3", note: "after movie complet" },
-      { label: "Capsules", value: "5", note: "verticales prêtes à publier" },
-    ],
+    ctaLabel: "Planifier la captation",
+    ctaSubcopy: "Verrouillez la date, devis en 24 h.",
   },
-
-  /* -------------------------------------------------- */
-  /* 3) IMMOBILIER                                      */
-  /* -------------------------------------------------- */
   {
     slug: "immobilier",
-    title: "Vidéo immobilière — déclencheur de visites",
-    subtitle: "Valorisez volumes, lumière et quartier.",
-    hook: "Vendez plus vite — mettez en valeur volumes, lumière et quartier.",
-    problem:
-      "Vos annonces doivent se démarquer instantanément pour générer des demandes qualifiées avant vos concurrents.",
-    promise:
-      "Je capture le bien en 4K HDR, révèle les points forts du quartier et livre une version verticale dédiée aux portails et réseaux sociaux.",
-    stack: ["Sony A1", "DJI Avata 2", "Luma Rooms AI", "Lightroom 2025"],
-    deliverables: ["Visite vidéo 60 s", "Version verticale 30 s", "Photos HDR & plan de coupe (option)"],
-    timeline: "48–72 h après tournage",
-    startingPrice: "À partir de 650 € HT",
-    proof: "2 offres reçues en 72 h",
-    ctaLabel: "Découvrir le service Immobilier",
-    phases: [
-      {
-        title: "Brief & objectifs",
-        description: "Identification des arguments clés, calendrier et ciblage acquéreurs.",
-        aiUpgrade: "Analyse du marché local + benchmark express des annonces concurrentes.",
-      },
-      {
-        title: "Scénario & planning",
-        description: "Storyboard visite, planning tournage et check-list home staging.",
-        aiUpgrade: "Simulation de lumière horaire pour choisir le meilleur créneau.",
-      },
-      {
-        title: "Tournage sur site",
-        description: "Plans gimbal, drone intérieur/extérieur, détails architecturaux.",
-        aiUpgrade: "Stabilisation gyroscopique IA + correction de perspective en direct.",
-      },
-      {
-        title: "Montage & révisions",
-        description: "Montage rythmé, titrage quartiers, étalonnage neutre luxe.",
-        aiUpgrade: "Suggestions de call-to-action et miniatures optimisées.",
-      },
-      {
-        title: "Activation",
-        description: "Exports portails, réseaux sociaux, emailing + kit visuels.",
-        aiUpgrade: "Génération d’annonces texte prêtes à publier.",
-      },
+    name: "Vidéo immobilière",
+    title: "Visites vidéo & drone — valorisez vos biens, vendez plus vite",
+    subtitle:
+      "Des vidéos lumineuses et rythmées qui révèlent volumes, circulation et atouts du quartier. Parfait pour annonces premium, réseaux, landing pages et emailing.",
+    description: "Biens résidentiels & pros, visites filmées + drone.",
+    timeline: "Créneau sous 72 h, livraison 48–72 h après tournage",
+    startingPrice: "À partir de 450 € HT",
+    benefits: [
+      "Clarté : parcours fluide, cadrages stables, exposition maîtrisée",
+      "Gain de temps : moins de visites inutiles, meilleure qualification",
+      "Drone (selon réglementation) pour vues d’ensemble & environnements",
     ],
-    signatureMove: "Version verticale ADS incluse pour booster vos campagnes Meta/Google.",
-    metrics: [
-      { label: "Preuve", value: "2 offres", note: "reçues en 72 h (cas réel)" },
-      { label: "Délais", value: "48–72 h", note: "après tournage" },
-      { label: "Prix d’appel", value: "650 €", note: "HT" },
+    formats: [
+      { title: "Visite Essentielle", description: "Tournage 1–2 h, montage 45–60 s" },
+      { title: "Visite Premium", description: "Tournage 2–3 h, montage 60–90 s + plan de quartier" },
+      { title: "Option Drone", description: "+150–250 € HT selon zone" },
     ],
-  },
-
-  /* -------------------------------------------------- */
-  /* 4) RÉSEAUX SOCIAUX                                 */
-  /* -------------------------------------------------- */
-  {
-    slug: "reseaux-sociaux",
-    title: "Contenus courts récurrents — rester visible sans y passer vos soirées",
-    subtitle: "Un pack mensuel cadré, des posts qui sortent du lot.",
-    hook: "Un workflow mensuel pour rester visible sans y passer vos soirées.",
-    problem:
-      "Vous manquez de temps pour produire des vidéos courtes régulières sans sacrifier la cohérence de marque.",
-    promise:
-      "Je mets en place un workflow mensuel avec tournages batchés, automatisations IA et reporting clair pour nourrir vos réseaux.",
-    stack: ["Sony FX3", "Aputure Infinibar", "CapCut Pro 2025", "OpusClip AI"],
+    workflow: {
+      preprod: [
+        "Brief & check-list pour préparer le bien (lumières, détails, accessoirisation)",
+        "Repérage rapide + validation autorisations drone le cas échéant",
+      ],
+      production: [
+        "Tournage stabilisé 4K + plans slider, drone selon zone",
+        "Prises de vues complémentaires (quartier, équipements, vues extérieures)",
+      ],
+      postprod: [
+        "Montage rythmique, bandeau infos (surface, pièces, atouts)",
+        "Étalonnage lumineux + musique sous licence",
+      ],
+      delivery: [
+        "Vidéo 4K + version verticale 9:16",
+        "Miniature et pack visuels pour portail immo et réseaux",
+      ],
+    },
+    process: [
+      { title: "Brief & check-list", description: "Arguments clés et préparation du bien" },
+      { title: "Repérage & planning", description: "Créneau lumière idéal" },
+      { title: "Tournage 4K", description: "Plans stabilisés + drone si autorisé" },
+      { title: "Montage", description: "Bandeau infos, musique sous licence" },
+      { title: "Livraison multi-formats", description: "Version horizontale + verticale" },
+    ],
     deliverables: [
-      "8–16 vidéos verticales/mois",
-      "Pack sous-titres & templates titres",
-      "Calendrier éditorial + scripts hooks",
+      "1 vidéo 4K/1080p",
+      "Version verticale 9:16",
+      "Bandeau infos (surface, pièces, atouts)",
+      "Musique sous licence",
     ],
-    timeline: "Production mensuelle cadencée",
-    startingPrice: "Abonnement dès 890 € HT / mois",
-    proof: "+120 % de vues sur 60 jours",
-    ctaLabel: "Voir le service Réseaux sociaux",
-    phases: [
+    options: ["Drone", "5 photos HDR", "Plan de quartier"],
+    pricing: [
       {
-        title: "Brief & objectifs",
-        description: "Atelier éditorial pour prioriser vos campagnes, promos et piliers de contenu.",
-        aiUpgrade: "Audit performance social + recommandations de formats IA.",
+        name: "Pack Journée",
+        price: "450–650 € HT",
+        description: "Tournage 1/2 journée, montage 45–60 s + photos détails",
       },
       {
-        title: "Scénario & planning",
-        description: "Scripts hooks, plan de tournage batch et pré-production logistique.",
-        aiUpgrade: "Générateur de variations de scripts pour A/B testing.",
+        name: "Pack Weekend",
+        price: "750–950 € HT",
+        description: "2 jours (jour + golden hour), montage 90 s + version verticale + 10 photos",
       },
       {
-        title: "Production agile",
-        description: "Tournages 1/2 journée, B-roll snack, captation audio autonome.",
-        aiUpgrade: "Sélection automatique des meilleures prises et cadrages.",
-      },
-      {
-        title: "Montage & révisions",
-        description: "Montage rapide, sous-titres animés, habillage motion réutilisable.",
-        aiUpgrade: "Templates dynamiques et suggestions de cuts pour chaque plateforme.",
-      },
-      {
-        title: "Pilotage",
-        description: "Livraison hebdo, bibliothèque Notion, reporting mensuel détaillé.",
-        aiUpgrade: "Dashboards automatisés avec idées de posts à venir.",
+        name: "Pack Sur Demande",
+        price: "Sur devis",
+        description: "Campagne multi-biens, voice-over, plans drone étendus",
       },
     ],
-    signatureMove: "Réunion éditoriale mensuelle + livraison des contenus prêts à programmer sous 48 h.",
-    metrics: [
-      { label: "Preuve", value: "+120%", note: "de vues sur 60 jours" },
-      { label: "Cadence", value: "8–16", note: "vidéos verticales / mois" },
-      { label: "Abonnement", value: "890 €", note: "HT / mois dès" },
-    ],
+    ctaLabel: "Mettre votre bien en valeur",
+    ctaSubcopy: "Créneau sous 72 h possible.",
   },
-
-  /* -------------------------------------------------- */
-  /* 5) MARIAGE                                         */
-  /* -------------------------------------------------- */
   {
     slug: "mariage",
-    title: "Film de mariage — vivant, élégant, fidèle à vous",
-    subtitle: "Un film que vous aurez plaisir à revoir et partager.",
-    hook: "Un film sincère, vivant, pour revivre l’émotion sans longueur.",
-    problem:
-      "Vous voulez revivre votre journée sans longueurs ni artifices, avec vos proches au centre.",
-    promise:
-      "Je capture chaque instant avec discrétion et livre un film sincère accompagné d’un teaser rapide et d’une galerie privée.",
-    stack: ["Sony A1", "Leica Q3", "Kodak Super 8", "Sora Colorist"],
-    deliverables: ["Film 5–8 minutes", "Bande-annonce 60 s", "Discours & moments bonus + galerie privée"],
-    timeline: "3–6 semaines",
-    startingPrice: "À partir de 1 900 € TTC",
-    proof: "97 % des couples recommandent",
-    ctaLabel: "Voir le service Mariage",
-    phases: [
+    name: "Film de mariage",
+    title: "Film de mariage — un souvenir vivant, sobre et élégant",
+    subtitle:
+      "Je raconte votre journée avec discrétion : de vrais moments, des émotions sincères, une esthétique lumineuse et naturelle.",
+    description: "Un film authentique, naturel et élégant de votre journée.",
+    timeline: "1er montage sous 3–4 semaines",
+    startingPrice: "À partir de 1 600 € TTC",
+    benefits: [
+      "Style documentaire ciné, couleurs douces",
+      "Prise de son des vœux & discours",
+      "Montage rythmé par votre énergie",
+    ],
+    formats: [
+      { title: "Formule Cœur", description: "Préparatifs → ouverture de bal, film 4–6 min" },
+      { title: "Formule Signature", description: "Préparatifs → 1 h du matin, film 6–8 min + teaser 60–90 s" },
+      { title: "Options", description: "Second shooter, drone, discours intégral, livraison express, clé USB souvenir" },
+    ],
+    workflow: {
+      preprod: [
+        "Appel découverte pour raconter votre histoire",
+        "Feuille de route avec moments clés, timings, playlists",
+      ],
+      production: [
+        "Présence discrète préparatifs → soirée, captation multi-cam des discours",
+        "Audio de secours et micros cravates pour vœux + cérémonies",
+      ],
+      postprod: [
+        "Montage cinématique 4–6 min, étalonnage doux",
+        "Sélection musique sous licence + teaser vertical",
+      ],
+      delivery: [
+        "Film 4K + 1080p, teaser vertical",
+        "Galerie privée protégée + clé USB optionnelle",
+      ],
+    },
+    process: [
+      { title: "Appel découverte", description: "On définit votre histoire et vos envies" },
+      { title: "Feuille de route", description: "Organisation des moments clés" },
+      { title: "Tournage discret", description: "Présence continue, captation son dédiée" },
+      { title: "Montage émotion", description: "Sélection musique sous licence, narration sincère" },
+      { title: "Livraison", description: "Film + teaser vertical, galerie privée" },
+    ],
+    deliverables: [
+      "Film en 4K + 1080p",
+      "Teaser vertical",
+      "Bande-son sous licence",
+      "Galerie privée en ligne",
+    ],
+    options: ["Second shooter", "Drone", "Discours intégral", "Livraison express", "Clé USB souvenir"],
+    pricing: [
       {
-        title: "Brief & objectifs",
-        description: "Rencontre vidéo, intentions artistiques, planning avec le wedding planner.",
-        aiUpgrade: "Moodboard émotionnel généré à partir de vos inspirations.",
+        name: "Pack Journée",
+        price: "1 600–2 000 € TTC",
+        description: "12 h de présence, film 4–6 min + teaser vertical",
       },
       {
-        title: "Scénario & planning",
-        description: "Storyline de la journée, repérages, coordination prestataires.",
-        aiUpgrade: "Assistant planning pour anticiper les moments clés et la lumière.",
+        name: "Pack Weekend",
+        price: "2 200–2 800 € TTC",
+        description: "2 jours (cérémonie civile + religieux), film 6–8 min + discours intégral",
       },
       {
-        title: "Tournage",
-        description: "Captation discrète, audio haute fidélité, séquences super 8 en option.",
-        aiUpgrade: "Focus tracking pour ne manquer aucun visage important.",
-      },
-      {
-        title: "Montage & révisions",
-        description: "Montage narratif, musique licenciée, 1 aller-retour inclus.",
-        aiUpgrade: "Sélection musicale assistée par IA validée avec vous.",
-      },
-      {
-        title: "Livraison",
-        description: "Bande-annonce J+7, film final 3–6 semaines, coffret souvenir.",
-        aiUpgrade: "Galerie privée sécurisée + backup 12 mois.",
+        name: "Pack Sur Demande",
+        price: "Sur devis",
+        description: "Destination wedding, second shooter, drone, livraison express",
       },
     ],
-    signatureMove: "Teaser livré sous 7 jours pour annoncer votre film complet.",
-    metrics: [
-      { label: "Preuve", value: "97%", note: "des couples recommandent" },
-      { label: "Délais", value: "3–6 sem.", note: "selon saison" },
-      { label: "Présence", value: "14 h", note: "de couverture continue" },
-    ],
+    ctaLabel: "Vérifier ma disponibilité",
+    ctaSubcopy: "Réponse sous 24 h, acompte pour bloquer la date.",
   },
-
-  /* -------------------------------------------------- */
-  /* 6) MOTION DESIGN / IA                              */
-  /* -------------------------------------------------- */
   {
-    slug: "motion-design-ia",
-    title: "Motion design / IA — rendez l’abstrait évident",
-    subtitle: "On comprend vite, on retient mieux, on agit plus.",
-    hook: "Expliquez l’invisible : process, produit tech, data — simplement.",
-    problem:
-      "Vos process tech ou data sont difficiles à expliquer sans support visuel pédagogique.",
-    promise:
-      "Je combine motion 2D/3D, avatars génératifs et sound design immersif pour vulgariser vos innovations et déclencher l’action.",
-    stack: ["After Effects 2025", "Blender Geo Nodes", "Runway Gen-3", "ElevenLabs Dubbing"],
-    deliverables: ["Vidéo 45–90 s animée", "Déclinaisons 30 s et 15 s", "Kit illustrations & loops UI"],
-    timeline: "2–4 semaines",
-    startingPrice: "À partir de 2 400 € HT",
-    proof: "+32 % de taux de complétion",
-    ctaLabel: "Voir le service Motion design/IA",
-    phases: [
+    slug: "reseaux-sociaux",
+    name: "Vidéos réseaux sociaux",
+    title: "Capsules social-first — verticales, ads et séries éditoriales",
+    subtitle:
+      "Du snack content aux campagnes ads, je produis des séries verticales pensées pour TikTok, Instagram, YouTube Shorts et LinkedIn avec un mix tournage + IA générative.",
+    description: "Capsules verticales, ads UGC, séries éditoriales.",
+    timeline: "Livraison 3 à 5 jours ouvrés après tournage",
+    startingPrice: "À partir de 650 € HT",
+    benefits: [
+      "Formats nativement pensés vertical/son-off",
+      "Calendrier éditorial & scripts optimisés conversion",
+      "Optimisation multi-plateformes + variations IA",
+    ],
+    formats: [
+      { title: "Capsules 15–30 s", description: "Pitch produit, tips, tutoriels punchy" },
+      { title: "Série éditoriale", description: "3 à 6 épisodes pour installer une rubrique" },
+      { title: "Ads UGC hybrides", description: "Tournage + IA pour déclinaisons ciblées" },
+      { title: "Live recap vertical", description: "Moments forts montés en 24 h" },
+    ],
+    workflow: {
+      preprod: [
+        "Sprint éditorial (message, hook, CTA, format)",
+        "Moodboard, scripts courts, templates brandés",
+      ],
+      production: [
+        "Tournage en rafale (studio ou in situ) + captation B-roll",
+        "Captation mobile/FPV si besoin pour un rendu organique",
+      ],
+      postprod: [
+        "Montage motion punchy, sous-titres dynamiques, versions son-off",
+        "Déclinaisons IA (variations visuelles, langues, accroches)",
+      ],
+      delivery: [
+        "Lots exportés par plateforme (9:16, 1:1, 4:5)",
+        "Planification recommandée + scripts de publication",
+      ],
+    },
+    process: [
+      { title: "Atelier éditorial", description: "Hooks, messages, calendrier" },
+      { title: "Pré-prod agile", description: "Scripts, moodboard, templates" },
+      { title: "Tournage batch", description: "1 à 2 journées, multi-sets" },
+      { title: "Montage & déclinaisons", description: "Motion dynamique, variations IA" },
+      { title: "Livraison & planif", description: "Exports optimisés + kit diffusion" },
+    ],
+    deliverables: [
+      "Capsules verticales 9:16 + versions carrées",
+      "Sous-titres dynamiques + fichiers .srt",
+      "Thumbs/midjourney prompts pour visuels de couverture",
+    ],
+    options: [
+      "Pack templates Canva/After Effects",
+      "Voix-off IA multilingue",
+      "Pilotage Ads + reporting",
+    ],
+    pricing: [
       {
-        title: "Brief & objectifs",
-        description: "Atelier storytelling produit, identification des messages clés et KPI.",
-        aiUpgrade: "Mindmap IA pour clarifier les parcours utilisateurs et objections.",
+        name: "Pack Journée",
+        price: "750–1 050 € HT",
+        description: "1 journée tournage batch, 4 capsules montées + déclinaison IA",
       },
       {
-        title: "Scénario & planning",
-        description: "Script, storyboard illustré, moodboard design et charte motion.",
-        aiUpgrade: "Animatics génératifs + voix témoin pour valider rythme.",
+        name: "Pack Weekend",
+        price: "1 400–1 900 € HT",
+        description: "2 jours (studio + terrain), 8 capsules + 2 ads UGC",
       },
       {
-        title: "Production",
-        description: "Animation 2D/3D, simulations data, intégration UI et avatars.",
-        aiUpgrade: "Textures génératives et avatars IA pilotés sur mesure.",
-      },
-      {
-        title: "Montage & révisions",
-        description: "Sound design, mixage multilingue, itérations ciblées.",
-        aiUpgrade: "Traductions et doublages IA validés par relecture humaine.",
-      },
-      {
-        title: "Activation",
-        description: "Exports webinaire, landing page, réseaux sociaux + toolkit brand.",
-        aiUpgrade: "Check-list accessibilité + QA automatique des contrastes.",
+        name: "Pack Sur Demande",
+        price: "Sur devis",
+        description: "Calendrier mensuel 12+ vidéos, automatisations IA & reporting",
       },
     ],
-    signatureMove: "Version multilingue (FR/EN/ES) incluse grâce au pipeline de doublage IA.",
-    metrics: [
-      { label: "Preuve", value: "+32%", note: "de taux de complétion" },
-      { label: "Délais", value: "2–4 sem.", note: "selon complexité" },
-      { label: "Formats", value: "3", note: "durées livrées (90/30/15 s)" },
+    ctaLabel: "Doper vos réseaux",
+    ctaSubcopy: "On cale les hooks et la diffusion en moins de 48 h.",
+  },
+  {
+    slug: "motion-ia",
+    name: "Motion Design / IA",
+    title: "Motion design & IA — expériences hybrides, volumétriques et génératives",
+    subtitle:
+      "Associez motion design premium, 3D légère et IA générative (Runway, Sora, ElevenLabs) pour produire des contenus futuristes, pédagogiques ou immersifs.",
+    description: "Motion design, IA générative, expériences volumétriques.",
+    timeline: "Planning 4 à 6 semaines selon complexité",
+    startingPrice: "À partir de 1 800 € HT",
+    benefits: [
+      "Narration pédagogique + direction artistique futuriste",
+      "Assets IA générés sous supervision créative",
+      "Livrables multi-formats (16:9, 1:1, 9:16, volumétrique)",
     ],
+    formats: [
+      { title: "Reveal produit", description: "Teaser motion + effets génératifs" },
+      { title: "Explainer animé", description: "Storyboard, illustrations, voice-over IA" },
+      { title: "Boucles volumétriques", description: "Objets 3D / NeRF animés pour stands & AR" },
+      { title: "Pack lancement", description: "Manifesto + déclinaisons social + gifs" },
+    ],
+    workflow: {
+      preprod: [
+        "Discovery workshop, moodboard, script + storyboard",
+        "Design system motion + prompts IA validés",
+      ],
+      production: [
+        "Illustrations, modélisation légère, tournage éléments si besoin",
+        "Générations IA (vidéo, voix, textures) sous contrôle direction artistique",
+      ],
+      postprod: [
+        "Animation, compositing, sound design immersif",
+        "Versions adaptées par canal (web, réseaux, events)",
+      ],
+      delivery: [
+        "Exports 4K, 1080p, 9:16, gifs animés",
+        "Sources projet + guide d’utilisation",
+      ],
+    },
+    process: [
+      { title: "Discovery & script", description: "Objectifs, message clé, moodboard" },
+      { title: "Storyboard & design", description: "Styleframes, charte motion, prompts IA" },
+      { title: "Production hybride", description: "Animation, tournage éléments, IA supervisée" },
+      { title: "Post-production", description: "Compositing, sound design, QA" },
+      { title: "Livraison & déclinaisons", description: "Exports multi-formats + kit templates" },
+    ],
+    deliverables: [
+      "Vidéo principale (4K/1080p)",
+      "Déclinaisons verticales + boucles sociales",
+      "Pack assets (illustrations, sous-titres, templates)",
+    ],
+    options: [
+      "Voix-off native + IA",
+      "Pack AR/WebGL",
+      "Localisations multilingues",
+    ],
+    pricing: [
+      {
+        name: "Pack Journée",
+        price: "1 800–2 400 € HT",
+        description: "Sprint motion 16:9 + déclinaison verticale (1 semaine)",
+      },
+      {
+        name: "Pack Weekend",
+        price: "3 200–4 200 € HT",
+        description: "2 semaines : reveal produit + kit social + sound design",
+      },
+      {
+        name: "Pack Sur Demande",
+        price: "Sur devis",
+        description: "Campagne complète 4-6 semaines, volumétrique & localisations",
+      },
+    ],
+    ctaLabel: "Imaginer un format hybride",
+    ctaSubcopy: "Workshop créatif offert pour cadrer le concept.",
   },
 ];
 
+export const methodSteps = [
+  { title: "Brief clair", description: "Objectifs, audience, style, canaux" },
+  { title: "Préparation simple", description: "Script/plan de tournage, repérages, feuille de route" },
+  { title: "Tournage léger", description: "Lumière & son pro, direction naturelle" },
+  { title: "Montage soigné", description: "Rythme, musique/licences, étalonnage" },
+  { title: "Livraison multi-formats", description: "Formats web, réseaux, sous-titres, corrections incluses" },
+];
+
+export const testimonials = [
+  {
+    quote: "Une vidéo qui a doublé notre taux de conversion sur la page d’accueil.",
+    author: "Client Entreprise",
+  },
+  {
+    quote: "Aftermovie livré en 72 h, parfait pour notre recap LinkedIn.",
+    author: "Organisateur de salon",
+  },
+];

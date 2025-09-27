@@ -53,11 +53,11 @@ export function SiteFooter() {
 
         <div className="space-y-3 text-sm text-white/70">
           <h3 className="text-xs font-semibold uppercase tracking-[0.4em] text-white/50">Réalisations</h3>
-          <Link to="/realisations" className="block transition hover:text-white">
+          <Link to="/portfolio" className="block transition hover:text-white">
             Index réalisations
           </Link>
           {CATEGORIES.map((category) => (
-            <Link key={category.slug} to={`/realisations/${category.slug}`} className="block transition hover:text-white">
+            <Link key={category.slug} to={`/portfolio/${category.slug}`} className="block transition hover:text-white">
               {category.label}
             </Link>
           ))}
