@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="solstice-ring" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0" stop-color="#38bdf8" />
+      <stop offset="0.45" stop-color="#6366f1" />
+      <stop offset="1" stop-color="#a855f7" />
+    </linearGradient>
+    <radialGradient id="solstice-core" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#1e293b" stop-opacity="0.15" />
+      <stop offset="0.7" stop-color="#020617" stop-opacity="0" />
+      <stop offset="1" stop-color="#020617" stop-opacity="0.25" />
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.45  0 0 0 0 0.85  0 0 0 0.6 0" />
+    </filter>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="60" cy="60" r="54" fill="url(#solstice-core)" opacity="0.85" />
+    <g filter="url(#glow)">
+      <circle
+        cx="60"
+        cy="60"
+        r="46"
+        stroke="url(#solstice-ring)"
+        stroke-width="11"
+        stroke-dasharray="30 14"
+        stroke-dashoffset="-6"
+        opacity="0.95"
+        transform="rotate(-8 60 60)"
+      />
+      <circle
+        cx="60"
+        cy="60"
+        r="38"
+        stroke="url(#solstice-ring)"
+        stroke-width="7"
+        stroke-dasharray="18 20"
+        stroke-dashoffset="4"
+        opacity="0.65"
+        transform="rotate(18 60 60)"
+      />
+    </g>
+  </g>
+</svg>

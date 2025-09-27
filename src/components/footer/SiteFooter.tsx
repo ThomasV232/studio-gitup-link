@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { CTA, CATEGORIES, MAIN_NAV } from "@/components/header/nav.config";
+import { BrandMark } from "@/components/branding/BrandMark";
 
 const FOOTER_CONTACT = {
   email: "hello@studio-vbg.com",
@@ -21,6 +22,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-white/10 bg-slate-950/95 text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-4">
         <div className="space-y-4 text-sm text-white/80">
+          <BrandMark dual className="max-w-[15rem]" orientation="horizontal" />
           <h3 className="text-sm font-semibold uppercase tracking-[0.35em] text-white/60">Studio VBG</h3>
           <a
             href={`mailto:${FOOTER_CONTACT.email}`}

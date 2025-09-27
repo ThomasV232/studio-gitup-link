@@ -1,8 +1,8 @@
 const excerptMap = {
-  entreprise: "Films de marque, interviews et témoignages cadrés conversion",
-  evenementiel: "Aftermovies dynamiques, teasers J-3 et captations conférences",
-  immobilier: "Visites 4K lumineuses, plans drone & bandeaux infos",
-  mariage: "Récits ciné lumineux + teaser vertical livré sous 72 h",
+  entreprise: "Film manifeste + interviews & preuves sociales pour vos RDV",
+  evenementiel: "Aftermovie J+3 + capsules verticales pour sponsors & réseaux",
+  immobilier: "Visite 4K HDR, plans drone + version verticale pour annonces",
+  mariage: "Film cinématique + teaser émotions fortes sous 72 h",
   "reseaux-sociaux": "Capsules verticales, formats ads et séries éditoriales",
   "motion-ia": "Expériences hybrides : motion design, IA générative, volumétrique",
 } as const;
@@ -22,10 +22,10 @@ export type CategorySlug = Category["slug"];
 export const MAIN_NAV = [
   {
     label: "Réalisations",
-    href: "/portfolio",
+    href: "/realisations",
     children: CATEGORIES.map((category) => ({
       label: category.label,
-      href: `/portfolio/${category.slug}`,
+      href: `/realisations/${category.slug}`,
     })),
   },
   {
@@ -43,4 +43,5 @@ export const MAIN_NAV = [
 ] as const;
 
 export const CTA = { label: "Connexion", href: "/connexion" } as const;
+
 
