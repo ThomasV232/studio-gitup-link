@@ -60,6 +60,46 @@ const subnavHighlightTransition = {
   damping: 34,
 };
 
+const dropdownTransition = {
+  duration: 0.48,
+  ease: [0.16, 1, 0.3, 1],
+};
+
+const dropdownVariants = {
+  closed: {
+    opacity: 0,
+    y: 28,
+    scale: 0.92,
+    rotateX: -14,
+    filter: "blur(12px)",
+  },
+  open: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    rotateX: 0,
+    filter: "blur(0px)",
+  },
+};
+
+const dropdownGlowVariants = {
+  closed: { opacity: 0, scale: 0.9, rotate: -4 },
+  open: { opacity: 0.9, scale: 1.05, rotate: 0 },
+};
+
+const dropdownSheenVariants = {
+  closed: { opacity: 0, x: "-35%" },
+  open: {
+    opacity: 0.75,
+    x: "105%",
+    transition: {
+      duration: 0.9,
+      ease: [0.22, 1, 0.36, 1],
+      delay: 0.06,
+    },
+  },
+};
+
 export function HeaderRoot() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -498,26 +538,50 @@ export function HeaderRoot() {
                           <span className="relative z-10">{item.label}</span>
                         </span>
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="mt-3 overflow-visible">
+                      <NavigationMenuContent
+                        asChild
+                        key={`dropdown-${item.label}`}
+                        className="mt-3 overflow-visible"
+                      >
                         <motion.div
-                          className="relative w-80 overflow-hidden rounded-[1.85rem] border border-white/15 bg-slate-950/90 p-4 text-white shadow-[0_28px_70px_rgba(15,23,42,0.55)] backdrop-blur-2xl"
-                          initial={{ opacity: 0, y: 14, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 12, scale: 0.97 }}
-                          transition={{
-                            duration: 0.38,
-                            ease: [0.16, 1, 0.3, 1],
+                          className="relative w-80 overflow-hidden rounded-[1.85rem] border border-white/15 bg-slate-950/90 p-4 text-white shadow-[0_36px_90px_rgba(15,23,42,0.65)] backdrop-blur-2xl will-change-transform"
+                          variants={dropdownVariants}
+                          initial="closed"
+                          animate="open"
+                          exit="closed"
+                          transition={dropdownTransition}
+                          style={{
+                            transformOrigin: "top center",
+                            transformPerspective: "1600px",
                           }}
                         >
                           <motion.span
                             aria-hidden
-                            className="pointer-events-none absolute -inset-px rounded-[2rem] bg-gradient-to-br from-cyan-400/25 via-fuchsia-400/10 to-indigo-500/15 opacity-50 blur-2xl"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
+                            className="pointer-events-none absolute -inset-[1.2px] rounded-[2rem] bg-gradient-to-br from-cyan-400/20 via-fuchsia-400/10 to-indigo-500/20 opacity-60 blur-2xl"
+                            variants={dropdownGlowVariants}
+                            initial="closed"
+                            animate="open"
+                            exit="closed"
                             transition={{
                               duration: 0.6,
-                              ease: [0.22, 1, 0.36, 1],
+                              ease: [0.18, 1, 0.32, 1],
                             }}
+                          />
+                          <motion.span
+                            aria-hidden
+                            className="pointer-events-none absolute inset-y-6 -left-1 h-[70%] w-1/3 rounded-full bg-gradient-to-r from-white/25 via-white/5 to-transparent blur-xl"
+                            variants={dropdownSheenVariants}
+                            initial="closed"
+                            animate="open"
+                            exit="closed"
+                          />
+                          <motion.div
+                            aria-hidden
+                            className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                            initial={{ scaleX: 0, opacity: 0 }}
+                            animate={{ scaleX: 1, opacity: 0.8 }}
+                            exit={{ scaleX: 0.6, opacity: 0 }}
+                            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
                           />
                           <div className="relative z-10 space-y-3">
                             <NavigationMenuLink asChild>
@@ -578,20 +642,47 @@ export function HeaderRoot() {
                         <span className="relative z-10">{item.label}</span>
                       </span>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="mt-4 overflow-visible">
+                    <NavigationMenuContent
+                      asChild
+                      key={`mega-${item.label}`}
+                      className="mt-4 overflow-visible"
+                    >
                       <motion.div
-                        className="relative w-[720px] overflow-hidden rounded-[2.25rem] border border-white/15 bg-slate-950/95 p-6 text-white shadow-[0_32px_80px_rgba(15,23,42,0.6)] backdrop-blur-2xl"
-                        initial={{ opacity: 0, y: 18, scale: 0.94 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 16, scale: 0.97 }}
-                        transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative w-[720px] overflow-hidden rounded-[2.35rem] border border-white/15 bg-slate-950/95 p-6 text-white shadow-[0_42px_110px_rgba(15,23,42,0.6)] backdrop-blur-2xl will-change-transform"
+                        variants={dropdownVariants}
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                        transition={dropdownTransition}
+                        style={{
+                          transformOrigin: "top center",
+                          transformPerspective: "1800px",
+                        }}
                       >
                         <motion.span
                           aria-hidden
-                          className="pointer-events-none absolute -inset-px rounded-[2.35rem] bg-[conic-gradient(at_top_left,_theme(colors.cyan.400/18),_transparent_35%,_theme(colors.fuchsia.400/14),_transparent_70%,_theme(colors.sky.400/18))] opacity-60 blur-3xl"
-                          initial={{ opacity: 0, rotate: -8 }}
-                          animate={{ opacity: 1, rotate: 0 }}
-                          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                          className="pointer-events-none absolute -inset-[1px] rounded-[2.5rem] bg-[conic-gradient(at_top_left,_theme(colors.cyan.400/22),_transparent_35%,_theme(colors.fuchsia.400/14),_transparent_70%,_theme(colors.sky.400/24))] opacity-70 blur-3xl"
+                          variants={dropdownGlowVariants}
+                          initial="closed"
+                          animate="open"
+                          exit="closed"
+                          transition={{ duration: 0.7, ease: [0.18, 1, 0.32, 1] }}
+                        />
+                        <motion.span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-y-8 -left-2 h-[72%] w-1/3 rounded-full bg-gradient-to-r from-white/30 via-white/10 to-transparent blur-2xl"
+                          variants={dropdownSheenVariants}
+                          initial="closed"
+                          animate="open"
+                          exit="closed"
+                        />
+                        <motion.div
+                          aria-hidden
+                          className="pointer-events-none absolute inset-x-8 bottom-3 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                          initial={{ scaleX: 0, opacity: 0 }}
+                          animate={{ scaleX: 1, opacity: 0.9 }}
+                          exit={{ scaleX: 0.6, opacity: 0 }}
+                          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                         />
                         <div className="relative z-10 space-y-4">
                           <NavigationMenuLink asChild>

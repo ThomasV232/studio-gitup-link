@@ -140,10 +140,10 @@ const About = () => {
         <section className="space-y-6">
           <h2 className="text-3xl font-extrabold">Services phares</h2>
           <div className="grid gap-6 lg:grid-cols-2">
-            {servicesData.slice(0, 4).map((service) => (
+            {servicesData.map((service) => (
               <article key={service.slug} className="rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6">
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/60">{service.slug.replace(/-/g, " ")}</p>
-                <h3 className="mt-3 text-2xl font-semibold text-white">{service.title}</h3>
+                <h3 className="mt-3 text-2xl font-semibold text-white">{service.name}</h3>
                 <p className="mt-3 text-sm text-white/70">{service.subtitle}</p>
                 <Link to={`/services/${service.slug}`} className="mt-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-sky-200">
                   Voir le détail

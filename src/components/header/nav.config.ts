@@ -2,18 +2,14 @@ const excerptMap = {
   entreprise: "Film manifeste + preuves sociales prêtes pour vos RDV commerciaux",
   evenementiel: "Aftermovie J+3 et capsules verticales pour sponsors & réseaux",
   immobilier: "Visite 4K HDR + version verticale optimisée annonces premium",
-  "reseaux-sociaux": "Séries mensuelles 9:16 montées avec scripts et sous-titres",
   mariage: "Film cinématique + bande-annonce émotions fortes 72 h",
-  "motion-design-ia": "Motion narratif mêlant design & IA générative pour expliquer",
 } as const;
 
 export const CATEGORIES = [
   { label: "Entreprise", slug: "entreprise" },
   { label: "Événementiel", slug: "evenementiel" },
   { label: "Immobilier", slug: "immobilier" },
-  { label: "Réseaux sociaux", slug: "reseaux-sociaux" },
   { label: "Mariage", slug: "mariage" },
-  { label: "Motion design / IA", slug: "motion-design-ia" },
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
