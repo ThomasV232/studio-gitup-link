@@ -115,6 +115,11 @@ type VisualPalette = {
   border: string;
 };
 
+type BrandAssets = {
+  nebula: string;
+  solstice: string;
+};
+
 const SERVICE_CATEGORIES = [
   "Entreprise",
   "Événementiel",
@@ -133,9 +138,12 @@ type StudioContextValue = {
   contactRequests: ContactRequest[];
   chats: ChatThread[];
   serviceCategories: typeof SERVICE_CATEGORIES;
+  brandAssets: BrandAssets;
   visualMode: VisualMode;
   palette: VisualPalette;
   cycleVisualMode: () => void;
+  updateBrandAsset: (mode: keyof BrandAssets, asset: string) => void;
+  resetBrandAssets: () => void;
   register: (payload: RegistrationPayload) => Promise<{ success: boolean; message?: string }>;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   requestPasswordReset: (email: string) => Promise<{ success: boolean; message?: string }>;
@@ -174,6 +182,11 @@ const visualPalettes: Record<VisualMode, VisualPalette> = {
   },
 };
 
+const defaultBrandAssets: BrandAssets = {
+  nebula: "/branding/logo-nebula.svg",
+  solstice: "/branding/logo-solstice.svg",
+};
+
 const isBrowser = typeof window !== "undefined";
 
 const storageKeys = {
@@ -185,6 +198,7 @@ const storageKeys = {
   contacts: "studio.vbg.contacts",
   chats: "studio.vbg.chats",
   visualMode: "studio.vbg.visual-mode",
+  brand: "studio.vbg.brand-assets",
 } as const;
 
 const readStorage = <T,>(key: string, fallback: T): T => {
@@ -394,6 +408,7 @@ const loadInitialQuotes = () => readStorage<QuoteRequest[]>(storageKeys.quotes, 
 const loadInitialContacts = () => readStorage<ContactRequest[]>(storageKeys.contacts, []);
 const loadInitialChats = () => readStorage<ChatThread[]>(storageKeys.chats, initialChats);
 const loadInitialVisualMode = () => readStorage<VisualMode>(storageKeys.visualMode, "nebula");
+const loadInitialBrandAssets = () => readStorage<BrandAssets>(storageKeys.brand, defaultBrandAssets);
 const loadInitialUser = () => {
   const storedUser = readStorage<(ClientAccount & { password?: string }) | null>(storageKeys.user, null);
   if (!storedUser) return null;
@@ -465,6 +480,7 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>(loadInitialContacts);
   const [chats, setChats] = useState<ChatThread[]>(loadInitialChats);
   const [visualMode, setVisualMode] = useState<VisualMode>(loadInitialVisualMode);
+  const [brandAssets, setBrandAssets] = useState<BrandAssets>(loadInitialBrandAssets);
 
   const syncClientFromSupabase = useCallback(
     (supabaseUser: User): ClientAccount => {
@@ -629,8 +645,24 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     writeStorage(storageKeys.chats, chats);
   }, [chats]);
 
+  useEffect(() => {
+    writeStorage(storageKeys.brand, brandAssets);
+  }, [brandAssets]);
+
   const cycleVisualMode = () => {
     setVisualMode((current) => (current === "nebula" ? "solstice" : "nebula"));
+  };
+
+  const updateBrandAsset: StudioContextValue["updateBrandAsset"] = (mode, asset) => {
+    const nextAsset = asset || defaultBrandAssets[mode];
+    setBrandAssets((current) => {
+      const next = { ...current, [mode]: nextAsset };
+      return next;
+    });
+  };
+
+  const resetBrandAssets: StudioContextValue["resetBrandAssets"] = () => {
+    setBrandAssets({ ...defaultBrandAssets });
   };
 
   const register: StudioContextValue["register"] = async (payload) => {
@@ -947,9 +979,12 @@ const StudioProvider = ({ children }: { children: ReactNode }) => {
     contactRequests,
     chats,
     serviceCategories: SERVICE_CATEGORIES,
+    brandAssets,
     visualMode,
     palette: visualPalettes[visualMode],
     cycleVisualMode,
+    updateBrandAsset,
+    resetBrandAssets,
     register,
     login,
     requestPasswordReset,

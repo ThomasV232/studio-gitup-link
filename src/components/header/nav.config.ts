@@ -1,10 +1,10 @@
 const excerptMap = {
-  entreprise: "Films clairs pour convaincre (60–90s + déclinaisons)",
-  evenementiel: "Aftermovie + capsules verticales",
-  immobilier: "Visites vidéo + version verticale",
-  "reseaux-sociaux": "Lots mensuels 8–16 vidéos",
-  mariage: "Film 5–8min + bande-annonce",
-  "motion-design-ia": "Explications animées 45–90s",
+  entreprise: "Film manifeste + preuves sociales prêtes pour vos RDV commerciaux",
+  evenementiel: "Aftermovie J+3 et capsules verticales pour sponsors & réseaux",
+  immobilier: "Visite 4K HDR + version verticale optimisée annonces premium",
+  "reseaux-sociaux": "Séries mensuelles 9:16 montées avec scripts et sous-titres",
+  mariage: "Film cinématique + bande-annonce émotions fortes 72 h",
+  "motion-design-ia": "Motion narratif mêlant design & IA générative pour expliquer",
 } as const;
 
 export const CATEGORIES = [
@@ -30,7 +30,7 @@ export const MAIN_NAV = [
     })),
   },
   {
-    label: "Services",
+    label: "Services & Tarifs",
     href: "/services",
     mega: CATEGORIES.map((category) => ({
       label: category.label,
@@ -39,8 +39,9 @@ export const MAIN_NAV = [
     })),
   },
   { label: "À propos", href: "/a-propos" },
-  { label: "Blog", href: "/blog" },
+  { label: "Conseils", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
-export const CTA = { label: "Demander un devis", href: "/contact" } as const;
+export const CTA = { label: "Connexion", href: "/connexion" } as const;
 

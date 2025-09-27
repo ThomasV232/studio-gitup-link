@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Play } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { BrandMark } from "@/components/branding/BrandMark";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import PageShell from "@/components/layout/PageShell";
+import { SectionHeading } from "@/components/layout/SectionHeading";
 import { useStudio } from "@/context/StudioContext";
+import { servicesData } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { CATEGORIES, type CategorySlug } from "@/components/header/nav.config";
 
@@ -62,6 +66,11 @@ const Portfolio = () => {
   const labelToSlug = useMemo(() => {
     const map = new Map<string, string>();
     CATEGORIES.forEach((category) => map.set(category.label, category.slug));
+    return map;
+  }, []);
+  const slugToService = useMemo(() => {
+    const map = new Map<string, (typeof servicesData)[number]>();
+    servicesData.forEach((service) => map.set(service.slug, service));
     return map;
   }, []);
 
@@ -124,25 +133,30 @@ const Portfolio = () => {
 
     return portfolioItems.filter((item) => item.category === activeCategory);
   }, [activeCategory, portfolioItems]);
+  const activeService = useMemo(() => {
+    const slug = labelToSlug.get(activeCategory);
+    if (!slug) return null;
+    return slugToService.get(slug) ?? null;
+  }, [activeCategory, labelToSlug, slugToService]);
+
+  const heroTitle =
+    activeCategory === ALL_CATEGORY
+      ? "Showreel & études de cas orchestrées"
+      : `Réalisations ${activeCategory} — pipeline complet`;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
-      />
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-20 pt-16 sm:px-10 lg:pb-24">
-        <header className="space-y-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            {activeCategory === ALL_CATEGORY
-              ? "Films génératifs orchestrés pour vos lancements stratégiques"
-              : `Études de cas ${activeCategory}`}
-          </h1>
-          <p className="max-w-3xl text-base text-slate-300">
-            Chaque projet conjugue direction artistique, IA générative et diffusion multicanale. Explorez nos études
-            de cas pour visualiser ce que notre studio peut activer pour votre marque.
-          </p>
+    <PageShell
+      gradientClassName="bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
+      contentClassName="pb-24"
+    >
+      <div className="page-container">
+        <header className="space-y-8">
+          <BrandMark dual className="max-w-xs" />
+          <SectionHeading
+            eyebrow="Portfolio"
+            title={heroTitle}
+            description="Films corporate, événements, immobilier, réseaux sociaux, mariage ou motion design : chaque projet est livré avec un plan de diffusion 2025, un pilotage IA supervisé et des indicateurs de performance."
+          />
         </header>
 
         <section className="space-y-8">
@@ -330,6 +344,25 @@ const Portfolio = () => {
                               </div>
                             </div>
                           )}
+                          <div className="portfolio-dialog-section portfolio-dialog-section--wide">
+                            <span className="portfolio-dialog-section-label">Passer à l'action</span>
+                            <div className="portfolio-dialog-chipRow">
+                              <Link
+                                to={`/contact?projet=${encodeURIComponent(item.title)}`}
+                                className="portfolio-dialog-chip"
+                                data-variant="primary"
+                              >
+                                Demander un brief similaire
+                              </Link>
+                              <Link
+                                to={`/services/${labelToSlug.get(item.category) ?? ""}`}
+                                className="portfolio-dialog-chip"
+                                data-variant="soft"
+                              >
+                                Voir le service associé
+                              </Link>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -345,8 +378,52 @@ const Portfolio = () => {
             )}
           </div>
         </section>
+
+        <section className="surface-panel p-8 sm:p-10">
+          <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="space-y-4">
+              <SectionHeading
+                eyebrow="Processus / Méthode"
+                title={activeService ? `Workflow ${activeService.title}` : "Une méthode fluide pour chaque catégorie"}
+                description="Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations."
+              />
+            </div>
+            <div className="space-y-4">
+              {(activeService?.phases ?? servicesData[0].phases).slice(0, 4).map((phase, index) => (
+                <div key={phase.title} className="surface-card flex flex-col gap-2 p-5 text-sm text-white/80">
+                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/60">Étape 0{index + 1}</span>
+                  <p className="text-sm text-white">{phase.title}</p>
+                  <p>{phase.description}</p>
+                  <p className="text-xs text-sky-200/85">Upgrade IA : {phase.aiUpgrade}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="surface-panel space-y-6 p-8 sm:p-10">
+          <SectionHeading
+            eyebrow="Contact & Devis"
+            title="Prêts pour un projet similaire ?"
+            description="Racontez-nous vos objectifs, les canaux de diffusion visés et votre deadline. Nous revenons sous 24 h avec un budget transparent, un plan de tournage et des idées de déclinaisons verticales."
+          />
+          <div className="flex flex-wrap gap-4">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
+            >
+              Demander un devis
+            </Link>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-transparent px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white/70 transition hover:text-white"
+            >
+              Explorer les services
+            </Link>
+          </div>
+        </section>
       </div>
-    </div>
+    </PageShell>
   );
 };
 

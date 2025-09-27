@@ -21,6 +21,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Blog = lazy(() => import("./pages/Blog"));
 const Legal = lazy(() => import("./pages/Legal"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -67,6 +68,9 @@ const App = () => (
               {/* À propos & Contact */}
               <Route path="/a-propos" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+
+              {/* Blog */}
+              <Route path="/blog" element={<Blog />} />
 
               {/* Auth + alias */}
               <Route path="/auth" element={<Auth />} />
