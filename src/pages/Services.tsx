@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Play } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
@@ -131,7 +130,9 @@ const Portfolio = () => {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
       />
+
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 sm:px-10">
+        {/* Header */}
         <header className="space-y-6">
           <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -145,6 +146,7 @@ const Portfolio = () => {
           </p>
         </header>
 
+        {/* Filters */}
         <section className="space-y-8">
           <div className="portfolio-filter-scroll-wrapper overflow-x-auto">
             <div className="flex w-max gap-3 py-1">
@@ -167,6 +169,7 @@ const Portfolio = () => {
             </div>
           </div>
 
+          {/* Gallery */}
           <div className="portfolio-gallery grid gap-10 lg:gap-14">
             {filteredItems.map((item) => {
               const embedUrl = getEmbedUrl(item.videoUrl);
@@ -367,6 +370,7 @@ const Portfolio = () => {
           </div>
         </section>
 
+        {/* Méthode / Process */}
         <section className="rounded-[3rem] border border-white/10 bg-white/5 p-10 backdrop-blur-2xl">
           <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-4">
@@ -397,6 +401,7 @@ const Portfolio = () => {
           </div>
         </section>
 
+        {/* CTA */}
         <section className="rounded-[3rem] border border-white/10 bg-gradient-to-br from-sky-500/20 via-indigo-500/20 to-fuchsia-500/20 p-10 backdrop-blur-2xl">
           <div className="space-y-4">
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Contact & Devis</p>
