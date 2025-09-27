@@ -1,46 +1,115 @@
-import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, ChevronDown, Menu, MoonStar, Search, SunMedium } from "lucide-react";
+import {
+  ArrowUpRight,
+  ChevronDown,
+  Menu,
+  MoonStar,
+  Search,
+  SunMedium,
+} from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useStudio } from "@/context/StudioContext";
-import { CTA, CATEGORIES, MAIN_NAV } from "./nav.config";
-import { AnimatePresence, motion, useMotionTemplate, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
-const progressStyles = "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
+import { CTA, CATEGORIES, MAIN_NAV, type CategorySlug } from "./nav.config";
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+
+const progressStyles =
+  "pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden";
+
 const progressTransition = {
   type: "spring",
   stiffness: 210,
   damping: 32,
-  mass: 0.8
-};
+  mass: 0.8,
+} as const;
+
 const instantTransition = { duration: 0.001 } as const;
+
 const brandPalettes = {
   light: "Palette Solstice",
-  dark: "Palette Nebula"
+  dark: "Palette Nebula",
 } as const;
+
 const navUnderlineTransition = {
   type: "spring",
   stiffness: 360,
-  damping: 32
-};
+  damping: 32,
+} as const;
+
 const subnavHighlightTransition = {
   type: "spring",
   stiffness: 320,
-  damping: 34
-};
-const floatingPanelClass = "relative z-20 overflow-visible rounded-[2.5rem] border border-white/12 bg-slate-950/88 text-white shadow-[0_26px_90px_rgba(12,18,37,0.72)] backdrop-blur-[30px] before:pointer-events-none before:absolute before:inset-[1.5px] before:-z-10 before:rounded-[2.4rem] before:bg-slate-950/75 before:shadow-[0_0_60px_rgba(59,130,246,0.2)] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:-z-20 after:rounded-[2.9rem] after:bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_58%)] after:opacity-80 after:blur-[60px] after:content-['']";
-const floatingPanelGlow = "pointer-events-none absolute -inset-[140px] rounded-[3.8rem] bg-[conic-gradient(at_top_left,_theme(colors.sky.400/20),_transparent_40%,_theme(colors.fuchsia.400/15),_transparent_75%,_theme(colors.violet.500/22))] opacity-75 blur-[82px] mix-blend-screen";
-const frostedCapsClass = "rounded-full border border-white/15 bg-white/7 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30";
-const frostedTileClass = "rounded-[1.9rem] border border-white/12 bg-white/6 px-4 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-white/80 transition duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white";
+  damping: 34,
+} as const;
+
+const floatingPanelClass =
+  "relative z-20 overflow-visible rounded-[2.5rem] border border-white/12 bg-slate-950/88 text-white shadow-[0_26px_90px_rgba(12,18,37,0.72)] backdrop-blur-[30px] before:pointer-events-none before:absolute before:inset-[1.5px] before:-z-10 before:rounded-[2.4rem] before:bg-slate-950/75 before:shadow-[0_0_60px_rgba(59,130,246,0.2)] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:-z-20 after:rounded-[2.9rem] after:bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_58%)] after:opacity-80 after:blur-[60px] after:content-['']";
+
+const floatingPanelGlow =
+  "pointer-events-none absolute -inset-[140px] rounded-[3.8rem] bg-[conic-gradient(at_top_left,_theme(colors.sky.400/20),_transparent_40%,_theme(colors.fuchsia.400/15),_transparent_75%,_theme(colors.violet.500/22))] opacity-75 blur-[82px] mix-blend-screen";
+
+const frostedCapsClass =
+  "rounded-full border border-white/15 bg-white/7 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/80 transition duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30";
+
+const frostedTileClass =
+  "rounded-[1.9rem] border border-white/12 bg-white/6 px-4 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-white/80 transition duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white";
+
 const navButtonBaseClass = cn(
   "group/nav nav-item relative inline-flex !h-auto !w-auto flex-col items-center gap-1 !rounded-full !px-2 !py-1.5 text-white/65 transition-colors duration-300",
   "hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 group-data-[state=open]/nav:text-white"
 );
-const navButtonActiveClass = "nav-item-active text-white drop-shadow-[0_0_18px_rgba(59,130,246,0.35)]";
+const navButtonActiveClass =
+  "nav-item-active text-white drop-shadow-[0_0_18px_rgba(59,130,246,0.35)]";
 
 type HeaderNavLabelProps = {
   label: string;
@@ -50,7 +119,13 @@ type HeaderNavLabelProps = {
   reduceMotion: boolean;
 };
 
-function HeaderNavLabel({ label, active = false, open = false, showChevron = false, reduceMotion }: HeaderNavLabelProps) {
+function HeaderNavLabel({
+  label,
+  active = false,
+  open = false,
+  showChevron = false,
+  reduceMotion,
+}: HeaderNavLabelProps) {
   const state = active || open ? "active" : "idle";
   const highlightTransition = reduceMotion
     ? instantTransition
@@ -87,7 +162,11 @@ function HeaderNavLabel({ label, active = false, open = false, showChevron = fal
             aria-hidden
             className="relative z-10 mt-[1px] flex items-center justify-center text-white/60"
             animate={{ rotate: open ? 180 : 0, opacity: open ? 1 : 0.75 }}
-            transition={reduceMotion ? instantTransition : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={
+              reduceMotion
+                ? instantTransition
+                : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
+            }
           >
             <ChevronDown className="h-3 w-3" />
           </motion.span>
@@ -107,51 +186,65 @@ function HeaderNavLabel({ label, active = false, open = false, showChevron = fal
     </motion.span>
   );
 }
+
 export function HeaderRoot() {
   const location = useLocation();
   const navigate = useNavigate();
   const { brandAssets } = useStudio();
+
   const headerRef = useRef<HTMLElement | null>(null);
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [openItem, setOpenItem] = useState<string | null>(null);
+
   const [language, setLanguage] = useState<"FR" | "EN">(() => {
     if (typeof window === "undefined") return "FR";
     const stored = window.localStorage.getItem("studio-lang");
     return stored === "EN" ? "EN" : "FR";
   });
+
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window === "undefined") return "dark";
     const stored = window.localStorage.getItem("studio-theme");
     if (stored === "light" || stored === "dark") return stored;
-    const prefersDark = typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     return prefersDark ? "dark" : "light";
   });
+
   const [scrollProgress, setScrollProgress] = useState(0);
   const [navReady, setNavReady] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
   const shouldReduceMotion = useReducedMotion();
   const { scrollY, scrollYProgress } = useScroll();
+
   const blurAmount = useTransform(scrollY, [0, 220], [26, 40]);
   const glassOpacity = useTransform(scrollY, [0, 220], [0.92, 0.78]);
   const accentOffset = useTransform(scrollY, [0, 420], [0, 74]);
   const glassBackdrop = useMotionTemplate`blur(${blurAmount}px)`;
   const glassBackground = useMotionTemplate`rgba(10, 16, 38, ${glassOpacity})`;
+
   const applyTheme = useCallback((value: "light" | "dark") => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", value === "dark");
     document.documentElement.style.colorScheme = value;
   }, []);
+
   useEffect(() => {
     applyTheme(theme);
     if (typeof window !== "undefined") {
       window.localStorage.setItem("studio-theme", theme);
     }
   }, [applyTheme, theme]);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("studio-lang", language);
   }, [language]);
+
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -162,15 +255,18 @@ export function HeaderRoot() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
-  useMotionValueEvent(scrollYProgress, "change", latest => {
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
   });
-  useMotionValueEvent(scrollY, "change", latest => {
+  useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 24);
   });
+
   useEffect(() => {
     setOpenItem(null);
   }, [location.pathname]);
+
   useEffect(() => {
     if (typeof window === "undefined") {
       setNavReady(true);
@@ -179,6 +275,7 @@ export function HeaderRoot() {
     const id = window.requestAnimationFrame(() => setNavReady(true));
     return () => window.cancelAnimationFrame(id);
   }, []);
+
   useLayoutEffect(() => {
     if (typeof document === "undefined" || typeof window === "undefined") return;
     if (!headerRef.current) return;
@@ -187,8 +284,14 @@ export function HeaderRoot() {
       if (!headerRef.current) return;
       const rect = headerRef.current.getBoundingClientRect();
       root.style.setProperty("--studio-header-height", `${rect.height}px`);
-      root.style.setProperty("--studio-header-float-offset", `${rect.height + 16}px`);
-      root.style.setProperty("--studio-header-float-offset-lg", `${rect.height + 28}px`);
+      root.style.setProperty(
+        "--studio-header-float-offset",
+        `${rect.height + 16}px`,
+      );
+      root.style.setProperty(
+        "--studio-header-float-offset-lg",
+        `${rect.height + 28}px`,
+      );
     };
     update();
     const handleResize = () => update();
@@ -209,49 +312,84 @@ export function HeaderRoot() {
       root.style.removeProperty("--studio-header-float-offset-lg");
     };
   }, [navReady]);
-  const toggleTheme = useCallback(() => setTheme(current => current === "dark" ? "light" : "dark"), []);
-  const toggleLanguage = useCallback(() => setLanguage(current => current === "FR" ? "EN" : "FR"), []);
+
+  const toggleTheme = useCallback(
+    () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+    [],
+  );
+  const toggleLanguage = useCallback(
+    () => setLanguage((current) => (current === "FR" ? "EN" : "FR")),
+    [],
+  );
+
+  // Dynamic CTA (keep from main)
+  const serviceSlugFromPath =
+    location.pathname.match(/^\/services\/(?<slug>[^/]+)/)?.groups?.slug;
+  const serviceSlugFromQuery = new URLSearchParams(location.search).get(
+    "service",
+  );
+  const activeService = useMemo(() => {
+    const preferred = (serviceSlugFromPath ||
+      serviceSlugFromQuery) as CategorySlug | null;
+    return CATEGORIES.find((category) => category.slug === preferred);
+  }, [serviceSlugFromPath, serviceSlugFromQuery]);
+
+  const ctaLabel = activeService ? `Devis ${activeService.label}` : CTA.label;
+  const ctaHref = activeService
+    ? `/contact?service=${activeService.slug}`
+    : CTA.href;
+
+  const isRealisations = location.pathname.startsWith("/realisations");
+  const isServices = location.pathname.startsWith("/services");
+
+  const subNavItems = useMemo(() => {
+    if (!isRealisations && !isServices)
+      return [] as { label: string; href: string }[];
+    const base = isRealisations ? "/realisations" : "/services";
+    return CATEGORIES.map((category) => ({
+      label: category.label,
+      href: `${base}/${category.slug}`,
+    }));
+  }, [isRealisations, isServices]);
+
+  const activeSubnavSlug =
+    location.pathname.match(
+      /^\/(?:services|realisations)\/(?<slug>[^/]+)/,
+    )?.groups?.slug ?? "";
+
   const commandGroups = useMemo(() => {
-    const primary = MAIN_NAV.map(item => ({
+    const primary = MAIN_NAV.map((item) => ({
       label: item.label,
-      href: item.href
+      href: item.href,
     }));
-    const services = CATEGORIES.map(category => ({
+    const services = CATEGORIES.map((category) => ({
       label: `Service · ${category.label}`,
-      href: `/services/${category.slug}`
+      href: `/services/${category.slug}`,
     }));
-    const works = CATEGORIES.map(category => ({
+    const works = CATEGORIES.map((category) => ({
       label: `Réalisations · ${category.label}`,
-      href: `/realisations/${category.slug}`
+      href: `/realisations/${category.slug}`,
     }));
-    return {
-      primary,
-      services,
-      works
-    };
+    return { primary, services, works };
   }, []);
-  const headerShellClass = useMemo(() => cn(
-    "relative isolate sticky top-0 z-50 border-b border-white/12 transition-shadow duration-500 before:absolute before:inset-0 before:-z-10 before:bg-[radial-gradient(circle_at_top,_rgba(129,140,248,0.18),_rgba(59,130,246,0.12),_rgba(15,23,42,0.92))] before:opacity-90 before:content-['']",
-    isScrolled ? "shadow-[0_22px_60px_rgba(7,11,23,0.58)]" : "shadow-[0_0_35px_rgba(15,23,42,0.65)]"
-  ), [isScrolled]);
+
+  const headerShellClass = useMemo(
+    () =>
+      cn(
+        "relative isolate sticky top-0 z-50 border-b border-white/12 transition-shadow duration-500 before:absolute before:inset-0 before:-z-10 before:bg-[radial-gradient(circle_at_top,_rgba(129,140,248,0.18),_rgba(59,130,246,0.12),_rgba(15,23,42,0.92))] before:opacity-90 before:content-['']",
+        isScrolled
+          ? "shadow-[0_22px_60px_rgba(7,11,23,0.58)]"
+          : "shadow-[0_0_35px_rgba(15,23,42,0.65)]",
+      ),
+    [isScrolled],
+  );
+
   const accentDrift = shouldReduceMotion ? undefined : accentOffset;
   const brandSrc = theme === "dark" ? brandAssets.nebula : brandAssets.solstice;
   const brandPaletteLabel = brandPalettes[theme];
-  const isRealisations = location.pathname.startsWith("/realisations");
-  const isServices = location.pathname.startsWith("/services");
-  const subNavItems = useMemo(() => {
-    if (!isRealisations && !isServices) return [] as {
-      label: string;
-      href: string;
-    }[];
-    const base = isRealisations ? "/realisations" : "/services";
-    return CATEGORIES.map(category => ({
-      label: category.label,
-      href: `${base}/${category.slug}`
-    }));
-  }, [isRealisations, isServices]);
-  const activeSubnavSlug = location.pathname.match(/^\/(?:services|realisations)\/(?<slug>[^/]+)/)?.groups?.slug ?? "";
-  return <Fragment>
+
+  return (
+    <Fragment>
       {/* Top progress bar */}
       <span className={progressStyles} aria-hidden>
         <motion.span
@@ -262,7 +400,6 @@ export function HeaderRoot() {
           style={{ transformOrigin: "left" }}
         />
       </span>
-
 
       <motion.header
         ref={headerRef}
@@ -279,25 +416,45 @@ export function HeaderRoot() {
           className="pointer-events-none absolute inset-0 overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.6,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         >
           <motion.div
             className="absolute -inset-x-32 -top-28 h-56 bg-gradient-to-r from-sky-400/30 via-fuchsia-400/16 to-transparent blur-3xl"
-            animate={shouldReduceMotion ? { opacity: 0.65 } : { opacity: [0.55, 0.85, 0.55] }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 20, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-            style={accentDrift ? { x: accentDrift } : {}}
+            animate={
+              shouldReduceMotion
+                ? { opacity: 0.65 }
+                : { opacity: [0.55, 0.85, 0.55] }
+            }
+            transition={
+              shouldReduceMotion
+                ? { duration: 0 }
+                : {
+                    duration: 20,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    ease: "easeInOut",
+                  }
+            }
+            style={accentDrift ? { x: accentDrift as any } : {}}
           />
           <motion.div
             className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: shouldReduceMotion ? 0 : 1.1,
+              ease: [0.22, 1, 0.36, 1],
+            }}
           />
         </motion.div>
+
         <div
           className={cn(
             "relative z-10 mx-auto flex max-w-6xl items-center gap-3 px-4 sm:px-6 transition-[padding,transform] duration-500",
-            isScrolled ? "py-2.5" : "py-3.5"
+            isScrolled ? "py-2.5" : "py-3.5",
           )}
         >
           {/* Left: mobile menu + brand */}
@@ -313,7 +470,10 @@ export function HeaderRoot() {
                   <Menu className="h-5 w-5" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-full max-w-sm border-white/10 bg-slate-950/95 p-0 text-white">
+              <SheetContent
+                side="left"
+                className="w-full max-w-sm border-white/10 bg-slate-950/95 p-0 text-white"
+              >
                 <SheetHeader className="space-y-2 border-b border-white/10 px-6 pb-4 pt-6 text-left">
                   <SheetTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.35em] text-white/60">
                     Studio VBG
@@ -323,8 +483,11 @@ export function HeaderRoot() {
 
                 <div className="flex h-full flex-col gap-8 px-6 py-8">
                   <nav className="space-y-4 text-sm font-medium text-white/85">
-                    {MAIN_NAV.map(item => {
-                      const hasNested = Boolean(("children" in item && item.children?.length) || ("mega" in item && item.mega?.length));
+                    {MAIN_NAV.map((item) => {
+                      const hasNested = Boolean(
+                        ("children" in item && item.children?.length) ||
+                          ("mega" in item && item.mega?.length),
+                      );
                       if (!hasNested) {
                         return (
                           <SheetClose asChild key={item.href}>
@@ -337,13 +500,17 @@ export function HeaderRoot() {
                           </SheetClose>
                         );
                       }
-                      const nestedLinks = (("children" in item && item.children) || ("mega" in item && item.mega) || []) as {
-                        href: string;
-                        label: string;
-                        excerpt?: string;
-                      }[];
+                      const nestedLinks =
+                        (("children" in item && item.children) ||
+                          ("mega" in item && item.mega) ||
+                          []) as { href: string; label: string; excerpt?: string }[];
                       return (
-                        <Accordion key={item.label} type="single" collapsible className="rounded-2xl border border-white/10 bg-white/5">
+                        <Accordion
+                          key={item.label}
+                          type="single"
+                          collapsible
+                          className="rounded-2xl border border-white/10 bg-white/5"
+                        >
                           <AccordionItem value={item.href ?? item.label}>
                             <AccordionTrigger className="px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-white">
                               {item.label}
@@ -359,7 +526,7 @@ export function HeaderRoot() {
                                   </Link>
                                 </SheetClose>
                               )}
-                              {nestedLinks.map(link => (
+                              {nestedLinks.map((link) => (
                                 <SheetClose asChild key={link.href}>
                                   <Link
                                     to={link.href}
@@ -367,7 +534,9 @@ export function HeaderRoot() {
                                   >
                                     <div>{link.label}</div>
                                     {"excerpt" in link && link.excerpt && (
-                                      <p className="pt-1 text-[0.65rem] normal-case text-white/60">{String(link.excerpt)}</p>
+                                      <p className="pt-1 text-[0.65rem] normal-case text-white/60">
+                                        {String(link.excerpt)}
+                                      </p>
                                     )}
                                   </Link>
                                 </SheetClose>
@@ -395,7 +564,11 @@ export function HeaderRoot() {
                         className="rounded-full border border-white/10 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
                         aria-label="Changer de thème"
                       >
-                        {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
+                        {theme === "dark" ? (
+                          <SunMedium className="h-4 w-4" />
+                        ) : (
+                          <MoonStar className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
 
@@ -412,10 +585,18 @@ export function HeaderRoot() {
 
                     <SheetClose asChild>
                       <Link
-                        to={CTA.href}
+                        to={ctaHref}
                         className="block rounded-full border border-white/20 bg-white px-6 py-3 text-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-950 transition hover:bg-white/90"
                       >
-                        {CTA.label}
+                        {ctaLabel}
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link
+                        to="/connexion"
+                        className="block rounded-full border border-white/10 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:bg-white/10 hover:text-white"
+                      >
+                        Connexion
                       </Link>
                     </SheetClose>
                   </div>
@@ -438,7 +619,10 @@ export function HeaderRoot() {
                     initial={{ opacity: 0, scale: 0.85, rotate: -8 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     exit={{ opacity: 0, scale: 0.8, rotate: 8 }}
-                    transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: [0.25, 1, 0.5, 1] }}
+                    transition={{
+                      duration: shouldReduceMotion ? 0 : 0.45,
+                      ease: [0.25, 1, 0.5, 1],
+                    }}
                   />
                 </AnimatePresence>
               </span>
@@ -451,12 +635,19 @@ export function HeaderRoot() {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 0.5, scale: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: [0.25, 1, 0.5, 1] }}
+                      transition={{
+                        duration: shouldReduceMotion ? 0 : 0.6,
+                        ease: [0.25, 1, 0.5, 1],
+                      }}
                     />
                   )}
                 </AnimatePresence>
-                <span className="relative z-10 text-xs font-semibold uppercase tracking-[0.35em]">Studio VBG</span>
-                <span className="relative z-10 text-[0.6rem] font-normal uppercase tracking-[0.5em] text-white/60">Vidéo · IA · Diffusion</span>
+                <span className="relative z-10 text-xs font-semibold uppercase tracking-[0.35em]">
+                  Studio VBG
+                </span>
+                <span className="relative z-10 text-[0.6rem] font-normal uppercase tracking-[0.5em] text-white/60">
+                  Vidéo · IA · Diffusion
+                </span>
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={brandPaletteLabel}
@@ -464,7 +655,10 @@ export function HeaderRoot() {
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: [0.42, 0, 0.58, 1] }}
+                    transition={{
+                      duration: shouldReduceMotion ? 0 : 0.35,
+                      ease: [0.42, 0, 0.58, 1],
+                    }}
                   >
                     {brandPaletteLabel}
                   </motion.span>
@@ -477,19 +671,24 @@ export function HeaderRoot() {
           <NavigationMenu
             className="hidden flex-1 justify-center lg:flex"
             value={openItem ?? undefined}
-            onValueChange={value => setOpenItem(value || null)}
+            onValueChange={(value) => setOpenItem(value || null)}
           >
             <NavigationMenuList className="flex items-center gap-6">
-              {MAIN_NAV.map(item => {
-                const hasNested = Boolean(("children" in item && item.children?.length) || ("mega" in item && item.mega?.length));
+              {MAIN_NAV.map((item) => {
+                const hasNested = Boolean(
+                  ("children" in item && item.children?.length) ||
+                    ("mega" in item && item.mega?.length),
+                );
                 const itemKey = item.href ?? item.label;
-                const isOpen = openItem === itemKey;
                 const routeActive = Boolean(
                   item.href &&
                     (item.href === "/"
                       ? location.pathname === "/"
-                      : location.pathname === item.href || location.pathname.startsWith(`${item.href}/`))
+                      : location.pathname === item.href ||
+                        location.pathname.startsWith(`${item.href}/`)),
                 );
+                const isOpen = openItem === itemKey;
+
                 if (!hasNested) {
                   return (
                     <NavigationMenuItem key={item.href}>
@@ -498,7 +697,10 @@ export function HeaderRoot() {
                           to={item.href}
                           end={item.href === "/"}
                           className={({ isActive }) =>
-                            cn(navButtonBaseClass, (isActive || routeActive) && navButtonActiveClass)
+                            cn(
+                              navButtonBaseClass,
+                              (isActive || routeActive) && navButtonActiveClass,
+                            )
                           }
                         >
                           {({ isActive }) => (
@@ -513,12 +715,16 @@ export function HeaderRoot() {
                     </NavigationMenuItem>
                   );
                 }
+
                 if ("children" in item && item.children?.length) {
                   return (
                     <NavigationMenuItem key={item.label} value={itemKey}>
                       <NavigationMenuTrigger
                         hideChevron
-                        className={cn(navButtonBaseClass, (isOpen || routeActive) && navButtonActiveClass)}
+                        className={cn(
+                          navButtonBaseClass,
+                          (isOpen || routeActive) && navButtonActiveClass,
+                        )}
                       >
                         <HeaderNavLabel
                           label={item.label}
@@ -530,11 +736,18 @@ export function HeaderRoot() {
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="pointer-events-none fixed left-1/2 top-[var(--studio-header-float-offset,92px)] z-[55] -translate-x-1/2 overflow-visible px-4 sm:px-0">
                         <motion.div
-                          className={cn("pointer-events-auto", floatingPanelClass, "w-[min(22rem,calc(100vw-2.5rem))] p-5")}
+                          className={cn(
+                            "pointer-events-auto",
+                            floatingPanelClass,
+                            "w-[min(22rem,calc(100vw-2.5rem))] p-5",
+                          )}
                           initial={{ opacity: 0, y: 14, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 12, scale: 0.97 }}
-                          transition={{ duration: shouldReduceMotion ? 0 : 0.38, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{
+                            duration: shouldReduceMotion ? 0 : 0.38,
+                            ease: [0.16, 1, 0.3, 1],
+                          }}
                           layout
                         >
                           <motion.span
@@ -542,11 +755,20 @@ export function HeaderRoot() {
                             className={floatingPanelGlow}
                             initial={{ opacity: 0, scale: 0.92 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{
+                              duration: shouldReduceMotion ? 0 : 0.6,
+                              ease: [0.22, 1, 0.36, 1],
+                            }}
                           />
                           <div className="relative z-10 space-y-4">
                             <NavigationMenuLink asChild>
-                              <Link to={item.href ?? "#"} className={cn(frostedCapsClass, "flex items-center justify-between gap-3")}>
+                              <Link
+                                to={item.href ?? "#"}
+                                className={cn(
+                                  frostedCapsClass,
+                                  "flex items-center justify-between gap-3",
+                                )}
+                              >
                                 Voir tout
                                 <ArrowUpRight className="h-3.5 w-3.5" />
                               </Link>
@@ -557,9 +779,16 @@ export function HeaderRoot() {
                                   key={child.href}
                                   initial={{ opacity: 0, y: 10 }}
                                   animate={{ opacity: 1, y: 0 }}
-                                  transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: [0.16, 1, 0.3, 1], delay: shouldReduceMotion ? 0 : index * 0.05 }}
+                                  transition={{
+                                    duration: shouldReduceMotion ? 0 : 0.35,
+                                    ease: [0.16, 1, 0.3, 1],
+                                    delay: shouldReduceMotion ? 0 : index * 0.05,
+                                  }}
                                 >
-                                  <Link to={child.href} className={cn("block", frostedTileClass)}>
+                                  <Link
+                                    to={child.href}
+                                    className={cn("block", frostedTileClass)}
+                                  >
                                     {child.label}
                                   </Link>
                                 </motion.li>
@@ -571,11 +800,16 @@ export function HeaderRoot() {
                     </NavigationMenuItem>
                   );
                 }
+
+                // Mega menu
                 return (
                   <NavigationMenuItem key={item.label} value={itemKey}>
                     <NavigationMenuTrigger
                       hideChevron
-                      className={cn(navButtonBaseClass, (isOpen || routeActive) && navButtonActiveClass)}
+                      className={cn(
+                        navButtonBaseClass,
+                        (isOpen || routeActive) && navButtonActiveClass,
+                      )}
                     >
                       <HeaderNavLabel
                         label={item.label}
@@ -587,11 +821,18 @@ export function HeaderRoot() {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="pointer-events-none fixed left-1/2 top-[var(--studio-header-float-offset-lg,104px)] z-[55] -translate-x-1/2 overflow-visible px-4 sm:px-0">
                       <motion.div
-                        className={cn("pointer-events-auto", floatingPanelClass, "w-[min(46rem,calc(100vw-2rem))] p-6")}
+                        className={cn(
+                          "pointer-events-auto",
+                          floatingPanelClass,
+                          "w-[min(46rem,calc(100vw-2rem))] p-6",
+                        )}
                         initial={{ opacity: 0, y: 18, scale: 0.94 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 16, scale: 0.97 }}
-                        transition={{ duration: shouldReduceMotion ? 0 : 0.42, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{
+                          duration: shouldReduceMotion ? 0 : 0.42,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
                         layout
                       >
                         <motion.span
@@ -599,40 +840,54 @@ export function HeaderRoot() {
                           className={floatingPanelGlow}
                           initial={{ opacity: 0, rotate: -6, scale: 0.94 }}
                           animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                          transition={{ duration: shouldReduceMotion ? 0 : 0.75, ease: [0.22, 1, 0.36, 1] }}
+                          transition={{
+                            duration: shouldReduceMotion ? 0 : 0.75,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
                         />
                         <div className="relative z-10 space-y-5">
                           <NavigationMenuLink asChild>
-                            <Link to={item.href ?? "#"} className={cn(frostedCapsClass, "inline-flex items-center gap-2")}>
+                            <Link
+                              to={item.href ?? "#"}
+                              className={cn(
+                                frostedCapsClass,
+                                "inline-flex items-center gap-2",
+                              )}
+                            >
                               Voir tout
                               <ArrowUpRight className="h-3.5 w-3.5" />
                             </Link>
                           </NavigationMenuLink>
                           <motion.div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {"mega" in item && item.mega
-                              ? item.mega.map((entry, index) => (
-                                  <motion.div
-                                    key={entry.href}
-                                    initial={{ opacity: 0, y: 12 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: [0.16, 1, 0.3, 1], delay: shouldReduceMotion ? 0 : index * 0.05 }}
+                            {"mega" in item &&
+                              item.mega?.map((entry, index) => (
+                                <motion.div
+                                  key={entry.href}
+                                  initial={{ opacity: 0, y: 12 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{
+                                    duration: shouldReduceMotion ? 0 : 0.4,
+                                    ease: [0.16, 1, 0.3, 1],
+                                    delay: shouldReduceMotion ? 0 : index * 0.05,
+                                  }}
+                                >
+                                  <Link
+                                    to={entry.href}
+                                    className="group flex h-full flex-col gap-3 rounded-[1.85rem] border border-white/12 bg-white/5 p-4 transition duration-300 hover:border-white/35 hover:bg-white/10"
                                   >
-                                    <Link
-                                      to={entry.href}
-                                      className="group flex h-full flex-col gap-3 rounded-[1.85rem] border border-white/12 bg-white/5 p-4 transition duration-300 hover:border-white/35 hover:bg-white/10"
-                                    >
-                                      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-cyan-200/85">
-                                        {entry.label}
-                                      </span>
-                                      <p className="text-sm text-white/70">{entry.excerpt}</p>
-                                      <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.32em] text-white/60 transition group-hover:translate-x-1">
-                                        Explorer
-                                        <ArrowUpRight className="h-3.5 w-3.5" />
-                                      </span>
-                                    </Link>
-                                  </motion.div>
-                                ))
-                              : null}
+                                    <span className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-cyan-200/85">
+                                      {entry.label}
+                                    </span>
+                                    <p className="text-sm text-white/70">
+                                      {entry.excerpt}
+                                    </p>
+                                    <span className="inline-flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.32em] text-white/60 transition group-hover:translate-x-1">
+                                      Explorer
+                                      <ArrowUpRight className="h-3.5 w-3.5" />
+                                    </span>
+                                  </Link>
+                                </motion.div>
+                              ))}
                           </motion.div>
                         </div>
                       </motion.div>
@@ -649,7 +904,7 @@ export function HeaderRoot() {
               asChild
               className="rounded-full border border-white/10 bg-white/5 px-5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80 transition hover:bg-white/10 hover:text-white"
             >
-              <Link to={CTA.href}>{CTA.label}</Link>
+              <Link to={ctaHref}>{ctaLabel}</Link>
             </Button>
           </div>
         </div>
@@ -659,17 +914,23 @@ export function HeaderRoot() {
           <div className="relative z-10 border-t border-white/10 bg-slate-950/80">
             <div className="mx-auto max-w-6xl px-4">
               <nav className="flex gap-3 overflow-x-auto py-3">
-                {subNavItems.map(item => {
+                {subNavItems.map((item) => {
                   const isActive = item.href.endsWith(`/${activeSubnavSlug}`);
                   return (
-                    <NavLink key={item.href} to={item.href} className="group relative inline-flex focus:outline-none">
+                    <NavLink
+                      key={item.href}
+                      to={item.href}
+                      className="group relative inline-flex focus:outline-none"
+                    >
                       {({ isActive: routeActive }) => {
                         const active = isActive || routeActive;
                         return (
                           <span
                             className={cn(
                               "relative inline-flex items-center justify-center overflow-hidden rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition-colors duration-300 group-focus-visible:ring-2 group-focus-visible:ring-white/40 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-slate-950",
-                              active ? "border-white/40 text-white" : "border-white/10 text-white/60 hover:border-white/20 hover:text-white"
+                              active
+                                ? "border-white/40 text-white"
+                                : "border-white/10 text-white/60 hover:border-white/20 hover:text-white",
                             )}
                           >
                             <AnimatePresence>
@@ -680,7 +941,11 @@ export function HeaderRoot() {
                                   initial={{ opacity: 0, scale: 0.9 }}
                                   animate={{ opacity: 1, scale: 1 }}
                                   exit={{ opacity: 0, scale: 0.95 }}
-                                  transition={shouldReduceMotion ? instantTransition : subnavHighlightTransition}
+                                  transition={
+                                    shouldReduceMotion
+                                      ? instantTransition
+                                      : subnavHighlightTransition
+                                  }
                                 />
                               )}
                             </AnimatePresence>
@@ -697,7 +962,6 @@ export function HeaderRoot() {
         )}
       </motion.header>
 
-
       {/* Command palette */}
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Rechercher une page, un service ou une réalisation..." />
@@ -705,35 +969,54 @@ export function HeaderRoot() {
           <CommandEmpty>Aucun résultat pour cette recherche.</CommandEmpty>
 
           <CommandGroup heading="Navigation">
-            {commandGroups.primary.map(item => <CommandItem key={item.href} value={item.label} onSelect={() => {
-            navigate(item.href);
-            setCommandOpen(false);
-          }}>
+            {commandGroups.primary.map((item) => (
+              <CommandItem
+                key={item.href}
+                value={item.label}
+                onSelect={() => {
+                  navigate(item.href);
+                  setCommandOpen(false);
+                }}
+              >
                 {item.label}
                 <CommandShortcut>↵</CommandShortcut>
-              </CommandItem>)}
+              </CommandItem>
+            ))}
           </CommandGroup>
 
           <CommandSeparator />
 
           <CommandGroup heading="Services">
-            {commandGroups.services.map(item => <CommandItem key={item.href} value={item.label} onSelect={() => {
-            navigate(item.href);
-            setCommandOpen(false);
-          }}>
+            {commandGroups.services.map((item) => (
+              <CommandItem
+                key={item.href}
+                value={item.label}
+                onSelect={() => {
+                  navigate(item.href);
+                  setCommandOpen(false);
+                }}
+              >
                 {item.label}
-              </CommandItem>)}
+              </CommandItem>
+            ))}
           </CommandGroup>
 
           <CommandGroup heading="Réalisations">
-            {commandGroups.works.map(item => <CommandItem key={item.href} value={item.label} onSelect={() => {
-            navigate(item.href);
-            setCommandOpen(false);
-          }}>
+            {commandGroups.works.map((item) => (
+              <CommandItem
+                key={item.href}
+                value={item.label}
+                onSelect={() => {
+                  navigate(item.href);
+                  setCommandOpen(false);
+                }}
+              >
                 {item.label}
-              </CommandItem>)}
+              </CommandItem>
+            ))}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
-    </Fragment>;
+    </Fragment>
+  );
 }

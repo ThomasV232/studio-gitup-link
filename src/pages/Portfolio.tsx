@@ -2,21 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { Play } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { BrandMark } from "@/components/branding/BrandMark";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import PageShell from "@/components/layout/PageShell";
-import { SectionHeading } from "@/components/layout/SectionHeading";
 import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
 import { cn } from "@/lib/utils";
-import { CATEGORIES, type CategorySlug } from "@/components/header/nav.config";
+import { CATEGORIES } from "@/components/header/nav.config";
 
 const ALL_CATEGORY = "Tous les projets";
 
 const getEmbedUrl = (url: string): string | null => {
-  if (!url) {
-    return null;
-  }
+  if (!url) return null;
 
   try {
     const parsed = new URL(url);
@@ -24,9 +19,7 @@ const getEmbedUrl = (url: string): string | null => {
 
     if (host.includes("youtube.com")) {
       const videoId = parsed.searchParams.get("v");
-      if (!videoId) {
-        return url;
-      }
+      if (!videoId) return url;
 
       const params = new URLSearchParams(parsed.searchParams);
       params.delete("v");
@@ -37,9 +30,7 @@ const getEmbedUrl = (url: string): string | null => {
 
     if (host === "youtu.be") {
       const videoId = parsed.pathname.replace(/^\//, "");
-      if (!videoId) {
-        return url;
-      }
+      if (!videoId) return url;
 
       const params = parsed.search ? parsed.search.replace(/^\?/, "") : "";
       return `https://www.youtube.com/embed/${videoId}${params ? `?${params}` : ""}`;
@@ -68,6 +59,7 @@ const Portfolio = () => {
     CATEGORIES.forEach((category) => map.set(category.label, category.slug));
     return map;
   }, []);
+
   const slugToService = useMemo(() => {
     const map = new Map<string, (typeof servicesData)[number]>();
     servicesData.forEach((service) => map.set(service.slug, service));
@@ -80,7 +72,7 @@ const Portfolio = () => {
       new Set(
         portfolioItems
           .map((item) => item.category)
-          .filter((label): label is string => Boolean(label) && !ordered.some(o => o === label))
+          .filter((label): label is string => Boolean(label) && !ordered.some((o) => o === label))
       )
     );
 
@@ -127,36 +119,34 @@ const Portfolio = () => {
   };
 
   const filteredItems = useMemo(() => {
-    if (activeCategory === ALL_CATEGORY) {
-      return portfolioItems;
-    }
-
+    if (activeCategory === ALL_CATEGORY) return portfolioItems;
     return portfolioItems.filter((item) => item.category === activeCategory);
   }, [activeCategory, portfolioItems]);
+
   const activeService = useMemo(() => {
     const slug = labelToSlug.get(activeCategory);
     if (!slug) return null;
     return slugToService.get(slug) ?? null;
   }, [activeCategory, labelToSlug, slugToService]);
 
-  const heroTitle =
-    activeCategory === ALL_CATEGORY
-      ? "Showreel & études de cas orchestrées"
-      : `Réalisations ${activeCategory} — pipeline complet`;
-
   return (
-    <PageShell
-      gradientClassName="bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
-      contentClassName="pb-24"
-    >
-      <div className="page-container">
-        <header className="space-y-8">
-          <BrandMark dual className="max-w-xs" />
-          <SectionHeading
-            eyebrow="Portfolio"
-            title={heroTitle}
-            description="Films corporate, événements, immobilier, réseaux sociaux, mariage ou motion design : chaque projet est livré avec un plan de diffusion 2025, un pilotage IA supervisé et des indicateurs de performance."
-          />
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
+      />
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 sm:px-10">
+        <header className="space-y-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            {activeCategory === ALL_CATEGORY
+              ? "Showreel & études de cas orchestrées"
+              : `Réalisations ${activeCategory} — pipeline complet`}
+          </h1>
+          <p className="max-w-3xl text-base text-slate-300">
+            Films corporate, événements, immobilier, réseaux sociaux, mariage ou motion design : chaque projet est livré
+            avec un plan de diffusion 2025, un pilotage IA supervisé et des indicateurs de performance.
+          </p>
         </header>
 
         <section className="space-y-8">
@@ -194,7 +184,12 @@ const Portfolio = () => {
                   <article className="portfolio-card group">
                     <div className="portfolio-card-media">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" loading="lazy" />
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
                       ) : (
                         <div className={cn("h-full w-full", item.gradient, "bg-gradient-to-br")} aria-hidden />
                       )}
@@ -209,11 +204,7 @@ const Portfolio = () => {
                         <p className="max-w-xl text-sm text-white/75 sm:text-base">{item.tagline}</p>
                       </div>
                       <DialogTrigger asChild>
-                        <button
-                          type="button"
-                          className="portfolio-card-cta"
-                          aria-label={`Visionner ${item.title}`}
-                        >
+                        <button type="button" className="portfolio-card-cta" aria-label={`Visionner ${item.title}`}>
                           <span className="portfolio-card-ctaLabel">
                             <Play className="h-4 w-4" aria-hidden />
                             Visionner
@@ -344,6 +335,7 @@ const Portfolio = () => {
                               </div>
                             </div>
                           )}
+
                           <div className="portfolio-dialog-section portfolio-dialog-section--wide">
                             <span className="portfolio-dialog-section-label">Passer à l'action</span>
                             <div className="portfolio-dialog-chipRow">
@@ -379,35 +371,46 @@ const Portfolio = () => {
           </div>
         </section>
 
-        <section className="surface-panel p-8 sm:p-10">
+        <section className="rounded-[3rem] border border-white/10 bg-white/5 p-10 backdrop-blur-2xl">
           <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-4">
-              <SectionHeading
-                eyebrow="Processus / Méthode"
-                title={activeService ? `Workflow ${activeService.title}` : "Une méthode fluide pour chaque catégorie"}
-                description="Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations."
-              />
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Processus / Méthode</p>
+              <h2 className="text-3xl font-bold text-white">
+                {activeService ? `Workflow ${activeService.title}` : "Une méthode fluide pour chaque catégorie"}
+              </h2>
+              <p className="text-sm text-white/70">
+                Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé
+                et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations.
+              </p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 rounded-[2.5rem] border border-white/10 bg-slate-950/60 p-6">
               {(activeService?.phases ?? servicesData[0].phases).slice(0, 4).map((phase, index) => (
-                <div key={phase.title} className="surface-card flex flex-col gap-2 p-5 text-sm text-white/80">
-                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/60">Étape 0{index + 1}</span>
+                <div
+                  key={phase.title}
+                  className="flex flex-col gap-2 rounded-[2rem] border border-white/10 bg-white/5 p-4 text-sm text-white/70"
+                >
+                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/50">
+                    Étape 0{index + 1}
+                  </span>
                   <p className="text-sm text-white">{phase.title}</p>
                   <p>{phase.description}</p>
-                  <p className="text-xs text-sky-200/85">Upgrade IA : {phase.aiUpgrade}</p>
+                  <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="surface-panel space-y-6 p-8 sm:p-10">
-          <SectionHeading
-            eyebrow="Contact & Devis"
-            title="Prêts pour un projet similaire ?"
-            description="Racontez-nous vos objectifs, les canaux de diffusion visés et votre deadline. Nous revenons sous 24 h avec un budget transparent, un plan de tournage et des idées de déclinaisons verticales."
-          />
-          <div className="flex flex-wrap gap-4">
+        <section className="rounded-[3rem] border border-white/10 bg-gradient-to-br from-sky-500/20 via-indigo-500/20 to-fuchsia-500/20 p-10 backdrop-blur-2xl">
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Contact & Devis</p>
+            <h2 className="text-3xl font-bold text-white">Prêts pour un projet similaire ?</h2>
+            <p className="max-w-3xl text-sm text-white/80">
+              Racontez-nous vos objectifs, les canaux de diffusion visés et votre deadline. Nous revenons sous 24 h avec
+              un budget transparent, un plan de tournage et des idées de déclinaisons verticales.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-4">
             <Link
               to="/contact"
               className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
@@ -423,7 +426,7 @@ const Portfolio = () => {
           </div>
         </section>
       </div>
-    </PageShell>
+    </div>
   );
 };
 

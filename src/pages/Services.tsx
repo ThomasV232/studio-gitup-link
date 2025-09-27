@@ -1,323 +1,433 @@
-import { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Play } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { BrandMark } from "@/components/branding/BrandMark";
-import { CATEGORIES } from "@/components/header/nav.config";
-import PageShell from "@/components/layout/PageShell";
-import { SectionHeading } from "@/components/layout/SectionHeading";
-import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useStudio } from "@/context/StudioContext";
 import { servicesData } from "@/lib/services";
+import { cn } from "@/lib/utils";
+import { CATEGORIES } from "@/components/header/nav.config";
 
-const heroHighlights = [
-  { label: "Stack 2025", value: "Burano 8K + Gen-5", note: "Workflow hybride IA & humain" },
-  { label: "Délais", value: "72 h – 5 sem.", note: "selon complexité & diffusion" },
-  { label: "Satisfaction", value: "4,9/5", note: "Avis clients vérifiés" },
-];
+const ALL_CATEGORY = "Tous les projets";
 
-const servicePacks: Record<string, { name: string; description: string; price: string; includes: string[] }[]> = {
-  entreprise: [
-    {
-      name: "Pack Journée",
-      description: "1 jour de tournage multicam + interviews", 
-      price: "À partir de 1 900 € HT",
-      includes: ["Film 60–90 s", "2 teasers 9:16", "Sous-titres FR/EN"],
-    },
-    {
-      name: "Pack Weekend",
-      description: "2 jours (interviews + B-roll terrain)",
-      price: "Dès 2 900 € HT",
-      includes: ["Film 90 s", "4 capsules 15 s", "Miniatures brandées"],
-    },
-    {
-      name: "Pack Sur demande",
-      description: "Narration premium + captations multi-sites",
-      price: "Sur devis", 
-      includes: ["Script direction com.", "Version 1:1 et 9:16", "Plan diffusion clé en main"],
-    },
-  ],
-  evenementiel: [
-    {
-      name: "Pack Journée",
-      description: "Captation express 1 jour",
-      price: "À partir de 1 400 € HT",
-      includes: ["Aftermovie 60 s", "Stories verticales", "Livraison J+3"],
-    },
-    {
-      name: "Pack Weekend",
-      description: "2 jours d'événement",
-      price: "Dès 2 200 € HT",
-      includes: ["Aftermovie 90 s", "5 capsules sponsor", "Galerie photo optionnelle"],
-    },
-    {
-      name: "Pack Sur demande",
-      description: "Couverture complète + live clips",
-      price: "Sur devis",
-      includes: ["Highlights demi-journée", "Montage 24 h", "Kit médias partenaires"],
-    },
-  ],
-  immobilier: [
-    {
-      name: "Pack Journée",
-      description: "Visite 4K HDR",
-      price: "À partir de 650 € HT",
-      includes: ["Film 60 s", "Version 9:16", "Photos HDR option"],
-    },
-    {
-      name: "Pack Weekend",
-      description: "2 biens ou biens premium",
-      price: "Dès 1 150 € HT",
-      includes: ["Plans drone", "Titres quartiers", "Miniatures agence"],
-    },
-    {
-      name: "Pack Sur demande",
-      description: "Programme neuf / luxe",
-      price: "Sur devis",
-      includes: ["Interviews promoteur", "Version ADS", "Visite virtuelle option"],
-    },
-  ],
-  "reseaux-sociaux": [
-    {
-      name: "Pack Journée",
-      description: "Tournage batch 6 vidéos",
-      price: "À partir de 1 050 € HT",
-      includes: ["6 formats 9:16", "Scripts + prompts", "Sous-titres dynamiques"],
-    },
-    {
-      name: "Pack Weekend",
-      description: "Tournage 2 jours",
-      price: "Dès 1 850 € HT",
-      includes: ["12 vidéos 9:16", "Templates motion", "Planning publication"],
-    },
-    {
-      name: "Pack Sur demande",
-      description: "Programme 3 mois",
-      price: "Sur devis",
-      includes: ["16-24 vidéos/mois", "Dashboards KPI", "Coaching équipes"],
-    },
-  ],
-  mariage: [
-    {
-      name: "Pack Journée",
-      description: "Cérémonie + cocktail",
-      price: "À partir de 1 750 € TTC",
-      includes: ["Film 6-8 min", "Teaser 60 s", "Discours micro HF"],
-    },
-    {
-      name: "Pack Weekend",
-      description: "Préparatifs + jour J complet",
-      price: "Dès 2 450 € TTC",
-      includes: ["Film 10-12 min", "Clips réseaux", "Coffret USB"],
-    },
-    {
-      name: "Pack Sur demande",
-      description: "Destination / production élargie",
-      price: "Sur devis",
-      includes: ["Drone FPV", "Voix-off storytelling", "Montage express 72 h"],
-    },
-  ],
-  "motion-design-ia": [
-    {
-      name: "Pack Journée",
-      description: "Script + storyboard + animatic",
-      price: "À partir de 2 200 € HT",
-      includes: ["Vidéo 45 s", "Habillage sonore", "Illustrations personnalisées"],
-    },
-    {
-      name: "Pack Weekend",
-      description: "Motion + IA générative",
-      price: "Dès 3 200 € HT",
-      includes: ["Vidéo 60-75 s", "Version 9:16", "Titres multilingues"],
-    },
-    {
-      name: "Pack Sur demande",
-      description: "Série pédagogique / onboarding",
-      price: "Sur devis",
-      includes: ["3-5 épisodes", "Assistant IA voix", "Guide diffusion"],
-    },
-  ],
+const getEmbedUrl = (url: string): string | null => {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+
+    if (host.includes("youtube.com")) {
+      const videoId = parsed.searchParams.get("v");
+      if (!videoId) return url;
+
+      const params = new URLSearchParams(parsed.searchParams);
+      params.delete("v");
+      const query = params.toString();
+
+      return `https://www.youtube.com/embed/${videoId}${query ? `?${query}` : ""}`;
+    }
+
+    if (host === "youtu.be") {
+      const videoId = parsed.pathname.replace(/^\//, "");
+      if (!videoId) return url;
+
+      const params = parsed.search ? parsed.search.replace(/^\?/, "") : "";
+      return `https://www.youtube.com/embed/${videoId}${params ? `?${params}` : ""}`;
+    }
+
+    return url;
+  } catch (error) {
+    console.warn("Unable to build embed url for portfolio video", error);
+    return url;
+  }
 };
 
-const Services = () => {
-  const services = useMemo(() => servicesData, []);
+const Portfolio = () => {
+  const { portfolioItems } = useStudio();
+  const navigate = useNavigate();
+  const { category: categorySlug } = useParams<{ category?: string }>();
+
+  const slugToLabel = useMemo(() => {
+    const map = new Map<string, string>();
+    CATEGORIES.forEach((category) => map.set(category.slug, category.label));
+    return map;
+  }, []);
+
+  const labelToSlug = useMemo(() => {
+    const map = new Map<string, string>();
+    CATEGORIES.forEach((category) => map.set(category.label, category.slug));
+    return map;
+  }, []);
+
+  const slugToService = useMemo(() => {
+    const map = new Map<string, (typeof servicesData)[number]>();
+    servicesData.forEach((service) => map.set(service.slug, service));
+    return map;
+  }, []);
+
+  const categories = useMemo(() => {
+    const ordered = CATEGORIES.map((category) => category.label);
+    const extras = Array.from(
+      new Set(
+        portfolioItems
+          .map((item) => item.category)
+          .filter((label): label is string => Boolean(label) && !ordered.some((o) => o === label))
+      )
+    );
+
+    return [ALL_CATEGORY, ...ordered, ...extras];
+  }, [portfolioItems]);
+
+  const [activeCategory, setActiveCategory] = useState(() => {
+    if (categorySlug) {
+      return slugToLabel.get(categorySlug) ?? ALL_CATEGORY;
+    }
+    return ALL_CATEGORY;
+  });
+
+  useEffect(() => {
+    if (!categorySlug) {
+      setActiveCategory(ALL_CATEGORY);
+      return;
+    }
+
+    const label = slugToLabel.get(categorySlug);
+    if (!label) {
+      navigate("/realisations", { replace: true });
+      return;
+    }
+
+    setActiveCategory(label);
+  }, [categorySlug, navigate, slugToLabel]);
+
+  useEffect(() => {
+    if (!categories.includes(activeCategory)) {
+      setActiveCategory(ALL_CATEGORY);
+    }
+  }, [categories, activeCategory]);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    if (category === ALL_CATEGORY) {
+      navigate("/realisations");
+      return;
+    }
+
+    const slug = labelToSlug.get(category);
+    navigate(slug ? `/realisations/${slug}` : "/realisations");
+  };
+
+  const filteredItems = useMemo(() => {
+    if (activeCategory === ALL_CATEGORY) return portfolioItems;
+    return portfolioItems.filter((item) => item.category === activeCategory);
+  }, [activeCategory, portfolioItems]);
+
+  const activeService = useMemo(() => {
+    const slug = labelToSlug.get(activeCategory);
+    if (!slug) return null;
+    return slugToService.get(slug) ?? null;
+  }, [activeCategory, labelToSlug, slugToService]);
 
   return (
-    <PageShell
-      gradientStyle={{
-        background:
-          "radial-gradient(circle at 20% 20%, rgba(56,189,248,0.28), transparent 55%), radial-gradient(circle at 80% 15%, rgba(147,51,234,0.18), transparent 60%), radial-gradient(circle at 50% 90%, rgba(236,72,153,0.2), transparent 65%)",
-      }}
-      contentClassName="pb-32"
-    >
-      <div className="page-container">
-        {/* HERO */}
-        <header className="surface-panel relative overflow-hidden p-10 sm:p-12">
-          <div aria-hidden className="absolute inset-0 -z-10">
-            <div className="absolute inset-0 animate-[spin_18s_linear_infinite] bg-[conic-gradient(from_180deg_at_50%_50%,rgba(125,211,252,0.15),rgba(244,114,182,0.1),rgba(14,165,233,0.25),transparent_65%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_60%)]" />
-          </div>
-          <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:items-end">
-            <div className="space-y-10">
-              <BrandMark dual className="max-w-sm" />
-              <span className={cn("section-eyebrow", "border-cyan-200/40 bg-cyan-500/20 text-cyan-100/85")}>Services & Tarifs · Septembre 2025</span>
-              <div className="space-y-6">
-                <h1 className="space-y-6 text-balance font-semibold">
-                  <span className="block text-[0.78rem] font-semibold uppercase tracking-[0.48em] text-cyan-100/75">
-                    Services vidéos full-stack
-                  </span>
-                  <span className="block text-balance font-semibold leading-[1.05] tracking-[-0.015em] text-white">
-                    Des offres packagées, pilotées et mesurables
-                  </span>
-                </h1>
-                <p className="max-w-2xl text-base text-slate-200/80">
-                  De l'idée au plan de diffusion, chaque service suit un pipeline préproduction → production → postproduction → activation. Vous choisissez le pack, nous orchestrons le reste.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/contact"
-                  className="group inline-flex items-center gap-3 rounded-full border border-cyan-200/40 bg-cyan-500/25 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-cyan-500/35"
-                >
-                  Demander un devis
-                  <span aria-hidden className="transition group-hover:translate-x-1">→</span>
-                </Link>
-                <Link
-                  to="/realisations"
-                  className="group inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-white/20"
-                >
-                  Voir des réalisations
-                  <span aria-hidden className="transition group-hover:translate-x-1">→</span>
-                </Link>
-              </div>
-              <dl className="grid gap-6 sm:grid-cols-3">
-                {heroHighlights.map((item) => (
-                  <div key={item.label} className="surface-card p-6">
-                    <dt className="text-xs uppercase tracking-[0.3em] text-cyan-200/70">{item.label}</dt>
-                    <dd className="mt-3 text-2xl font-bold">{item.value}</dd>
-                    <p className="text-xs text-slate-200/70">{item.note}</p>
-                  </div>
-                ))}
-              </dl>
-            </div>
-
-            <div className="surface-card relative flex flex-col gap-6 p-8">
-              <div aria-hidden className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-cyan-400/20 blur-3xl" />
-              <div className="space-y-3">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">Stack créative Sept. 2025</p>
-                <p className="text-sm leading-relaxed text-slate-200/80">
-                  Sony Burano 8K · FX6 Duo · DJI Inspire 3 · Runway Gen-5 · Sora Color Suite · DaVinci Resolve Neural 19 · ElevenLabs Dubbing · Notion AI Ops.
-                </p>
-              </div>
-              <div className="space-y-3">
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/80">Services phares</p>
-                <ul className="space-y-2 text-sm text-slate-200/70">
-                  {CATEGORIES.map((category) => (
-                    <li key={category.slug} className="flex items-center justify-between gap-4">
-                      <span>{category.label}</span>
-                      <Link to={`/services/${category.slug}`} className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-200">
-                        Voir
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),transparent_55%)]"
+      />
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 sm:px-10">
+        <header className="space-y-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.55em] text-slate-400">Portfolio</p>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            {activeCategory === ALL_CATEGORY
+              ? "Showreel & études de cas orchestrées"
+              : `Réalisations ${activeCategory} — pipeline complet`}
+          </h1>
+          <p className="max-w-3xl text-base text-slate-300">
+            Films corporate, événements, immobilier, réseaux sociaux, mariage ou motion design : chaque projet est livré
+            avec un plan de diffusion 2025, un pilotage IA supervisé et des indicateurs de performance.
+          </p>
         </header>
 
-        {/* SERVICE SECTIONS */}
-        <div className="mt-20 space-y-16">
-          {services.map((service) => {
-            const packs = servicePacks[service.slug] ?? [];
-            return (
-              <section
-                key={service.slug}
-                id={`service-${service.slug}`}
-                className="surface-panel p-10 lg:p-12"
-              >
-                <div className="flex flex-col gap-10 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
-                  <div className="space-y-6">
-                    <SectionHeading
-                      eyebrow={`${service.title} · ${service.timeline}`}
-                      title={service.hook}
-                      description={service.promise}
-                    />
-                    <div className="space-y-4">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Essentiel du déroulement</p>
-                      <ol className="grid gap-3 text-sm text-white/70">
-                        {service.phases.slice(0, 5).map((phase, index) => (
-                          <li key={phase.title} className="surface-card rounded-[2rem] p-5">
-                            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/50">
-                              Étape 0{index + 1}
-                            </p>
-                            <p className="mt-2 text-sm text-white">{phase.title}</p>
-                            <p className="mt-1 text-sm text-white/70">{phase.description}</p>
-                            <p className="mt-2 text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  </div>
+        <section className="space-y-8">
+          <div className="portfolio-filter-scroll-wrapper overflow-x-auto">
+            <div className="flex w-max gap-3 py-1">
+              {categories.map((category) => {
+                const isActive = category === activeCategory;
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => handleCategoryChange(category)}
+                    className={cn(
+                      "portfolio-filter-trigger shrink-0",
+                      isActive ? "portfolio-filter-active" : "portfolio-filter-idle"
+                    )}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Packs & livrables</p>
-                      <div className="grid gap-4">
-                        {packs.map((pack) => (
-                          <div key={pack.name} className="surface-card rounded-[2.25rem] p-6">
-                            <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-white/70">
-                              <span className="text-white">{pack.name}</span>
-                              <span>{pack.price}</span>
+          <div className="portfolio-gallery grid gap-10 lg:gap-14">
+            {filteredItems.map((item) => {
+              const embedUrl = getEmbedUrl(item.videoUrl);
+              const dialogTitleId = `portfolio-dialog-title-${item.id}`;
+              const dialogTaglineId = `portfolio-dialog-tagline-${item.id}`;
+              const dialogDescriptionId = `portfolio-dialog-description-${item.id}`;
+              const ariaDescription = `${dialogTaglineId} ${dialogDescriptionId}`.trim();
+
+              return (
+                <Dialog key={item.id}>
+                  <article className="portfolio-card group">
+                    <div className="portfolio-card-media">
+                      {item.thumbnail ? (
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className={cn("h-full w-full", item.gradient, "bg-gradient-to-br")} aria-hidden />
+                      )}
+                      <div className="portfolio-card-overlay" />
+                      <div className="portfolio-card-copy">
+                        <div className="flex flex-wrap items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-white/70">
+                          <span>{item.category}</span>
+                          <span className="opacity-70">•</span>
+                          <span>{item.year}</span>
+                        </div>
+                        <h3 className="text-2xl font-semibold leading-tight sm:text-3xl">{item.title}</h3>
+                        <p className="max-w-xl text-sm text-white/75 sm:text-base">{item.tagline}</p>
+                      </div>
+                      <DialogTrigger asChild>
+                        <button type="button" className="portfolio-card-cta" aria-label={`Visionner ${item.title}`}>
+                          <span className="portfolio-card-ctaLabel">
+                            <Play className="h-4 w-4" aria-hidden />
+                            Visionner
+                          </span>
+                        </button>
+                      </DialogTrigger>
+                    </div>
+
+                    <div className="portfolio-card-meta">
+                      <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.35em] text-white/60">
+                        <span>{item.duration}</span>
+                        <span className="hidden h-1 w-1 rounded-full bg-white/30 sm:inline-flex" aria-hidden />
+                        <span>{item.aiTools.length} outils IA</span>
+                        <span className="hidden h-1 w-1 rounded-full bg-white/30 sm:inline-flex" aria-hidden />
+                        <span>Diffusion : {item.socialStack.join(" · ")}</span>
+                      </div>
+                      <p className="text-sm text-white/75 sm:text-base">{item.description}</p>
+                      {item.aiTools.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {item.aiTools.map((tool) => (
+                            <span
+                              key={tool}
+                              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80"
+                            >
+                              {tool}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {item.deliverables.length > 0 && (
+                        <div className="flex flex-wrap gap-3 text-[0.65rem] uppercase tracking-[0.35em] text-white/55">
+                          {item.deliverables.map((deliverable) => (
+                            <span key={deliverable}>{deliverable}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </article>
+
+                  <DialogContent
+                    className="portfolio-dialog"
+                    aria-labelledby={dialogTitleId}
+                    aria-describedby={ariaDescription || undefined}
+                  >
+                    <div className="portfolio-dialog-aurora" aria-hidden />
+                    <div className="portfolio-dialog-body">
+                      <div className="portfolio-dialog-media">
+                        <div className="portfolio-dialog-media-frame">
+                          {embedUrl ? (
+                            <iframe
+                              src={embedUrl}
+                              title={`Lecture de ${item.title}`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                              referrerPolicy="strict-origin-when-cross-origin"
+                              loading="lazy"
+                            />
+                          ) : item.thumbnail ? (
+                            <img src={item.thumbnail} alt={item.title} loading="lazy" />
+                          ) : (
+                            <div className="portfolio-dialog-media-fallback" aria-hidden />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="portfolio-dialog-details">
+                        <DialogTitle id={dialogTitleId} className="portfolio-dialog-title">
+                          {item.title}
+                        </DialogTitle>
+                        <DialogDescription id={dialogTaglineId} className="portfolio-dialog-tagline">
+                          {item.tagline}
+                        </DialogDescription>
+                        <p id={dialogDescriptionId} className="portfolio-dialog-description">
+                          {item.description}
+                        </p>
+
+                        <div className="portfolio-dialog-meta">
+                          <div className="portfolio-dialog-section">
+                            <span className="portfolio-dialog-section-label">Durée</span>
+                            <div className="portfolio-dialog-chipRow">
+                              <span className="portfolio-dialog-chip">{item.duration}</span>
                             </div>
-                            <p className="mt-2 text-sm text-white/60">{pack.description}</p>
-                            <ul className="mt-4 space-y-2 text-sm text-white/70">
-                              {pack.includes.map((item) => (
-                                <li key={item} className="flex items-start gap-2">
-                                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400/80" aria-hidden />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
                           </div>
-                        ))}
+
+                          <div className="portfolio-dialog-section">
+                            <span className="portfolio-dialog-section-label">Catégorie / Année</span>
+                            <div className="portfolio-dialog-chipRow">
+                              <span className="portfolio-dialog-chip">{item.category}</span>
+                              <span className="portfolio-dialog-chip">{item.year}</span>
+                            </div>
+                          </div>
+
+                          {item.aiTools.length > 0 && (
+                            <div className="portfolio-dialog-section portfolio-dialog-section--wide">
+                              <span className="portfolio-dialog-section-label">Pipeline IA</span>
+                              <div className="portfolio-dialog-chipRow">
+                                {item.aiTools.map((tool) => (
+                                  <span key={tool} className="portfolio-dialog-chip">
+                                    {tool}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {item.deliverables.length > 0 && (
+                            <div className="portfolio-dialog-section portfolio-dialog-section--wide">
+                              <span className="portfolio-dialog-section-label">Services & Livrables</span>
+                              <div className="portfolio-dialog-chipRow">
+                                {item.deliverables.map((deliverable) => (
+                                  <span key={deliverable} className="portfolio-dialog-chip" data-variant="soft">
+                                    {deliverable}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {item.socialStack.length > 0 && (
+                            <div className="portfolio-dialog-section portfolio-dialog-section--wide">
+                              <span className="portfolio-dialog-section-label">Diffusion ciblée</span>
+                              <div className="portfolio-dialog-chipRow">
+                                {item.socialStack.map((channel) => (
+                                  <span key={channel} className="portfolio-dialog-chip" data-variant="soft">
+                                    {channel}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="portfolio-dialog-section portfolio-dialog-section--wide">
+                            <span className="portfolio-dialog-section-label">Passer à l'action</span>
+                            <div className="portfolio-dialog-chipRow">
+                              <Link
+                                to={`/contact?projet=${encodeURIComponent(item.title)}`}
+                                className="portfolio-dialog-chip"
+                                data-variant="primary"
+                              >
+                                Demander un brief similaire
+                              </Link>
+                              <Link
+                                to={`/services/${labelToSlug.get(item.category) ?? ""}`}
+                                className="portfolio-dialog-chip"
+                                data-variant="soft"
+                              >
+                                Voir le service associé
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="surface-card space-y-3 rounded-[2.25rem] p-6 text-sm text-white/70">
-                      <p className="text-xs uppercase tracking-[0.3em] text-white/50">Livrables inclus</p>
-                      <ul className="space-y-1">
-                        {service.deliverables.map((deliverable) => (
-                          <li key={deliverable}>{deliverable}</li>
-                        ))}
-                      </ul>
-                      <p className="text-xs uppercase tracking-[0.35em] text-white/50">Preuve</p>
-                      <p className="text-sm text-white">{service.proof}</p>
-                      <Link
-                        to={`/contact?service=${service.slug}`}
-                        className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-sky-200"
-                      >
-                        Demander un devis détaillé
-                        <span aria-hidden>→</span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            );
-          })}
-        </div>
+                  </DialogContent>
+                </Dialog>
+              );
+            })}
 
-        <div className="surface-card mt-20 p-8 text-sm text-white/70">
-          <p className="text-xs uppercase tracking-[0.35em] text-white/50">FAQ budgétaire</p>
-          <p className="mt-3 text-balance">
-            Pour toutes les questions liées aux droits musicaux, aux révisions, aux délais ou aux livrables, consultez la section « Conseils » du blog. Vous y trouverez les repères budgétaires détaillés et des modèles de checklists à télécharger.
-          </p>
-          <Link to="/blog" className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-sky-200">
-            Accéder à la FAQ
-            <span aria-hidden>→</span>
-          </Link>
-        </div>
+            {filteredItems.length === 0 && (
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-sm text-white/70">
+                Aucun projet ne correspond encore à ce filtre. Revenez bientôt, nous produisons en continu.
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="rounded-[3rem] border border-white/10 bg-white/5 p-10 backdrop-blur-2xl">
+          <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Processus / Méthode</p>
+              <h2 className="text-3xl font-bold text-white">
+                {activeService ? `Workflow ${activeService.title}` : "Une méthode fluide pour chaque catégorie"}
+              </h2>
+              <p className="text-sm text-white/70">
+                Chaque tournage est encadré par un chef de projet unique, un plan de repérage, un pipeline IA supervisé
+                et un plan de diffusion multi-format. Voici le déroulé que nous appliquons à vos réalisations.
+              </p>
+            </div>
+            <div className="space-y-4 rounded-[2.5rem] border border-white/10 bg-slate-950/60 p-6">
+              {(activeService?.phases ?? servicesData[0].phases).slice(0, 4).map((phase, index) => (
+                <div
+                  key={phase.title}
+                  className="flex flex-col gap-2 rounded-[2rem] border border-white/10 bg-white/5 p-4 text-sm text-white/70"
+                >
+                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/50">
+                    Étape 0{index + 1}
+                  </span>
+                  <p className="text-sm text-white">{phase.title}</p>
+                  <p>{phase.description}</p>
+                  <p className="text-xs text-sky-200/80">Upgrade IA : {phase.aiUpgrade}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-[3rem] border border-white/10 bg-gradient-to-br from-sky-500/20 via-indigo-500/20 to-fuchsia-500/20 p-10 backdrop-blur-2xl">
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Contact & Devis</p>
+            <h2 className="text-3xl font-bold text-white">Prêts pour un projet similaire ?</h2>
+            <p className="max-w-3xl text-sm text-white/80">
+              Racontez-nous vos objectifs, les canaux de diffusion visés et votre deadline. Nous revenons sous 24 h avec
+              un budget transparent, un plan de tournage et des idées de déclinaisons verticales.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-4">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
+            >
+              Demander un devis
+            </Link>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-transparent px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white/70 transition hover:text-white"
+            >
+              Explorer les services
+            </Link>
+          </div>
+        </section>
       </div>
-    </PageShell>
+    </div>
   );
 };
 
-export default Services;
+export default Portfolio;

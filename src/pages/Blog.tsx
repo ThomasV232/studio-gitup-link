@@ -1,8 +1,4 @@
 import { Link } from "react-router-dom";
-
-import { BrandMark } from "@/components/branding/BrandMark";
-import PageShell from "@/components/layout/PageShell";
-import { SectionHeading } from "@/components/layout/SectionHeading";
 import { CATEGORIES } from "@/components/header/nav.config";
 
 const articles = [
@@ -60,28 +56,40 @@ const faq = [
 
 const Blog = () => {
   return (
-    <PageShell
-      gradientStyle={{
-        background:
-          "radial-gradient(circle at 12% 18%, rgba(56,189,248,0.18), transparent 55%), radial-gradient(circle at 82% 22%, rgba(236,72,153,0.16), transparent 60%), linear-gradient(155deg, rgba(15,23,42,0.95), rgba(15,23,42,0.74))",
-      }}
-      contentClassName="pb-24"
-    >
-      <div className="page-container">
-        <header className="space-y-8">
-          <BrandMark dual className="max-w-xs" />
-          <SectionHeading
-            eyebrow="Conseils 2025 · Budgets · Process"
-            title="Ressources pour piloter vos projets vidéo avec sérénité"
-            description="Les articles et FAQ ci-dessous vous donnent une vision claire des budgets, des délais et des points de vigilance pour chaque catégorie. Objectif : vous aider à choisir le bon format, au bon prix, au bon moment."
-          />
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 12% 18%, rgba(56,189,248,0.18), transparent 55%), radial-gradient(circle at 82% 22%, rgba(236,72,153,0.16), transparent 60%), linear-gradient(155deg, rgba(15,23,42,0.95), rgba(15,23,42,0.74))",
+        }}
+      />
+
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-24 sm:px-10">
+        {/* Header */}
+        <header className="space-y-6">
+          <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.4em] text-white/70">
+            Conseils 2025 · Budgets · Process
+          </span>
+          <div className="space-y-4">
+            <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl">
+              Ressources pour piloter vos projets vidéo avec sérénité
+            </h1>
+            <p className="max-w-3xl text-base text-white/70">
+              Les articles et FAQ ci-dessous vous donnent une vision claire des budgets, des délais et des points de
+              vigilance pour chaque catégorie. Objectif : vous aider à choisir le bon format, au bon prix, au bon
+              moment.
+            </p>
+          </div>
         </header>
 
+        {/* Articles */}
         <section className="grid gap-8 lg:grid-cols-3">
           {articles.map((article) => (
             <article
               key={article.slug}
-              className="surface-card group relative flex h-full flex-col gap-5 p-6 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(56,189,248,0.18)]"
+              className="group relative flex h-full flex-col gap-5 rounded-[2.75rem] border border-white/10 bg-white/5 p-6 backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/10 hover:shadow-[0_24px_80px_rgba(56,189,248,0.18)]"
             >
               <div className="flex items-center justify-between text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/60">
                 <span>{article.date}</span>
@@ -105,23 +113,28 @@ const Blog = () => {
                 className="mt-auto inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-sky-200"
               >
                 Lire l'article
-                <span aria-hidden className="transition group-hover:translate-x-1">
-                  →
-                </span>
+                <span aria-hidden className="transition group-hover:translate-x-1">→</span>
               </Link>
             </article>
           ))}
         </section>
 
-        <section className="surface-panel space-y-6 p-8 sm:p-10">
-          <SectionHeading
-            eyebrow="FAQ budgétaire"
-            title="Toutes les réponses budget, droits et livrables"
-            description="Ces questions reviennent le plus souvent pendant la préparation de devis. N'hésitez pas à les partager en interne pour accélérer vos validations."
-          />
+        {/* FAQ */}
+        <section className="space-y-6 rounded-[3.5rem] border border-white/10 bg-white/5 p-10">
+          <header className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/60">FAQ budgétaire</p>
+            <h2 className="text-3xl font-bold">Toutes les réponses budget, droits et livrables</h2>
+            <p className="max-w-3xl text-sm text-white/70">
+              Ces questions reviennent le plus souvent pendant la préparation de devis. N'hésitez pas à les partager en
+              interne pour accélérer vos validations.
+            </p>
+          </header>
           <div className="grid gap-6 lg:grid-cols-2">
             {faq.map((item) => (
-              <div key={item.question} className="surface-card p-6">
+              <div
+                key={item.question}
+                className="rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6"
+              >
                 <h3 className="text-lg font-semibold text-white">{item.question}</h3>
                 <p className="mt-3 text-sm text-white/70">{item.answer}</p>
               </div>
@@ -129,12 +142,17 @@ const Blog = () => {
           </div>
         </section>
 
-        <section className="surface-panel space-y-6 p-8 sm:p-10">
-          <SectionHeading
-            eyebrow="Contact & Devis"
-            title="Besoin d'un plan d'action précis ?"
-            description="Expliquez vos enjeux, vos délais et les formats attendus : nous vous répondons sous 24 h avec une estimation claire, un rétroplanning et des idées de diffusion."
-          />
+        {/* CTA */}
+        <section className="space-y-8 rounded-[3rem] border border-white/10 bg-gradient-to-br from-sky-500/20 via-indigo-500/20 to-fuchsia-500/20 p-10 backdrop-blur-2xl">
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Contact & Devis</p>
+            <h2 className="text-3xl font-bold leading-tight">Besoin d'un plan d'action précis ?</h2>
+            <p className="max-w-2xl text-sm text-white/75">
+              Expliquez vos enjeux, vos délais et les formats attendus : nous vous répondons sous 24 h avec une
+              estimation claire, un rétroplanning et des idées de diffusion.
+            </p>
+          </div>
+
           <div className="flex flex-wrap gap-4">
             <Link
               to="/contact"
@@ -149,16 +167,20 @@ const Blog = () => {
               Voir Services & Tarifs
             </Link>
           </div>
+
           <div className="flex flex-wrap gap-2 text-[0.65rem] uppercase tracking-[0.35em] text-white/50">
             {CATEGORIES.map((category) => (
-              <span key={category.slug} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
+              <span
+                key={category.slug}
+                className="rounded-full border border-white/15 bg-white/5 px-3 py-1"
+              >
                 {category.label}
               </span>
             ))}
           </div>
         </section>
       </div>
-    </PageShell>
+    </div>
   );
 };
 
