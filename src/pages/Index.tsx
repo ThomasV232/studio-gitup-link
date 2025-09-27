@@ -81,8 +81,8 @@ const Index = () => {
     () =>
       servicesData.map((service) => ({
         slug: service.slug,
-        title: service.title,
-        hook: service.hook,
+        title: service.name,
+        intro: service.description,
         timeline: service.timeline,
         startingPrice: service.startingPrice,
         deliverables: service.deliverables.slice(0, 2),
@@ -159,7 +159,7 @@ const Index = () => {
                   Programmer un appel créatif
                 </Link>
                 <Link
-                  to="/realisations"
+                  to="/portfolio"
                   className="inline-flex items-center gap-3 rounded-full border border-white/30 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white/70 transition-colors duration-300 hover:text-white"
                 >
                   Voir le showreel
@@ -197,7 +197,7 @@ const Index = () => {
                       <p className="text-sm font-semibold text-white">{heroProject?.title ?? "Studio VBG"}</p>
                     </div>
                     <Link
-                      to="/realisations"
+                      to="/portfolio"
                       className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white"
                     >
                       Lecture
@@ -230,7 +230,7 @@ const Index = () => {
               </p>
             </div>
             <Link
-              to="/realisations"
+              to="/portfolio"
               className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15"
             >
               Découvrir le portfolio complet
@@ -283,7 +283,7 @@ const Index = () => {
                   <span>{service.startingPrice}</span>
                 </div>
                 <h3 className="text-xl font-semibold text-white">{service.title}</h3>
-                <p className="text-sm text-white/70">{service.hook}</p>
+                <p className="text-sm text-white/70">{service.intro}</p>
                 <ul className="space-y-2 text-sm text-white/60">
                   {service.deliverables.map((item) => (
                     <li key={item} className="flex items-start gap-2">
